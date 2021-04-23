@@ -10,10 +10,11 @@ public class Shot : MonoBehaviour
     private static int FRAME = 60;  //フレームレート
     private static float MAX_TAPTIME = FRAME * 2;   //タップ時間の最大
 
-    public float tapTime;   //タップしている時間
+    private float tapTime;   //タップしている時間
     public float power;     //プレイヤーに渡す用の変数
-    public Vector2 tapStart;//タップし始めた場所
-    public Vector2 tapEnd;  //タップを離した場所
+    
+    private Vector2 tapStart;//タップし始めた場所
+    private Vector2 tapEnd;  //タップを離した場所
     public Vector2 direction;//方向のベクター
 
     public float GetPower
@@ -54,7 +55,7 @@ public class Shot : MonoBehaviour
                 if (tapTime == 0.0f)
                 {   //Beganの代わり
                     tapStart = tMger._touch_position;   //座標取得
-                    Debug.Log("start" + tapStart);
+                    //Debug.Log("start" + tapStart);
                 }
                 tapTime += 1.0f;
             }
@@ -62,7 +63,7 @@ public class Shot : MonoBehaviour
             if (touch_state._touch_phase == TouchPhase.Ended)
             {   //タッチ終了
                 tapEnd = tMger._touch_position;         //座標取得
-                Debug.Log("end" + tapEnd);
+                //Debug.Log("end" + tapEnd);
                 PowerConversion();  //パワーの計算
                 VectorCalculation();//ベクトルの計算
                 tapTime = 0;        //時間の初期化
@@ -81,7 +82,7 @@ public class Shot : MonoBehaviour
     void PowerConversion()
     {   //入力時間をパワーに変換する
         power = tapTime / (FRAME / 2);  //時間によるパワーの計算式   
-        Debug.Log(power);
+        //Debug.Log(power);
     }
 
     void VectorCalculation()
@@ -92,6 +93,6 @@ public class Shot : MonoBehaviour
         {   //下側にスワイプした場合(反転化)
             direction *= new Vector2(-1, -1);
         }
-        Debug.Log("direction" + direction);
+        //Debug.Log("direction" + direction);
     }
 }
