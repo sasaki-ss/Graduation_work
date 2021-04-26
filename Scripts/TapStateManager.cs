@@ -2,11 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
- 参考サイト
- https://techblog.gracetory.co.jp/entry/2018/06/04/000000
- */
-
 /**
  * 状態管理
  */
@@ -17,9 +12,9 @@ namespace TapStateManager
      */
     public class TouchManager
     {
-        public bool touch_flg;      // タッチ有無
-        public Vector2 touch_position;   // タッチ座標
-        public TouchPhase touch_phase;   // タッチ状態
+        public bool _touch_flag;      // タッチ有無
+        public Vector2 _touch_position;   // タッチ座標
+        public TouchPhase _touch_phase;   // タッチ状態
 
         /**
          * コンストラクタ
@@ -31,16 +26,16 @@ namespace TapStateManager
          */
         public TouchManager(bool flag = false, Vector2? position = null, TouchPhase phase = TouchPhase.Began)
         {
-            this.touch_flg = flag;
+            this._touch_flag = flag;
             if (position == null)
             {
-                this.touch_position = new Vector2(0, 0);
+                this._touch_position = new Vector2(0, 0);
             }
             else
             {
-                this.touch_position = (Vector2)position;
+                this._touch_position = (Vector2)position;
             }
-            this.touch_phase = phase;
+            this._touch_phase = phase;
         }
 
         /**
@@ -50,7 +45,7 @@ namespace TapStateManager
          */
         public void update()
         {
-            this.touch_flg = false;
+            this._touch_flag = false;
 
             // エディタ
             if (Application.isEditor)
@@ -58,29 +53,29 @@ namespace TapStateManager
                 // 押した瞬間
                 if (Input.GetMouseButtonDown(0))
                 {
-                    this.touch_flg = true;
-                    this.touch_phase = TouchPhase.Began;
+                    this._touch_flag = true;
+                    this._touch_phase = TouchPhase.Began;
                     Debug.Log("押した瞬間");
                 }
 
                 // 離した瞬間
                 if (Input.GetMouseButtonUp(0))
                 {
-                    this.touch_flg = true;
-                    this.touch_phase = TouchPhase.Ended;
+                    this._touch_flag = true;
+                    this._touch_phase = TouchPhase.Ended;
                     Debug.Log("離した瞬間");
                 }
 
                 // 押しっぱなし
                 if (Input.GetMouseButton(0))
                 {
-                    this.touch_flg = true;
-                    this.touch_phase = TouchPhase.Moved;
+                    this._touch_flag = true;
+                    this._touch_phase = TouchPhase.Moved;
                     Debug.Log("押しっぱなし");
                 }
 
                 // 座標取得
-                if (this.touch_flg) this.touch_position = Input.mousePosition;
+                if (this._touch_flag) this._touch_position = Input.mousePosition;
 
                 // 端末
             }
@@ -89,9 +84,9 @@ namespace TapStateManager
                 if (Input.touchCount > 0)
                 {
                     Touch touch = Input.GetTouch(0);
-                    this.touch_position = touch.position;
-                    this.touch_phase = touch.phase;
-                    this.touch_flg = true;
+                    this._touch_position = touch.position;
+                    this._touch_phase = touch.phase;
+                    this._touch_flag = true;
                 }
             }
         }
@@ -103,7 +98,7 @@ namespace TapStateManager
          */
         public TouchManager getTouch()
         {
-            return new TouchManager(this.touch_flg, this.touch_position, this.touch_phase);
+            return new TouchManager(this._touch_flag, this._touch_position, this._touch_phase);
         }
     }
 }
