@@ -11,6 +11,8 @@ public class CharaStatus : MonoBehaviour
     private double charaStamina = 10;
     //スピード
     private double charaSpeed = 50;
+    //ラケットを振ったフラグ
+    private bool racketFlg = false; 
 
     private double maxStamina =10;
 
@@ -37,6 +39,14 @@ public class CharaStatus : MonoBehaviour
         get { return this.charaSpeed; }
         set { this.charaSpeed = value; }
     }
+
+    //ラケットフラグのプロパティー
+    public bool RacketFlg
+    {
+        get { return this.racketFlg; }
+        set { this.racketFlg = value; }
+    }
+
     void Start()
     {
         //移動速度設定
@@ -45,7 +55,7 @@ public class CharaStatus : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("キャラステータス：　パワー："+charaPower+"　スタミナ:"+ charaStamina + "　スピード:" + charaSpeed);
+        Debug.Log("キャラステータス：　パワー："+charaPower+"　スタミナ:"+ charaStamina + "　スピード:" + charaSpeed);
 
         //スタミナが無い
         if (charaStamina <= maxStamina / 10 * 0)
