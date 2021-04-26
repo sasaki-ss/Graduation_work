@@ -3,9 +3,6 @@ using UnityEngine.AI;
 
 public class CharacterMove : MonoBehaviour
 {
-    //キャラのNavMeshAgent
-    public NavMeshAgent agent;
-
     //ステータス取得用
     public CharaStatus CharaStatus;
 
@@ -14,14 +11,7 @@ public class CharacterMove : MonoBehaviour
 
     //キャラ
     [SerializeField] Transform player;
-
-    private void Start()
-    {
-        //移動速度設定
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = (float)CharaStatus.CharaSpeed;
-    }
-
+    Vector3 a;
     void Update()
     {
         //左クリックしたら
@@ -29,18 +19,43 @@ public class CharacterMove : MonoBehaviour
         {
             MoveToCursor();
         }
-        /*スタミナが減る処理
-         * まだ途中なので完成してない
-        if(hit.point.x >player.position.x)
-        {
 
+        //現座標と前座標に違う場合
+        if (player.position != a)
+        {
+            //移動中ならスタミナ減少(今いる座標と目的地の座標のズレが1以上の場合)
+            if (hit.point.x - player.position.x < -1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
+
+            if (hit.point.x - player.position.x > 1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
+
+            if (hit.point.y - player.position.y < -1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
+
+            if (hit.point.y - player.position.y > 1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
+
+            if (hit.point.z - player.position.z < -1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
+
+            if (hit.point.z - player.position.z > 1)
+            {
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            }
         }
 
-
-        Debug.Log("kyら:" + player.position);
-        Debug.Log("hit:" + hit.point);
-        */
-
+        a = player.position;
     }
 
     private void MoveToCursor()
@@ -48,10 +63,6 @@ public class CharacterMove : MonoBehaviour
         //カメラの場所とマウスのClick座標からZ座標を求める
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         bool hasHit = Physics.Raycast(ray, out hit);
-
-        //移動速度減少
-        agent.speed -= 0.5f;
-        CharaStatus.CharaSpeed = agent.speed;
 
         //Clickした場所まで移動
         if (hasHit)

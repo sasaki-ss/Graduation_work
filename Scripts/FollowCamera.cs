@@ -12,8 +12,8 @@ public class FollowCamera : MonoBehaviour
         transform.position = player.position;
 
         //˜ëáÕ‹“_‚É‚·‚é‚½‚ß­‚µ‚¸‚ç‚·
-        pos.z = transform.position.z - 10;
-        pos.y = transform.position.y + 10;
+        pos.z = transform.position.z - 50;
+        pos.y = transform.position.y + 50;
         transform.position = pos;
 
         //Camera‚ÌŠp“x‚ğŒX‚¯‚é
