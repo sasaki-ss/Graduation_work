@@ -55,7 +55,7 @@ public class CharaStatus : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("キャラステータス：　パワー："+charaPower+"　スタミナ:"+ charaStamina + "　スピード:" + charaSpeed);
+        //Debug.Log("キャラステータス：　パワー："+charaPower+"　スタミナ:"+ charaStamina + "　スピード:" + charaSpeed);
 
         //スタミナが無い
         if (charaStamina <= maxStamina / 10 * 0)

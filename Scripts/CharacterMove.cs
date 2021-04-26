@@ -12,7 +12,7 @@ public class CharacterMove : MonoBehaviour
     //キャラ
     [SerializeField] Animator animator;
     [SerializeField] Transform player;
-    [SerializeField] Transform precisionCircle;
+
     Vector3 a;
     Vector2 touch;
     Vector3 touchPosition;
@@ -91,12 +91,6 @@ public class CharacterMove : MonoBehaviour
             animator.SetBool("is_Run", false);
         }
         a = player.position;
-
-        //精度の円？？？
-        //とりあえずプレイヤーを中心にした円表示
-
-        precisionCircle.position = player.position;
-
     }
 
     private void MoveToCursor()
