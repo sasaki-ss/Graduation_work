@@ -6,40 +6,116 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     [SerializeField]
-    private float altitudeReach;    //到達高度
+    private Rigidbody rb;           //Rigidbody
     [SerializeField]
-    private float ReachDistance;    //到達距離
-    [SerializeField]
-    private float launchAltitude;   //打出高度
-    [SerializeField]
-    private float gravity;          //重力加速度
-
+    private Vector3 endPoint;       //終点地点
     [SerializeField]
     private float flightTime;       //滞空時間
     [SerializeField]
-    private float initialVelocity;  //初速度
+    private float speedRate;        //滞空時間を基準とした移動速度倍率
+
+    [SerializeField]
+    private float e;  //反発係数
+
+    [SerializeField]
+    private Vector3 diff;       //距離
+
+    private bool isNet;
+    [SerializeField]
+    private bool isShot;
+    [SerializeField]
+    private bool isBound;       //バウンドフラグ
+    [SerializeField]
+    private bool isProjection;  //投射フラグ   
 
     private void Start()
     {
-        launchAltitude = this.transform.position.y;
+        rb = this.GetComponent<Rigidbody>();
 
-        gravity = Physics.gravity.y;
+        SphereCollider sc = this.GetComponent<SphereCollider>();
+        PhysicMaterial bound = sc.material;
 
-        flightTime = (Mathf.Sqrt(2 * -gravity * (altitudeReach - launchAltitude)) +
-            Mathf.Sqrt(2 * -gravity * altitudeReach)) / -gravity;
+        MeshCollider mc = GameObject.Find("Court_Base").GetComponent<MeshCollider>();
+        PhysicMaterial field = mc.material;
 
-        initialVelocity = Mathf.Sqrt(((ReachDistance / flightTime) * (ReachDistance / flightTime)) +
-            2 * -gravity * (altitudeReach - launchAltitude));
+        e = (bound.bounciness + field.bounciness) / 2f;
 
-        Debug.Log("滞空時間 = " + flightTime);
+        isNet = false;
+        isShot = false;
+        isProjection = false;
+
     }
 
-    private void Update()
+    //物理演算が行われる際の処理
+    private void FixedUpdate()
     {
-        launchAltitude = this.transform.position.y;
-        if (Input.GetMouseButtonDown(0))
+        if(isBound && flightTime < 0.005f)
         {
-            Debug.Log("撃ちました");
+            isBound = false;
+        }
+
+        if (Input.GetMouseButtonDown(0) && !isShot)
+        {
+            isBound = false;
+            isShot = true;
+
+            endPoint = GameObject.Find("pointB").transform.position;
+
+            StartCoroutine(ProjectileMotion(endPoint, flightTime,
+                speedRate, Physics.gravity.y));
+        }
+
+        if (isBound && !isProjection)
+        {
+            endPoint += diff * e;
+            flightTime *= e;
+            speedRate *= e;
+            StartCoroutine(ProjectileMotion(endPoint, flightTime,
+                speedRate, Physics.gravity.y));
+        }
+    }
+
+    private IEnumerator ProjectileMotion(Vector3 _endPoint, float _flightTime,
+        float _speedRate, float _gravity)
+    {
+        Vector3 startPoint = this.transform.position;               //初期位置
+        float diffY = (_endPoint - startPoint).y;                   //視点と終点のy成分の差分
+        diff.x = (_endPoint - startPoint).x;
+        diff.z = (_endPoint - startPoint).z;
+        float vn = (diffY - _gravity * 0.5f *
+            _flightTime * _flightTime) / _flightTime;               //鉛直方向の初速度vn
+
+        isProjection = true;
+
+        for(float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
+        {
+            if (isNet) yield break;
+
+            Vector3 p = Vector3.Lerp(startPoint, _endPoint,
+                t / _flightTime);                                    //水平方向の座標を求める(x,z座標)
+            p.y = startPoint.y + vn * t + 0.5f * _gravity * t * t;  //鉛直方向の座標 y
+
+            rb.MovePosition(p);
+            //transform.position = p;
+
+            yield return null;
+        }
+        isShot = false;
+        isBound = true;
+        isProjection = false;
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if(other.gameObject.CompareTag("Net"))
+        {
+            Debug.Log("当たったよ");
+            isNet = true;
+        }
+
+        if(other.gameObject.CompareTag("Field"))
+        {
+            Debug.Log("地面着地");
         }
     }
 }
