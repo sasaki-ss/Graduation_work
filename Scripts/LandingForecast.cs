@@ -15,11 +15,13 @@ public class LandingForecast : MonoBehaviour
     private float radius;               //îºåa
     [SerializeField]
     private float diameter;             //íºåa
+    [SerializeField,Range(0f,100f)]
+    private float correctionVal;        //ï‚ê≥íl
 
     //èâä˙âªèàóù
     private void Start()
     {
-        radius = 0.5f;
+        radius = 2;
         diameter = radius * 2;
         randingPoint.SetActive(false);
 
@@ -31,7 +33,28 @@ public class LandingForecast : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            float rad = (float)shot.GetRadian;
+            float distance = (float)shot.GetDistance / correctionVal;
+
+            Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
+
+            Debug.Log("rad=" + rad * (180 / 3.14f));
+            Debug.Log("distance=" + distance);
+
+            float x = Mathf.Sin(rad) * distance;
+            float z = Mathf.Cos(rad) * distance;
+
+            //User2ÇæÇ¡ÇΩèÍçáêîílÇîΩì]Ç≥ÇπÇÈ
+            if (ball.Tag == "Player2")
+            {
+                x = -x;
+                z = -z;
+            }
+
+            Debug.Log("(x,z)=" + "(" + x + "," + z + ")");
+
             randingPoint.SetActive(true);
+            randingPoint.transform.position = new Vector3(x, 0.5f, z);
             diameter = radius * 2;
             randingPoint.transform.localScale = new Vector3(diameter, diameter, diameter);
         }
@@ -39,8 +62,6 @@ public class LandingForecast : MonoBehaviour
 
     void PointSetting()
     {
-        Vector2 direction = shot.GetDirection;
-
 
     }
 }

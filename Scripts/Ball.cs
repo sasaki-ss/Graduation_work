@@ -26,11 +26,31 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private bool isBound;       //バウンドフラグ
     [SerializeField]
-    private bool isProjection;  //投射フラグ   
+    private bool isProjection;  //投射フラグ
+
+    [SerializeField]
+    private GameObject[] userObj;   //ユーザーオブジェクト
+    [SerializeField]
+    private int nowShotUser;        //現在打っているユーザー
+    [SerializeField]
+    private string tag = "";        //タグ
+
+    //tagのゲッター
+    public string Tag
+    {
+        get { return this.tag; }
+    }
 
     private void Start()
     {
         rb = this.GetComponent<Rigidbody>();
+
+        userObj = new GameObject[2];
+        userObj[0] = GameObject.Find("Player");
+        userObj[1] = GameObject.Find("Player2");
+
+        nowShotUser = 0;
+        TagChange();
 
         SphereCollider sc = this.GetComponent<SphereCollider>();
         PhysicMaterial bound = sc.material;
@@ -43,7 +63,6 @@ public class Ball : MonoBehaviour
         isNet = false;
         isShot = false;
         isProjection = false;
-
     }
 
     //物理演算が行われる際の処理
@@ -63,6 +82,8 @@ public class Ball : MonoBehaviour
 
             StartCoroutine(ProjectileMotion(endPoint, flightTime,
                 speedRate, Physics.gravity.y));
+
+            TagChange();
         }
 
         if (isBound && !isProjection)
@@ -117,5 +138,30 @@ public class Ball : MonoBehaviour
         {
             Debug.Log("地面着地");
         }
+    }
+
+    private void Init()
+    {
+        isShot = false;
+        isBound = false;
+        isProjection = false;
+    }
+
+    //タグ切り替え処理
+    private void TagChange()
+    {
+        //ユーザーが0番目のとき
+        if(nowShotUser == 0)
+        {
+            nowShotUser = 1;
+        }
+        //ユーザーが1番目のとき
+        else
+        {
+            nowShotUser = 0;
+        }
+
+        //タグを指定したユーザーへ変更する
+        tag = userObj[nowShotUser].name;
     }
 }
