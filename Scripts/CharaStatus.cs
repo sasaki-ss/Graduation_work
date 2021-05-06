@@ -11,6 +11,7 @@ public class CharaStatus : MonoBehaviour
     private double charaStamina = 10;
     //スピード
     private double charaSpeed = 50;
+
     //ラケットを振ったフラグ
     private bool racketFlg = false; 
 
@@ -88,8 +89,10 @@ public class CharaStatus : MonoBehaviour
             charaSpeed = 50;
         }
 
+        //0で止める
         if (charaStamina < 0) charaStamina = 0;
 
+        //スピードを設定
         agent.speed = (float)charaSpeed;
     }
 }
