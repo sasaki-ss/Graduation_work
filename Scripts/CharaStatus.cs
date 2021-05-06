@@ -11,6 +11,8 @@ public class CharaStatus : MonoBehaviour
     private double charaStamina = 10;
     //スピード
     private double charaSpeed = 50;
+    //円の大きさ
+    private int charaCircle = 0;
 
     //ラケットを振ったフラグ
     private bool racketFlg = false; 
@@ -46,6 +48,13 @@ public class CharaStatus : MonoBehaviour
     {
         get { return this.racketFlg; }
         set { this.racketFlg = value; }
+    }
+
+    //円の大きさのプロパティー
+    public int CharaCircle
+    {
+        get { return this.charaCircle; }
+        set { this.charaCircle = value; }
     }
 
     void Start()
