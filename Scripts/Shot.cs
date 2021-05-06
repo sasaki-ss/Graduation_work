@@ -92,7 +92,7 @@ public class Shot : MonoBehaviour
 
     void PowerConversion()
     {   //入力時間をパワーに変換する
-        power = tapTime / (FRAME / 2);  //時間によるパワーの計算式   
+        power = tapTime / (FRAME / 2);  //時間によるパワーの計算式 tapTime/30 で最大値4になる  
         //Debug.Log("入力時間"+power);
     }
 
