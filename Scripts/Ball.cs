@@ -35,6 +35,9 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private string tag = "";        //タグ
 
+    [SerializeField]
+    private GameObject randingPoint;
+
     //tagのゲッター
     public string Tag
     {
@@ -134,9 +137,16 @@ public class Ball : MonoBehaviour
             isNet = true;
         }
 
+        //ボールがフィールドに着地した際の処理
         if(other.gameObject.CompareTag("Field"))
         {
-            Debug.Log("地面着地");
+            //着地地点を生成
+            GameObject instObject = Instantiate(randingPoint);
+
+            //着地地点を設定
+            instObject.transform.position = new Vector3(this.transform.position.x, 0.02f,
+                this.transform.position.z);
+
         }
     }
 
