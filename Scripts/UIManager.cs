@@ -52,8 +52,8 @@ public class UIManager : MonoBehaviour
     private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
 
     //カメラ
-    public Camera mainCam;
-    public Camera uiCam;
+    public Camera mainCam;              //メインカメラ
+    public Camera uiCam;                //サブカメラ
 
     //プレイヤーのオブジェクト格納
     private GameObject Player;          //プレイヤーオブジェクトを格納する変数
@@ -66,6 +66,10 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //タップ関連の初期化
+        tMger = new TouchManager();
+        createFlg = true;
+
         //プレハブの読み込み
         textPref = (GameObject)Resources.Load("TextPref");
         lgPref = (GameObject)Resources.Load("LineGaugePref");
@@ -79,16 +83,13 @@ public class UIManager : MonoBehaviour
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
         pgPos = new Vector3(0, 0, 0);
+
         //オブジェクトおよびスクリプトの格納
         Player = GameObject.Find("Player");
         pcStatus = Player.GetComponent<CharaStatus>();
 
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
-
-        //タップ関連の初期化
-        tMger = new TouchManager();
-        createFlg = true;
 
         CreateInit();                   //初期化と生成
 
@@ -99,8 +100,8 @@ public class UIManager : MonoBehaviour
     {
         lgPlayer.value = (float)pcStatus.CharaStamina;  //スタミナ取得
 
-        TapDoing();                     //タップ中のUIの生成管理
-        tMger.update();                                              //更新(タップ監視)
+        tMger.update();                                 //更新(タップ監視)
+        TapDoing();                                     //タップ中のUIの生成管理
 
     }
 
@@ -168,7 +169,7 @@ public class UIManager : MonoBehaviour
     void TapDoing()
     {   //タップしている最中に行う処理
 
-        TouchManager touch_state = tMger.getTouch();                 //タッチ取得
+        TouchManager touch_state = tMger.getTouch();    //タッチ取得
 
         if (touch_state._touch_flag)                    //タッチされていた場合
         {
@@ -181,15 +182,24 @@ public class UIManager : MonoBehaviour
             {
                 if (createFlg)
                 {   //Beganの代わり
+                    #region タップ中に表示されるUIの生成
 
                     j = i;                                                                              //現在のinstances配列の続きからカウントする
 
+                    //座標設定
+                    plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
+                    pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
+                    pgViewPos.z = 0;                                                                    //z軸の設定
+                    pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+
+                    //パワーゲージ(枠組み)
                     instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                     instances[j].name = "pGauge1";                                                      //オブジェクト名変更
                     pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
                     j++;
 
+                    //パワーゲージ(青い部分)
                     instances[j] = (GameObject)Instantiate(pgPref2, pgPos, Quaternion.identity);        //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                     instances[j].name = "pGauge2";                                                      //オブジェクト名変更
@@ -197,9 +207,12 @@ public class UIManager : MonoBehaviour
                     j++;
 
                     createFlg = false;                                                                  //生成しました
+
+                    #endregion
                 }
+
                 //タッチ中
-                pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //ゲージ設定
+                pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
                 
             }
 
@@ -207,7 +220,7 @@ public class UIManager : MonoBehaviour
             {   //タッチ終了
                 for (int n = i; n < j; n++)
                 {
-                    Destroy(instances[n], 0.0f);                                                        //削除
+                    Destroy(instances[n], 0.0f);                                                        //タップ中に生成されたオブジェクトの削除
                 }
                 createFlg = true;
             }
