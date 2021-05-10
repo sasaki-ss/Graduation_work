@@ -1,3 +1,4 @@
+using TapStateManager;
 using UnityEngine;
 using UnityEngine.AI;
 //using UnityEngine.Touch;
@@ -5,6 +6,7 @@ public class CharacterMove : MonoBehaviour
 {
     //ステータス取得用
     public CharaStatus CharaStatus;
+    public TouchManager TouchManager;
 
     //Shot用
     public Shot Shot;
@@ -107,23 +109,27 @@ public class CharacterMove : MonoBehaviour
         }
         */
 
-        //左クリックしたら
-        if (Input.GetMouseButtonDown(0))
+        //クリック
+        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Ended)
         {
 
             //現状の移動指定地を削除
             GetComponent<NavMeshAgent>().ResetPath();
+
+            CharaStatus.RacketSwing = 1;
 
             //クリック時の処理
             MoveToCursor();
         }
 
 
-        //左クリックしたら
-        if (Input.GetMouseButtonDown(1))
+        //長押し中
+        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Moved)
         {
+            CharaStatus.RacketSwing = 2;
+
             //スライドの長さによって円の大きさが変わる
-            if(Shot.GetDistance  >= 0  && Shot.GetDistance < 5 )
+            if (Shot.GetDistance  >= 0  && Shot.GetDistance < 5 )
             {
                 CharaStatus.CharaCircle = 50;
             }
@@ -167,6 +173,8 @@ public class CharacterMove : MonoBehaviour
 
         //座標判定
         PositionJudge();
+
+        Debug.Log(CharaStatus.CharaCircle);
        
     }
 
