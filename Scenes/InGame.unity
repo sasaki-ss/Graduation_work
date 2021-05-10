@@ -810,7 +810,7 @@ MonoBehaviour:
   Shot: {fileID: 429837359}
   animator: {fileID: 1834506136}
   player: {fileID: 1834506139}
-  ball: {fileID: 0}
+  ball: {fileID: 1172014073}
 --- !u!95 &1834506136 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
