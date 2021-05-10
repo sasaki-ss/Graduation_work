@@ -746,6 +746,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 8547c170b1eb7eb43b54938992adbcc1, type: 2}
     m_RemovedComponents:
     - {fileID: 11400042, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
     - {fileID: 11400040, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
@@ -766,10 +770,10 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 100
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 0
+  m_StoppingDistance: 10
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -803,8 +807,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharaStatus: {fileID: 1834506130}
-  animator: {fileID: 0}
+  Shot: {fileID: 429837359}
+  animator: {fileID: 1834506136}
   player: {fileID: 1834506139}
+  ball: {fileID: 0}
+--- !u!95 &1834506136 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
+  m_PrefabInstance: {fileID: 1666853045}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1834506139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
