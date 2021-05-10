@@ -6,7 +6,6 @@ public class CharacterMove : MonoBehaviour
 {
     //ステータス取得用
     public CharaStatus CharaStatus;
-    public TouchManager TouchManager;
 
     //Shot用
     public Shot Shot;
@@ -26,9 +25,11 @@ public class CharacterMove : MonoBehaviour
     Vector2 touch;
     Vector3 touchPosition;
 
+    TouchManager tMger;      //TapStateManager内のTouchManager
+
     void Start()
     {
-
+        tMger = new TouchManager(); //初期化
     }
 
     void Update()
@@ -109,8 +110,17 @@ public class CharacterMove : MonoBehaviour
         }
         */
 
+        tMger.update(); //更新
+
+        TouchManager touch_state = tMger.getTouch();    //タッチ取得
+
+
+        Debug.Log(touch_state._touch_phase == TouchPhase.Ended);
+        Debug.Log(touch_state._touch_phase == TouchPhase.Moved);
+        Debug.Log(touch_state._touch_phase);
+
         //クリック
-        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Ended)
+        if (touch_state._touch_flag == true && touch_state._touch_phase == TouchPhase.Ended)
         {
 
             //現状の移動指定地を削除
@@ -124,7 +134,7 @@ public class CharacterMove : MonoBehaviour
 
 
         //長押し中
-        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Moved)
+        if (touch_state._touch_flag == true && touch_state._touch_phase == TouchPhase.Moved)
         {
             CharaStatus.RacketSwing = 2;
 
@@ -173,8 +183,6 @@ public class CharacterMove : MonoBehaviour
 
         //座標判定
         PositionJudge();
-
-        Debug.Log(CharaStatus.CharaCircle);
        
     }
 
@@ -237,6 +245,7 @@ public class CharacterMove : MonoBehaviour
             {
                 //プレイヤーを待機モーションにする
                 animator.SetBool("is_Run", false);
+                CharaStatus.RacketSwing = 0;
             }
         }
 
