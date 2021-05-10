@@ -1,3 +1,4 @@
+using TapStateManager;
 using UnityEngine;
 using UnityEngine.AI;
 //using UnityEngine.Touch;
@@ -5,6 +6,7 @@ public class CharacterMove : MonoBehaviour
 {
     //ステータス取得用
     public CharaStatus CharaStatus;
+    public TouchManager TouchManager;
 
     //Shot用
     public Shot Shot;
@@ -31,32 +33,69 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
-        /*製作途中 右振り、左振り、ボレー
+        //製作途中 右振り、左振り、ボレー
+
+        //右振り
         if (Input.GetKey("right"))
         {
             animator.SetBool("is_RightShake", true);
         }
+
+        //100カウント後に待機モーションに
+        if (animator.GetBool("is_RightShake") == true)
+        {
+            a++;
+
+            if (a > 100)
+            {
+                a = 0;
+                //プレイヤーを待機モーションにする
+                animator.SetBool("is_RightShake", false);
+            }
+        }
+
+        //左振り
         if (Input.GetKey("left"))
         {
             animator.SetBool("is_LeftShake", true);
         }
+
+        //100カウント後に待機モーションに
+        if (animator.GetBool("is_LeftShake") == true)
+        {
+            a++;
+
+            if (a > 100)
+            {
+                a = 0;
+                //プレイヤーを待機モーションにする
+                animator.SetBool("is_LeftShake", false);
+            }
+        }
+
+        //ボレー
         if (Input.GetKey("down"))
         {
-           // AutoMove();
             animator.SetBool("is_Volley", true);
         }
 
-        if(animator.GetBool("is_Volley")==true)
+        //100カウント後に待機モーションに
+        if (animator.GetBool("is_Volley")==true)
         {
-            Debug.Log(a);
             a++;
 
             if(a>100)
             {
                 a = 0;
-                //プレイヤーを立ち止まりモーションにする
+                //プレイヤーを待機モーションにする
                 animator.SetBool("is_Volley", false);
             }
+        }
+
+        /*
+        if (Input.GetKey("up"))
+        {
+             AutoMove();
         }
         */
 
@@ -70,23 +109,27 @@ public class CharacterMove : MonoBehaviour
         }
         */
 
-        //左クリックしたら
-        if (Input.GetMouseButtonDown(0))
+        //クリック
+        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Ended)
         {
 
             //現状の移動指定地を削除
             GetComponent<NavMeshAgent>().ResetPath();
+
+            CharaStatus.RacketSwing = 1;
 
             //クリック時の処理
             MoveToCursor();
         }
 
 
-        //左クリックしたら
-        if (Input.GetMouseButtonDown(1))
+        //長押し中
+        if (TouchManager._touch_flag == true && TouchManager._touch_phase == TouchPhase.Moved)
         {
+            CharaStatus.RacketSwing = 2;
+
             //スライドの長さによって円の大きさが変わる
-            if(Shot.GetDistance  >= 0  && Shot.GetDistance < 5 )
+            if (Shot.GetDistance  >= 0  && Shot.GetDistance < 5 )
             {
                 CharaStatus.CharaCircle = 50;
             }
@@ -130,11 +173,16 @@ public class CharacterMove : MonoBehaviour
 
         //座標判定
         PositionJudge();
+
+        Debug.Log(CharaStatus.CharaCircle);
        
     }
 
     private void MoveToCursor()
     {
+        //プレイヤーを走るモーションにする
+        animator.SetBool("is_Run", true);
+
         //カメラの場所とマウスのClick座標からZ座標を求める
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -155,44 +203,41 @@ public class CharacterMove : MonoBehaviour
         //現座標と前座標に違う場合
         if (player.position != nowPosition)
         {
-            //プレイヤーを走るモーションにする
-            animator.SetBool("is_Run", true);
-
             //移動中ならスタミナ減少(今いる座標と目的地の座標のズレが1以上の場合)
             if (hit.point.x - player.position.x < -1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-
+            else
             if (hit.point.x - player.position.x > 1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-
+            else
             if (hit.point.y - player.position.y < -1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-
+            else
             if (hit.point.y - player.position.y > 1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-
+            else
             if (hit.point.z - player.position.z < -1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-
+            else
             if (hit.point.z - player.position.z > 1)
             {
                 CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
             }
-        }
-        else
-        {
-            //プレイヤーを立ち止まりモーションにする
-            animator.SetBool("is_Run", false);
+            else
+            {
+                //プレイヤーを待機モーションにする
+                animator.SetBool("is_Run", false);
+            }
         }
 
         //現在の座標を取得
