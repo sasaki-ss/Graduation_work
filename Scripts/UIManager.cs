@@ -2,17 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TapStateManager;
+using System;
 
 public class UIManager : MonoBehaviour
 {
+    //タップ判定取得
+    TouchManager tMger;                 //TapStateManager内のTouchManager
+    private bool createFlg;             //タップ中のUIの生成フラグ
+
     //UIの要素数
-    private const int UINum = 7;        //生成するUIの要素数
+    private const int UINum = 8;        //生成するUIの要素数
 
     private int i = 0;                  //UIの要素数のカウント
+    private int j = 0;                  //ゲーム中生成したり削除するオブジェクトの要素数
 
     //プレハブの格納
     private GameObject textPref;        //テキスト
     private GameObject lgPref;          //ラインゲージ
+    private GameObject pgPref1;         //パワーゲージ(枠線)
+    private GameObject pgPref2;         //パワーゲージ(青い部分)
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -25,19 +34,34 @@ public class UIManager : MonoBehaviour
     private Text textScore;             //スコアの表示
     private Text textPlayerName;        //プレイヤー名
     private Text textOpponentName;      //相手名
+
+    //ゲージ
     private Slider lgPlayer;            //プレイヤーのスタミナゲージ
     private Slider lgOpponent;          //相手のスタミナゲージ
-    
+    private Image pGauge1;              //パワーゲージ(枠線)
+    private Image pGauge2;              //パワーゲージ(青い部分)
+
     //座標
     private Vector2 scorePos;           //スコアの座標
     private Vector2 pNamePos;           //プレイヤー名の座標
     private Vector2 oNamePos;           //相手名の座標
     private Vector2 plgPos;             //プレイヤーのスタミナゲージの座標
     private Vector2 olgPos;             //相手のスタミナゲージの座標
+    private Vector3 pgPos;              //パワーゲージの座標
+    private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
+    private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
+
+    //カメラ
+    public Camera mainCam;
+    public Camera uiCam;
 
     //プレイヤーのオブジェクト格納
     private GameObject Player;          //プレイヤーオブジェクトを格納する変数
     CharaStatus pcStatus;               //プレイヤーオブジェクトのスクリプトを格納する変数
+
+    //ショットのオブジェクト格納
+    private GameObject Shot;            //ショットオブジェクトを格納する変数
+    Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +69,8 @@ public class UIManager : MonoBehaviour
         //プレハブの読み込み
         textPref = (GameObject)Resources.Load("TextPref");
         lgPref = (GameObject)Resources.Load("LineGaugePref");
+        pgPref1 = (GameObject)Resources.Load("PowerGaugePref1");
+        pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
 
         //座標設定
         scorePos = new Vector2(-100.0f, Screen.height/2);
@@ -52,21 +78,36 @@ public class UIManager : MonoBehaviour
         oNamePos = new Vector2((Screen.width / 2 )- 140, Screen.height / 2);
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
-
+        pgPos = new Vector3(0, 0, 0);
+        //オブジェクトおよびスクリプトの格納
         Player = GameObject.Find("Player");
         pcStatus = Player.GetComponent<CharaStatus>();
 
+        Shot = GameObject.Find("Shot");
+        shot = Shot.GetComponent<Shot>();
+
+        //タップ関連の初期化
+        tMger = new TouchManager();
+        createFlg = true;
+
         CreateInit();                   //初期化と生成
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        lgPlayer.value = (float)pcStatus.CharaStamina;
+        lgPlayer.value = (float)pcStatus.CharaStamina;  //スタミナ取得
+
+        TapDoing();                     //タップ中のUIの生成管理
+        tMger.update();                                              //更新(タップ監視)
+
     }
 
     private void CreateInit()
     {
+        #region 基本表示されるUIの生成
+
         //初期化
         instances = new GameObject[UINum];
         textScore = null;
@@ -121,7 +162,55 @@ public class UIManager : MonoBehaviour
         lgOpponent.value = lgOpponent.maxValue;                                             //現在の値の設定
         i++;
 
+        #endregion
     }
 
+    void TapDoing()
+    {   //タップしている最中に行う処理
 
+        TouchManager touch_state = tMger.getTouch();                 //タッチ取得
+
+        if (touch_state._touch_flag)                    //タッチされていた場合
+        {
+            if (touch_state._touch_phase == TouchPhase.Began)
+            {   //タッチ開始
+                //ここの処理が実行されない
+            }
+
+            if (touch_state._touch_phase == TouchPhase.Moved)
+            {
+                if (createFlg)
+                {   //Beganの代わり
+
+                    j = i;                                                                              //現在のinstances配列の続きからカウントする
+
+                    instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
+                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                    instances[j].name = "pGauge1";                                                      //オブジェクト名変更
+                    pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
+                    j++;
+
+                    instances[j] = (GameObject)Instantiate(pgPref2, pgPos, Quaternion.identity);        //インスタンス生成
+                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                    instances[j].name = "pGauge2";                                                      //オブジェクト名変更
+                    pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
+                    j++;
+
+                    createFlg = false;                                                                  //生成しました
+                }
+                //タッチ中
+                pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //ゲージ設定
+                
+            }
+
+            if (touch_state._touch_phase == TouchPhase.Ended)
+            {   //タッチ終了
+                for (int n = i; n < j; n++)
+                {
+                    Destroy(instances[n], 0.0f);                                                        //削除
+                }
+                createFlg = true;
+            }
+        }
+    }
 }

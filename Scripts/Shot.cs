@@ -20,6 +20,10 @@ public class Shot : MonoBehaviour
     private double radian;     //2“_ŠÔ‚ÌŠp“x
     private double distance;   //2“_ŠÔ‚Ì‹——£
 
+    public double GetTapTime
+    {
+        get { return tapTime; }
+    }
     public double GetPower
     {
         get { return power; }
