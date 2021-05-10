@@ -6,6 +6,9 @@ public class CharacterMove : MonoBehaviour
     //ステータス取得用
     public CharaStatus CharaStatus;
 
+    //Shot用
+    public Shot Shot;
+
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
     int a = 0;
@@ -28,7 +31,7 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
-        /*製作途中
+        /*製作途中 右振り、左振り、ボレー
         if (Input.GetKey("right"))
         {
             animator.SetBool("is_RightShake", true);
@@ -56,6 +59,7 @@ public class CharacterMove : MonoBehaviour
             }
         }
         */
+
         /*
         //タッチ時の処理　確認はしてない
         if (Input.GetTouch(0).phase == TouchPhase.Moved)
@@ -69,11 +73,52 @@ public class CharacterMove : MonoBehaviour
         //左クリックしたら
         if (Input.GetMouseButtonDown(0))
         {
+
             //現状の移動指定地を削除
             GetComponent<NavMeshAgent>().ResetPath();
 
             //クリック時の処理
             MoveToCursor();
+        }
+
+
+        //左クリックしたら
+        if (Input.GetMouseButtonDown(1))
+        {
+            //スライドの長さによって円の大きさが変わる
+            if(Shot.GetDistance  >= 0  && Shot.GetDistance < 5 )
+            {
+                CharaStatus.CharaCircle = 50;
+            }
+            else
+            if (Shot.GetDistance >= 5  && Shot.GetDistance < 10)
+            {
+                CharaStatus.CharaCircle = 42;
+            }
+            else
+            if (Shot.GetDistance >= 10 && Shot.GetDistance < 15)
+            {
+                CharaStatus.CharaCircle = 34;
+            }
+            else
+            if (Shot.GetDistance >= 15 && Shot.GetDistance < 20)
+            {
+                CharaStatus.CharaCircle = 26;
+            }
+            else
+            if (Shot.GetDistance >= 20 && Shot.GetDistance < 25)
+            {
+                CharaStatus.CharaCircle = 18;
+            }
+            else
+            if (Shot.GetDistance >= 25 && Shot.GetDistance < 30)
+            {
+                CharaStatus.CharaCircle = 10;
+            }
+            else
+            {
+                CharaStatus.CharaCircle = 2;
+            }
         }
 
         //オート移動処理
