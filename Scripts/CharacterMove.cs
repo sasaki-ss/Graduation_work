@@ -31,62 +31,71 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
-        //*製作途中 右振り、左振り、ボレー
+        //製作途中 右振り、左振り、ボレー
+
+        //右振り
         if (Input.GetKey("right"))
         {
             animator.SetBool("is_RightShake", true);
         }
 
+        //100カウント後に待機モーションに
         if (animator.GetBool("is_RightShake") == true)
         {
-            Debug.Log(a);
             a++;
 
             if (a > 100)
             {
                 a = 0;
-                //プレイヤーを立ち止まりモーションにする
+                //プレイヤーを待機モーションにする
                 animator.SetBool("is_RightShake", false);
             }
         }
 
+        //左振り
         if (Input.GetKey("left"))
         {
             animator.SetBool("is_LeftShake", true);
         }
 
+        //100カウント後に待機モーションに
         if (animator.GetBool("is_LeftShake") == true)
         {
-            Debug.Log(a);
             a++;
 
             if (a > 100)
             {
                 a = 0;
-                //プレイヤーを立ち止まりモーションにする
+                //プレイヤーを待機モーションにする
                 animator.SetBool("is_LeftShake", false);
             }
         }
 
+        //ボレー
         if (Input.GetKey("down"))
         {
-           // AutoMove();
             animator.SetBool("is_Volley", true);
         }
 
-        if(animator.GetBool("is_Volley")==true)
+        //100カウント後に待機モーションに
+        if (animator.GetBool("is_Volley")==true)
         {
-            Debug.Log(a);
             a++;
 
             if(a>100)
             {
                 a = 0;
-                //プレイヤーを立ち止まりモーションにする
+                //プレイヤーを待機モーションにする
                 animator.SetBool("is_Volley", false);
             }
         }
-        
+
+        /*
+        if (Input.GetKey("up"))
+        {
+             AutoMove();
+        }
+        */
 
         /*
         //タッチ時の処理　確認はしてない
@@ -218,7 +227,7 @@ public class CharacterMove : MonoBehaviour
             }
             else
             {
-                //プレイヤーを立ち止まりモーションにする
+                //プレイヤーを待機モーションにする
                 animator.SetBool("is_Run", false);
             }
         }
