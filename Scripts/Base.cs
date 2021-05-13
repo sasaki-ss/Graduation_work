@@ -17,9 +17,15 @@ public class Base : MonoBehaviour
     //タップ処理を実行するためのやつ
     TouchManager tMger;      //TapStateManager内のTouchManager
     public TouchManager touch_state;
+
+    float flightTime;
+    float speed;
+
     // Start is called before the first frame update
     void Start()
     {
+        flightTime = 0;
+        speed = 0;
         tMger = new TouchManager(); //初期化
         ball = GameObject.Find("Ball").GetComponent<Ball>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -32,11 +38,13 @@ public class Base : MonoBehaviour
 
         touch_state = tMger.getTouch();    //タッチ取得
     }
+
     void FixedUpdate()
     {
         //ここにProjectileMotion関数で使うための情報を入れる関数が来る
 
     }
+
     //共通処理　移動
     public void Move(Vector3 _pos, RaycastHit _hit)
     {
@@ -120,10 +128,16 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　スイング
-    public void Swing()
+    public void Swing(double _power)
     {
         //滞空時間　タップ時間から　
         //速度　　　パワーから
-        
+
+        //とりあえず最低3秒滞空時間があるとしてます　(3～7秒)
+        flightTime = (float)Shot.GetTapTime * 2 + 3;
+        //とりあえず3倍してます
+        speed = (float)_power * 3;
+
+        //この二つ変数をProjectileMotion関数に渡す
     }
 }
