@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class Base : MonoBehaviour
 {
-    [SerializeField] Shot Shot;
+    [SerializeField] public Shot Shot;
 
     [SerializeField] Ball ball;
 
@@ -140,7 +140,7 @@ public class Base : MonoBehaviour
         //‚±‚Ì“ñ‚Â•Ï”‚ğProjectileMotionŠÖ”‚É“n‚·
 
         //‚Æ‚è‚ ‚¦‚¸Å’á5•b‘Ø‹óŠÔ‚ª‚ ‚é‚Æ‚µ‚Ä‚Ü‚·@(5`7•b)
-        flightTime = (float)Shot.GetTapTime * 2 + 5;
+        flightTime = (float)Shot.GetTapTime / 120 + 5;
         //‚Æ‚è‚ ‚¦‚¸6‚ÅŠ„‚Á‚Ä‚Ü‚·”’l“I‚É‚Í1.6666666
         speed = (float)_power / 6;
 

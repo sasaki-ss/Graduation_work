@@ -99,21 +99,28 @@ public class CharacterMove : MonoBehaviour
             */
         }
 
-        //右振り
-        if (Input.GetKey(KeyCode.A))
-        {
-            Debug.Log("aaa");
-            Base.Swing(CharaStatus.CharaPower);
-        }
-
         //クリック
         if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
         {
             //現状の移動指定地を削除
             GetComponent<NavMeshAgent>().ResetPath();
 
-            //移動の処理
-            GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition,hit);
+            if (Base.Shot.GetTapTime <= 10) 
+            {
+                //移動の処理
+                GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
+            }
+            else
+            {
+                //円の大きさを測る
+                CharaStatus.CharaCircle = Base.CircleScale();
+
+                //プレイヤー状態を振るに変更
+                CharaStatus.RacketSwing = 2;
+
+                //振る
+                Base.Swing(CharaStatus.CharaPower);
+            }
         }
 
         //移動中かどうか
@@ -137,15 +144,24 @@ public class CharacterMove : MonoBehaviour
         }
 
         //長押し中
-        if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Moved)
+       /* if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
         {
-            //円の大きさを測る
-            CharaStatus.CharaCircle = Base.CircleScale();
+            //現状の移動指定地を削除
+            GetComponent<NavMeshAgent>().ResetPath();
 
-            //プレイヤー状態を振るに変更
-            CharaStatus.RacketSwing = 2;
+            if (Base.Shot.GetTapTime >= 10)
+            {
+                //円の大きさを測る
+                CharaStatus.CharaCircle = Base.CircleScale();
 
-        }
+                //プレイヤー状態を振るに変更
+                CharaStatus.RacketSwing = 2;
+
+                //振る
+                Base.Swing(CharaStatus.CharaPower);
+            }
+
+        }*/
 
         //オート移動処理
         /*if(プレイヤーに対して向かってきている状態の弾なら)
