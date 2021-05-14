@@ -21,11 +21,15 @@ public class Base : MonoBehaviour
     float flightTime;
     float speed;
 
+    bool flg;
+
     // Start is called before the first frame update
     void Start()
     {
         flightTime = 0;
         speed = 0;
+        flg = false;
+
         tMger = new TouchManager(); //初期化
         ball = GameObject.Find("Ball").GetComponent<Ball>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -42,7 +46,11 @@ public class Base : MonoBehaviour
     void FixedUpdate()
     {
         //ここにProjectileMotion関数で使うための情報を入れる関数が来る
-
+        if (flg == true) 
+        {
+            ball.Strike(flightTime, speed);
+            flg = false;
+        }
     }
 
     //共通処理　移動
@@ -129,11 +137,14 @@ public class Base : MonoBehaviour
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
+        //この二つ変数をProjectileMotion関数に渡す
+
         //とりあえず最低3秒滞空時間があるとしてます　(3～7秒)
         flightTime = (float)Shot.GetTapTime * 2 + 3;
         //とりあえず3倍してます
         speed = (float)_power * 3;
 
-        //この二つ変数をProjectileMotion関数に渡す
+        flg = true;
+
     }
 }
