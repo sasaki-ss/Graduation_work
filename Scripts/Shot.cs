@@ -36,6 +36,15 @@ public class Shot : MonoBehaviour
     {
         get { return distance; }
     }
+    public Vector2 GetTapStart
+    {
+        get { return tapStart; }
+    }
+    public Vector2 GetTapEnd
+    {
+        get { return tapEnd; }
+    }
+
     public double GetRadian
     {
         get { return radian; }

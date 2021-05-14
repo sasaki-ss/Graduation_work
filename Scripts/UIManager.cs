@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour
     private GameObject lgPref;          //ラインゲージ
     private GameObject pgPref1;         //パワーゲージ(枠線)
     private GameObject pgPref2;         //パワーゲージ(青い部分)
+    private GameObject arrowPref;       //矢印
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -41,6 +42,9 @@ public class UIManager : MonoBehaviour
     private Image pGauge1;              //パワーゲージ(枠線)
     private Image pGauge2;              //パワーゲージ(青い部分)
 
+    //矢印
+    private Image arrow;                //飛ばす方向の矢印
+
     //座標
     private Vector2 scorePos;           //スコアの座標
     private Vector2 pNamePos;           //プレイヤー名の座標
@@ -50,6 +54,7 @@ public class UIManager : MonoBehaviour
     private Vector3 pgPos;              //パワーゲージの座標
     private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
     private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
+    private Vector2 arrowPos;           //矢印の座標
 
     //カメラ
     public Camera mainCam;              //メインカメラ
@@ -75,6 +80,7 @@ public class UIManager : MonoBehaviour
         lgPref = (GameObject)Resources.Load("LineGaugePref");
         pgPref1 = (GameObject)Resources.Load("PowerGaugePref1");
         pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
+        arrowPref = (GameObject)Resources.Load("ArrowPref"); 
 
         //座標設定
         scorePos = new Vector2(-100.0f, Screen.height/2);
@@ -82,7 +88,6 @@ public class UIManager : MonoBehaviour
         oNamePos = new Vector2((Screen.width / 2 )- 140, Screen.height / 2);
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
-        pgPos = new Vector3(0, 0, 0);
 
         //オブジェクトおよびスクリプトの格納
         Player = GameObject.Find("Player");
@@ -191,6 +196,10 @@ public class UIManager : MonoBehaviour
                     pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
                     pgViewPos.z = 0;                                                                    //z軸の設定
                     pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+                    arrowPos = shot.GetTapStart;                                                        //タップを開始した座標に設定
+                    arrowPos.x -= Screen.width / 2;
+                    arrowPos.y -= Screen.height / 2;
+                    Debug.Log(arrowPos);
 
                     //パワーゲージ(枠組み)
                     instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
@@ -204,6 +213,13 @@ public class UIManager : MonoBehaviour
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                     instances[j].name = "pGauge2";                                                      //オブジェクト名変更
                     pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
+                    j++;
+
+                    //矢印
+                    instances[j] = (GameObject)Instantiate(arrowPref, arrowPos, Quaternion.identity);   //インスタンス生成
+                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                    instances[j].name = "arrow";                                                        //オブジェクト名変更
+                    arrow = instances[j].GetComponent<Image>();                                         //イメージ
                     j++;
 
                     createFlg = false;                                                                  //生成しました
