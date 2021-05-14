@@ -71,24 +71,13 @@ public class Ball : MonoBehaviour
     //物理演算が行われる際の処理
     private void FixedUpdate()
     {
+        //滞空時間が0.005f以下の場合バウンドを停止させる
         if(isBound && flightTime < 0.005f)
         {
             isBound = false;
         }
 
-        if (Input.GetMouseButtonDown(0) && !isShot)
-        {
-            isBound = false;
-            isShot = true;
-
-            endPoint = GameObject.Find("pointB").transform.position;
-
-            StartCoroutine(ProjectileMotion(endPoint, flightTime,
-                speedRate, Physics.gravity.y));
-
-            TagChange();
-        }
-
+        //バウンドの処理
         if (isBound && !isProjection)
         {
             endPoint += diff * e;
@@ -147,6 +136,36 @@ public class Ball : MonoBehaviour
             instObject.transform.position = new Vector3(this.transform.position.x, 0.02f,
                 this.transform.position.z);
 
+        }
+    }
+
+    //打つ処理
+    public void Strike(float _flightTime,float _speedRate)
+    {
+        //打ちフラグがオフの場合
+        if (!isShot)
+        {
+            //バウンドフラグをオフに
+            isBound = false;
+
+            //打ちフラグをオンに
+            isShot = true;
+
+            //到達地点を取得
+            endPoint = GameObject.Find("pointB").transform.position;
+
+            //滞空時間をBallクラスに格納
+            flightTime = _flightTime;
+
+            //滞空時間を基準とした移動速度倍率をBallクラスに格納
+            speedRate = _speedRate;
+
+            //斜方投射コルーチンを開始
+            StartCoroutine(ProjectileMotion(endPoint, flightTime,
+                speedRate, Physics.gravity.y));
+
+            //タグを切り替える
+            TagChange();
         }
     }
 
