@@ -14,11 +14,12 @@ public class Shot : MonoBehaviour
     private double tapTime;   //タップしている時間
     private double power;     //プレイヤーに渡す用の変数
     
-    private Vector2 tapStart; //タップし始めた場所    
+    private Vector2 tapStart; //タップし始めた場所
+    private Vector2 tapWhile; //タップしてる最中の座標
     private Vector2 tapEnd;   //タップを離した場所
     private Vector2 direction;//始点と終点を計算した方向のベクター
-    private double radian;     //2点間の角度
-    private double distance;   //2点間の距離
+    private double radian;    //2点間の角度
+    private double distance;  //2点間の距離
 
     public double GetTapTime
     {
@@ -39,6 +40,10 @@ public class Shot : MonoBehaviour
     public Vector2 GetTapStart
     {
         get { return tapStart; }
+    }
+    public Vector2 GetTapWhile
+    {
+        get { return tapWhile; }
     }
     public Vector2 GetTapEnd
     {
@@ -82,6 +87,7 @@ public class Shot : MonoBehaviour
                     //Debug.Log("開始座標" + tapStart);
                 }
                 tapTime += 1.0f;
+                tapWhile = tMger._touch_position;       //座標取得
             }
 
             if (touch_state._touch_phase == TouchPhase.Ended)

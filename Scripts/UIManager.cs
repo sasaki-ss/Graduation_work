@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     private GameObject lgPref;          //ラインゲージ
     private GameObject pgPref1;         //パワーゲージ(枠線)
     private GameObject pgPref2;         //パワーゲージ(青い部分)
-    private GameObject arrowPref;       //矢印
+    private GameObject linePref;       //線
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -42,8 +42,8 @@ public class UIManager : MonoBehaviour
     private Image pGauge1;              //パワーゲージ(枠線)
     private Image pGauge2;              //パワーゲージ(青い部分)
 
-    //矢印
-    private Image arrow;                //飛ばす方向の矢印
+    //線
+    private LineRenderer line;                //飛ばす方向の線
 
     //座標
     private Vector2 scorePos;           //スコアの座標
@@ -54,7 +54,8 @@ public class UIManager : MonoBehaviour
     private Vector3 pgPos;              //パワーゲージの座標
     private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
     private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
-    private Vector2 arrowPos;           //矢印の座標
+    private Vector3 linePos;            //線の原点
+    private Vector3 lineEndPos;         //線の移動する頂点
 
     //カメラ
     public Camera mainCam;              //メインカメラ
@@ -80,7 +81,7 @@ public class UIManager : MonoBehaviour
         lgPref = (GameObject)Resources.Load("LineGaugePref");
         pgPref1 = (GameObject)Resources.Load("PowerGaugePref1");
         pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
-        arrowPref = (GameObject)Resources.Load("ArrowPref"); 
+        linePref = (GameObject)Resources.Load("linePref"); 
 
         //座標設定
         scorePos = new Vector2(-100.0f, Screen.height/2);
@@ -196,11 +197,11 @@ public class UIManager : MonoBehaviour
                     pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
                     pgViewPos.z = 0;                                                                    //z軸の設定
                     pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
-                    arrowPos = shot.GetTapStart;                                                        //タップを開始した座標に設定
-                    arrowPos.x -= Screen.width / 2;
-                    arrowPos.y -= Screen.height / 2;
-                    Debug.Log(arrowPos);
-
+                    linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
+                    linePos.z = 10.0f;
+                    linePos = uiCam.ScreenToWorldPoint(linePos);
+                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,0.0f);              //タップしている間移動する頂点の座標
+                    lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
                     //パワーゲージ(枠組み)
                     instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
@@ -215,11 +216,15 @@ public class UIManager : MonoBehaviour
                     pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
                     j++;
 
-                    //矢印
-                    instances[j] = (GameObject)Instantiate(arrowPref, arrowPos, Quaternion.identity);   //インスタンス生成
+                    //線
+                    instances[j] = (GameObject)Instantiate(linePref, linePos, Quaternion.identity);     //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
-                    instances[j].name = "arrow";                                                        //オブジェクト名変更
-                    arrow = instances[j].GetComponent<Image>();                                         //イメージ
+                    instances[j].name = "line";                                                         //オブジェクト名変更
+                    line = instances[j].GetComponent<LineRenderer>();                                   //イメージ
+                    line.SetWidth(0.1f, 0.1f);                                                          //線の幅
+                    line.SetVertexCount(2);                                                             //頂点の数
+                    line.SetPosition(0, linePos);                                                       //頂点の座標設定(原点)
+                    line.SetPosition(1, lineEndPos);                                                    //頂点の座標設定(移動する点)
                     j++;
 
                     createFlg = false;                                                                  //生成しました
@@ -229,7 +234,10 @@ public class UIManager : MonoBehaviour
 
                 //タッチ中
                 pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
-                
+                lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
+                lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
+                lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
+                line.SetPosition(1, lineEndPos);                                                        //頂点の設定
             }
 
             if (touch_state._touch_phase == TouchPhase.Ended)
