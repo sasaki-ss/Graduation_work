@@ -139,12 +139,11 @@ public class Base : MonoBehaviour
 
         //‚±‚Ì“ñ‚Â•Ï”‚ğProjectileMotionŠÖ”‚É“n‚·
 
-        //‚Æ‚è‚ ‚¦‚¸Å’á3•b‘Ø‹óŠÔ‚ª‚ ‚é‚Æ‚µ‚Ä‚Ü‚·@(3`7•b)
-        flightTime = (float)Shot.GetTapTime * 2 + 3;
-        //‚Æ‚è‚ ‚¦‚¸3”{‚µ‚Ä‚Ü‚·
-        speed = (float)_power * 3;
+        //‚Æ‚è‚ ‚¦‚¸Å’á5•b‘Ø‹óŠÔ‚ª‚ ‚é‚Æ‚µ‚Ä‚Ü‚·@(5`7•b)
+        flightTime = (float)Shot.GetTapTime * 2 + 5;
+        //‚Æ‚è‚ ‚¦‚¸6‚ÅŠ„‚Á‚Ä‚Ü‚·”’l“I‚É‚Í1.6666666
+        speed = (float)_power / 6;
 
         flg = true;
-
     }
 }

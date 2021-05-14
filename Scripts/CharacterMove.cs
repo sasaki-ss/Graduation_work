@@ -99,6 +99,13 @@ public class CharacterMove : MonoBehaviour
             */
         }
 
+        //右振り
+        if (Input.GetKey(KeyCode.A))
+        {
+            Debug.Log("aaa");
+            Base.Swing(CharaStatus.CharaPower);
+        }
+
         //クリック
         if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
         {
