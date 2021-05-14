@@ -46,7 +46,7 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　移動
-    public void Move(Vector3 _pos, RaycastHit _hit)
+    public Vector3 Move(Vector3 _pos, RaycastHit _hit)
     {
         //カメラの場所とマウスのClick座標からZ座標を求める
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -56,11 +56,7 @@ public class Base : MonoBehaviour
 
         bool hasHit = Physics.Raycast(ray, out _hit);
 
-        //Clickした場所まで移動
-        if (hasHit)
-        {
-            GetComponent<NavMeshAgent>().destination = _hit.point;
-        }
+        return _hit.point;
     }
 
     //共通処理　移動判定

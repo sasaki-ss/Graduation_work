@@ -106,7 +106,7 @@ public class CharacterMove : MonoBehaviour
             GetComponent<NavMeshAgent>().ResetPath();
 
             //ˆÚ“®‚Ìˆ—
-            Base.Move(Input.mousePosition,hit);
+            GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition,hit);
         }
 
         //ˆÚ“®’†‚©‚Ç‚¤‚©
