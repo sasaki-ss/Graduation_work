@@ -42,6 +42,10 @@ public class UIManager : MonoBehaviour
     //線
     private LineRenderer line;          //飛ばす方向の線
 
+    //保持用
+    private float gaugeKeep;            //ゲージのキープ
+    private Vector3 vertexKeep;         //頂点の座標キープ
+
     //座標
     private Vector2 scorePos;           //スコアの座標
     private Vector2 pNamePos;           //プレイヤー名の座標
@@ -241,11 +245,13 @@ public class UIManager : MonoBehaviour
 
                 //タッチ中
                 pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
+                gaugeKeep = pGauge2.fillAmount;                                                         //ゲージキープ
                 
                 lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
                 lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
                 lineEndPos.z = 10;
                 lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
+                vertexKeep = lineEndPos;                                                                //頂点の座標キープ
                 line.SetPosition(1, lineEndPos);                                                        //頂点の設定
             }
 
@@ -253,7 +259,10 @@ public class UIManager : MonoBehaviour
             {   //タッチ終了
                 for (int n = i; n < j; n++)
                 {
-                    Destroy(instances[n], 0.0f);                                                        //タップ中に生成されたオブジェクトの削除
+                    pGauge2.fillAmount = gaugeKeep;                                                     //保持
+                    lineEndPos = vertexKeep;
+
+                    Destroy(instances[n], 0.3f);                                                        //タップ中に生成されたオブジェクトの削除
                 }
                 createFlg = true;
             }
