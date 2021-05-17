@@ -10,6 +10,8 @@ public class Base : MonoBehaviour
 
     [SerializeField] Ball ball;
 
+    [SerializeField] Judgement judgement;
+
     //タッチ時に使う処理
     Vector2 touch;
     Vector3 touchPosition;
@@ -33,6 +35,8 @@ public class Base : MonoBehaviour
         tMger = new TouchManager(); //初期化
         ball = GameObject.Find("Ball").GetComponent<Ball>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
+        //オブジェクト名あとで変更
+        judgement = GameObject.Find("Base").GetComponent<Judgement>();
     }
 
     // Update is called once per frame
@@ -134,16 +138,19 @@ public class Base : MonoBehaviour
     //共通処理　スイング
     public void Swing(double _power)
     {
-        //滞空時間　タップ時間から　
-        //速度　　　パワーから
+       // if (judgement.HitFlg == true)
+        {
+            //滞空時間　タップ時間から　
+            //速度　　　パワーから
 
-        //この二つ変数をProjectileMotion関数に渡す
+            //この二つ変数をProjectileMotion関数に渡す
 
-        //とりあえず最低5秒滞空時間があるとしてます　(5～7秒)
-        flightTime = (float)Shot.GetTapTime / 120 + 5;
-        //とりあえず6で割ってます数値的には1.6666666
-        speed = (float)_power / 6;
+            //とりあえず最低5秒滞空時間があるとしてます　(5～7秒)
+            flightTime = (float)Shot.GetTapTime / 120 + 5;
+            //とりあえず6で割ってます数値的には1.6666666
+            speed = (float)_power / 6;
 
-        flg = true;
+            flg = true;
+        }
     }
 }
