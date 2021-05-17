@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TapStateManager;
-using System;
 
 public class UIManager : MonoBehaviour
 {
@@ -43,7 +40,7 @@ public class UIManager : MonoBehaviour
     private Image pGauge2;              //パワーゲージ(青い部分)
 
     //線
-    private LineRenderer line;                //飛ばす方向の線
+    private LineRenderer line;          //飛ばす方向の線
 
     //座標
     private Vector2 scorePos;           //スコアの座標
@@ -71,7 +68,6 @@ public class UIManager : MonoBehaviour
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
-    // Start is called before the first frame update
     void Start()
     {
         //タップ関連の初期化
@@ -105,7 +101,7 @@ public class UIManager : MonoBehaviour
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
 
-        CreateInit();                   //初期化と生成
+        CreateInit();                                   //初期化と生成
 
     }
 

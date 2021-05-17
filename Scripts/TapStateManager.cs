@@ -55,7 +55,7 @@ namespace TapStateManager
                 {
                     this._touch_flag = true;
                     this._touch_phase = TouchPhase.Began;
-                    Debug.Log("‰Ÿ‚µ‚½uŠÔ");
+                 //   Debug.Log("‰Ÿ‚µ‚½uŠÔ");
                 }
 
                 // —£‚µ‚½uŠÔ
@@ -63,7 +63,7 @@ namespace TapStateManager
                 {
                     this._touch_flag = true;
                     this._touch_phase = TouchPhase.Ended;
-                    Debug.Log("—£‚µ‚½uŠÔ");
+                 //   Debug.Log("—£‚µ‚½uŠÔ");
                 }
 
                 // ‰Ÿ‚µ‚Á‚Ï‚È‚µ
@@ -71,7 +71,7 @@ namespace TapStateManager
                 {
                     this._touch_flag = true;
                     this._touch_phase = TouchPhase.Moved;
-                    Debug.Log("‰Ÿ‚µ‚Á‚Ï‚È‚µ");
+                //    Debug.Log("‰Ÿ‚µ‚Á‚Ï‚È‚µ");
                 }
 
                 // À•Wæ“¾
