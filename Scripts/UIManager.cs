@@ -22,7 +22,7 @@ public class UIManager : MonoBehaviour
     private GameObject lgPref;          //ラインゲージ
     private GameObject pgPref1;         //パワーゲージ(枠線)
     private GameObject pgPref2;         //パワーゲージ(青い部分)
-    private GameObject linePref;       //線
+    private GameObject linePref;        //線
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -192,16 +192,19 @@ public class UIManager : MonoBehaviour
 
                     j = i;                                                                              //現在のinstances配列の続きからカウントする
 
-                    //座標設定
+                    //ゲージの座標設定
                     plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
                     pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
                     pgViewPos.z = 0;                                                                    //z軸の設定
                     pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+
+                    //線の座標設定
                     linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
-                    linePos.z = 10.0f;
+                    linePos.z = 10;
                     linePos = uiCam.ScreenToWorldPoint(linePos);
-                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,0.0f);              //タップしている間移動する頂点の座標
+                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,10.0f);              //タップしている間移動する頂点の座標
                     lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
+                    
                     //パワーゲージ(枠組み)
                     instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
@@ -234,8 +237,10 @@ public class UIManager : MonoBehaviour
 
                 //タッチ中
                 pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
+                
                 lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
                 lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
+                lineEndPos.z = 10;
                 lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
                 line.SetPosition(1, lineEndPos);                                                        //頂点の設定
             }
