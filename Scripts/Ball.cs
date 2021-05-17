@@ -14,6 +14,8 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private float speedRate;        //滞空時間を基準とした移動速度倍率
 
+    private Coroutine coroutine;    //コルーチン
+
     [SerializeField]
     private float e;  //反発係数
 
@@ -21,8 +23,6 @@ public class Ball : MonoBehaviour
     private Vector3 diff;       //距離
 
     private bool isNet;
-    [SerializeField]
-    private bool isShot;
     [SerializeField]
     private bool isBound;       //バウンドフラグ
     [SerializeField]
@@ -36,7 +36,7 @@ public class Ball : MonoBehaviour
     private string tag = "";        //タグ
 
     [SerializeField]
-    private GameObject randingPoint;
+    private GameObject randingPoint;    //着地地点オブジェクト
 
     //tagのゲッター
     public string Tag
@@ -64,7 +64,6 @@ public class Ball : MonoBehaviour
         e = (bound.bounciness + field.bounciness) / 2f;
 
         isNet = false;
-        isShot = false;
         isProjection = false;
     }
 
@@ -72,7 +71,7 @@ public class Ball : MonoBehaviour
     private void FixedUpdate()
     {
         //滞空時間が0.005f以下の場合バウンドを停止させる
-        if(isBound && flightTime < 0.005f)
+        if (isBound && flightTime < 1f)
         {
             isBound = false;
         }
@@ -83,7 +82,7 @@ public class Ball : MonoBehaviour
             endPoint += diff * e;
             flightTime *= e;
             speedRate *= e;
-            StartCoroutine(ProjectileMotion(endPoint, flightTime,
+            coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
                 speedRate, Physics.gravity.y));
         }
     }
@@ -100,34 +99,38 @@ public class Ball : MonoBehaviour
 
         isProjection = true;
 
-        for(float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
+        for (float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
         {
-            if (isNet) yield break;
+            //if (isNet || !isProjection)
+            //{
+            //    diff.x = 0f;
+            //    diff.z = 0f;
+            //    yield break;
+            //}
 
             Vector3 p = Vector3.Lerp(startPoint, _endPoint,
                 t / _flightTime);                                    //水平方向の座標を求める(x,z座標)
             p.y = startPoint.y + vn * t + 0.5f * _gravity * t * t;  //鉛直方向の座標 y
 
             rb.MovePosition(p);
-            //transform.position = p;
 
             yield return null;
         }
-        isShot = false;
         isBound = true;
         isProjection = false;
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        if(other.gameObject.CompareTag("Net"))
+        if (other.gameObject.CompareTag("Net"))
         {
             Debug.Log("当たったよ");
             isNet = true;
         }
 
         //ボールがフィールドに着地した際の処理
-        if(other.gameObject.CompareTag("Field"))
+        if (other.gameObject.CompareTag("Field") ||
+            other.gameObject.CompareTag("OutSide"))
         {
             //着地地点を生成
             GameObject instObject = Instantiate(randingPoint);
@@ -135,43 +138,44 @@ public class Ball : MonoBehaviour
             //着地地点を設定
             instObject.transform.position = new Vector3(this.transform.position.x, 0.02f,
                 this.transform.position.z);
-
         }
     }
 
     //打つ処理
-    public void Strike(float _flightTime,float _speedRate)
+    public void Strike(float _flightTime, float _speedRate)
     {
-        //打ちフラグがオフの場合
-        if (!isShot)
+        LandingForecast lf = GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
+        lf.PointSetting();
+
+        //バウンドフラグをオフに
+        isBound = false;
+
+        //斜方投射フラグをオフに
+        if (isProjection)
         {
-            //バウンドフラグをオフに
-            isBound = false;
-
-            //打ちフラグをオンに
-            isShot = true;
-
-            //到達地点を取得
-            endPoint = GameObject.Find("pointB").transform.position;
-
-            //滞空時間をBallクラスに格納
-            flightTime = _flightTime;
-
-            //滞空時間を基準とした移動速度倍率をBallクラスに格納
-            speedRate = _speedRate;
-
-            //斜方投射コルーチンを開始
-            StartCoroutine(ProjectileMotion(endPoint, flightTime,
-                speedRate, Physics.gravity.y));
-
-            //タグを切り替える
-            TagChange();
+            isProjection = false;
+            StopCoroutine(coroutine);
         }
+
+        //到達地点を取得
+        endPoint = GameObject.Find("pointB").transform.position;
+
+        //滞空時間をBallクラスに格納
+        flightTime = _flightTime;
+
+        //滞空時間を基準とした移動速度倍率をBallクラスに格納
+        speedRate = _speedRate;
+
+        //斜方投射コルーチンを開始
+        coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
+            speedRate, Physics.gravity.y));
+
+        //タグを切り替える
+        TagChange();
     }
 
     private void Init()
     {
-        isShot = false;
         isBound = false;
         isProjection = false;
     }
