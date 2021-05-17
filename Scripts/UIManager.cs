@@ -58,8 +58,10 @@ public class UIManager : MonoBehaviour
     private Vector3 lineEndPos;         //線の移動する頂点
 
     //カメラ
-    public Camera mainCam;              //メインカメラ
-    public Camera uiCam;                //サブカメラ
+    private GameObject mCam;            //カメラ格納オブジェクト
+    private GameObject uCam;
+    private Camera mainCam;             //メインカメラ
+    private Camera uiCam;               //サブカメラ
 
     //プレイヤーのオブジェクト格納
     private GameObject Player;          //プレイヤーオブジェクトを格納する変数
@@ -89,6 +91,12 @@ public class UIManager : MonoBehaviour
         oNamePos = new Vector2((Screen.width / 2 )- 140, Screen.height / 2);
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
+
+        //カメラの取得
+        mCam = GameObject.Find("Main Camera");
+        uCam = GameObject.Find("UICamera");
+        mainCam = mCam.GetComponent<Camera>();
+        uiCam = uCam.GetComponent<Camera>();
 
         //オブジェクトおよびスクリプトの格納
         Player = GameObject.Find("Player");
