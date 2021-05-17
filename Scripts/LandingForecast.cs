@@ -23,6 +23,8 @@ public class LandingForecast : MonoBehaviour
     {
         radius = 2;
         diameter = radius * 2;
+
+        //オブジェクト非表示
         randingPoint.SetActive(false);
 
         shot = shotObject.GetComponent<Shot>();
@@ -37,14 +39,13 @@ public class LandingForecast : MonoBehaviour
 
     public void PointSetting()
     {
-        float rad = (float)shot.GetRadian;
-        float distance = (float)shot.GetDistance / correctionVal;
+        float rad = (float)shot.GetRadian;                          //ラジアン値
+        float distance = (float)shot.GetDistance / correctionVal;   //到達距離
 
+        //ボールScriptを取得
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
-        Debug.Log("rad=" + rad * (180 / 3.14f));
-        Debug.Log("distance=" + distance);
-
+        //到達距離と三角関数を使ってx,zを算出
         float x = Mathf.Sin(rad) * distance;
         float z = Mathf.Cos(rad) * distance;
 
@@ -55,25 +56,34 @@ public class LandingForecast : MonoBehaviour
             z = -z;
         }
 
+        //オブジェクトを表示する
         randingPoint.SetActive(true);
+
+        //到達地点の座標を変更
         randingPoint.transform.position = new Vector3(x, 0.5f, z);
+
+        //スケールを修正
         diameter = radius * 2;
         randingPoint.transform.localScale = new Vector3(diameter, diameter, diameter);
 
         Vector3 basePoint = randingPoint.transform.position;
         GameObject pointB = GameObject.Find("pointB");
 
+        //マイナスか否かを判定
         int isMinusX = Random.Range(0, 1 + 1);
         int isMinusZ = Random.Range(0, 1 + 1);
+
+        //加算値を乱数
         float addX = Random.Range(0f, radius);
         float addZ = Random.Range(0f, radius);
 
+        //マイナスだった場合
         if (isMinusX == 1) addX = -addX;
         if (isMinusZ == 1) addZ = -addZ;
 
+        //ボールの着地地点を設定
         pointB.transform.position = new Vector3(
-            randingPoint.transform.position.x + addX,
-            pointB.transform.position.y,
-            randingPoint.transform.position.z + addZ);
+            basePoint.x + addX, pointB.transform.position.y,
+            basePoint.z + addZ);
     }
 }

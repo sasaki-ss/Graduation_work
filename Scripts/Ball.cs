@@ -44,23 +44,29 @@ public class Ball : MonoBehaviour
         get { return this.tag; }
     }
 
+    //初期化処理
     private void Start()
     {
+        //Rigidbodyを取得
         rb = this.GetComponent<Rigidbody>();
 
+        //Userオブジェクトを取得
         userObj = new GameObject[2];
         userObj[0] = GameObject.Find("Player");
         userObj[1] = GameObject.Find("Player2");
 
+        //打っているユーザーの初期化
         nowShotUser = 0;
         TagChange();
 
+        //PhysiceMaterialを取得
         SphereCollider sc = this.GetComponent<SphereCollider>();
         PhysicMaterial bound = sc.material;
 
         MeshCollider mc = GameObject.Find("Court_Base").GetComponent<MeshCollider>();
         PhysicMaterial field = mc.material;
 
+        //取得したboundとfieldから反発係数を算出
         e = (bound.bounciness + field.bounciness) / 2f;
 
         isNet = false;
@@ -70,6 +76,13 @@ public class Ball : MonoBehaviour
     //物理演算が行われる際の処理
     private void FixedUpdate()
     {
+        //ネットに当たってるとき
+        if (isNet)
+        {
+            //コルーチンを停止する
+            StopCoroutine(coroutine);
+        }
+
         //滞空時間が0.005f以下の場合バウンドを停止させる
         if (isBound && flightTime < 1f)
         {
@@ -79,6 +92,8 @@ public class Ball : MonoBehaviour
         //バウンドの処理
         if (isBound && !isProjection)
         {
+            //到達地点、滞空時間、速度倍率に反発係数をかける
+            //物理法則は多分無視してる
             endPoint += diff * e;
             flightTime *= e;
             speedRate *= e;
@@ -101,17 +116,11 @@ public class Ball : MonoBehaviour
 
         for (float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
         {
-            //if (isNet || !isProjection)
-            //{
-            //    diff.x = 0f;
-            //    diff.z = 0f;
-            //    yield break;
-            //}
-
             Vector3 p = Vector3.Lerp(startPoint, _endPoint,
                 t / _flightTime);                                    //水平方向の座標を求める(x,z座標)
             p.y = startPoint.y + vn * t + 0.5f * _gravity * t * t;  //鉛直方向の座標 y
 
+            //座標を更新する
             rb.MovePosition(p);
 
             yield return null;
@@ -144,6 +153,7 @@ public class Ball : MonoBehaviour
     //打つ処理
     public void Strike(float _flightTime, float _speedRate)
     {
+        //到達地点を更新する
         LandingForecast lf = GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
         lf.PointSetting();
 
@@ -154,6 +164,7 @@ public class Ball : MonoBehaviour
         if (isProjection)
         {
             isProjection = false;
+            //コルーチンを停止する
             StopCoroutine(coroutine);
         }
 
