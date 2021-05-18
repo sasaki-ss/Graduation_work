@@ -10,7 +10,6 @@ public class Base : MonoBehaviour
 
     [SerializeField] Ball ball;
 
-    [SerializeField] Judgement judgement;
 
     //タッチ時に使う処理
     Vector2 touch;
@@ -36,7 +35,6 @@ public class Base : MonoBehaviour
         ball = GameObject.Find("Ball").GetComponent<Ball>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
         //オブジェクト名あとで変更
-        judgement = GameObject.Find("Base").GetComponent<Judgement>();
     }
 
     // Update is called once per frame
@@ -138,8 +136,6 @@ public class Base : MonoBehaviour
     //共通処理　スイング
     public void Swing(double _power)
     {
-       // if (judgement.HitFlg == true)
-        {
             //滞空時間　タップ時間から　
             //速度　　　パワーから
 
@@ -151,6 +147,5 @@ public class Base : MonoBehaviour
             speed = (float)_power / 6;
 
             flg = true;
-        }
     }
 }

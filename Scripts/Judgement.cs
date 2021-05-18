@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Judgement : MonoBehaviour
 {
-    //ラケットを振ったフラグ
+    //ラケットが当たったフラグ
     private bool hitFlg = false;
 
     //ラケットフラグのプロパティー
@@ -22,21 +22,26 @@ public class Judgement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Debug.Log(hitFlg);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-
         //Debug.Log("衝突したオブジェクト：" + gameObject.name);
         //Debug.Log("衝突されたオブジェクト：" + collision.gameObject.name);
 
-        //ボールのオブジェクトと当たったら
-        if(gameObject.name == "Ball")
+        //ラケットと当たったら
+        if(gameObject.name == "Cube")
         {
             hitFlg = true;
         }
-        else
+    }
+
+    //離れたら
+    void OnCollisionExit(Collision collision)
+    {
+        //ラケットと離れたら
+        if (gameObject.name == "Cube")
         {
             hitFlg = false;
         }
