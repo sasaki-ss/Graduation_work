@@ -3,20 +3,36 @@ using UnityEngine;
 public class FollowCamera : MonoBehaviour
 {
     //追尾するキャラ
-    [SerializeField] Transform player;
+    //[SerializeField] Transform player;
+
+    //posision 60 70 0
+    //rotation 32 -90 0
+
+    private GameObject player;
+    private Vector3 playerPos;
+
+    private GameObject camera;
+    private Vector3 cameraPos;
+
+    private void Start()
+    {
+        player = GameObject.Find("Player");     //プレイヤー格納
+
+        camera = GameObject.Find("Main Camera");//
+        camera.transform.position = new Vector3(player.transform.position.x + 60, 70, 0);
+        camera.transform.rotation = Quaternion.Euler(32, -90, 0);
+    }
 
     void Update()
     {
-        // 座標を取得して移動させる
-        Vector3 pos = player.position;
-        transform.position = player.position;
-
-        //俯瞰視点にするため少しずらす
-        pos.z = transform.position.z - 50;
-        pos.y = transform.position.y + 50;
-        transform.position = pos;
-
-        //Cameraの角度を傾ける
-        transform.rotation = Quaternion.Euler(45,0, 0);
+        camera.transform.position = new Vector3(player.transform.position.x + 60, 70, player.transform.position.z/1.2f);
+        if(player.transform.position.z < 0)
+        {
+            camera.transform.rotation = Quaternion.Euler(32, -90 - player.transform.position.z/4, 0);
+        }
+        else if (player.transform.position.z > 0)
+        {
+            camera.transform.rotation = Quaternion.Euler(32, -90 - player.transform.position.z / 4, 0);
+        }
     }
 }
