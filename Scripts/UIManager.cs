@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TapStateManager;
-using System;
 
 public class UIManager : MonoBehaviour
 {
@@ -22,7 +19,7 @@ public class UIManager : MonoBehaviour
     private GameObject lgPref;          //ラインゲージ
     private GameObject pgPref1;         //パワーゲージ(枠線)
     private GameObject pgPref2;         //パワーゲージ(青い部分)
-    private GameObject linePref;       //線
+    private GameObject linePref;        //線
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -43,7 +40,11 @@ public class UIManager : MonoBehaviour
     private Image pGauge2;              //パワーゲージ(青い部分)
 
     //線
-    private LineRenderer line;                //飛ばす方向の線
+    private LineRenderer line;          //飛ばす方向の線
+
+    //保持用
+    private float gaugeKeep;            //ゲージのキープ
+    private Vector3 vertexKeep;         //頂点の座標キープ
 
     //座標
     private Vector2 scorePos;           //スコアの座標
@@ -58,8 +59,10 @@ public class UIManager : MonoBehaviour
     private Vector3 lineEndPos;         //線の移動する頂点
 
     //カメラ
-    public Camera mainCam;              //メインカメラ
-    public Camera uiCam;                //サブカメラ
+    private GameObject mCam;            //カメラ格納オブジェクト
+    private GameObject uCam;
+    private Camera mainCam;             //メインカメラ
+    private Camera uiCam;               //サブカメラ
 
     //プレイヤーのオブジェクト格納
     private GameObject Player;          //プレイヤーオブジェクトを格納する変数
@@ -69,7 +72,6 @@ public class UIManager : MonoBehaviour
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
-    // Start is called before the first frame update
     void Start()
     {
         //タップ関連の初期化
@@ -90,6 +92,12 @@ public class UIManager : MonoBehaviour
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
 
+        //カメラの取得
+        mCam = GameObject.Find("Main Camera");
+        uCam = GameObject.Find("UICamera");
+        mainCam = mCam.GetComponent<Camera>();
+        uiCam = uCam.GetComponent<Camera>();
+
         //オブジェクトおよびスクリプトの格納
         Player = GameObject.Find("Player");
         pcStatus = Player.GetComponent<CharaStatus>();
@@ -97,7 +105,7 @@ public class UIManager : MonoBehaviour
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
 
-        CreateInit();                   //初期化と生成
+        CreateInit();                                   //初期化と生成
 
     }
 
@@ -192,16 +200,19 @@ public class UIManager : MonoBehaviour
 
                     j = i;                                                                              //現在のinstances配列の続きからカウントする
 
-                    //座標設定
+                    //ゲージの座標設定
                     plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
                     pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
                     pgViewPos.z = 0;                                                                    //z軸の設定
                     pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+
+                    //線の座標設定
                     linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
-                    linePos.z = 10.0f;
+                    linePos.z = 10;
                     linePos = uiCam.ScreenToWorldPoint(linePos);
-                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,0.0f);              //タップしている間移動する頂点の座標
+                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,10.0f);              //タップしている間移動する頂点の座標
                     lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
+                    
                     //パワーゲージ(枠組み)
                     instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
                     instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
@@ -234,9 +245,13 @@ public class UIManager : MonoBehaviour
 
                 //タッチ中
                 pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
+                gaugeKeep = pGauge2.fillAmount;                                                         //ゲージキープ
+                
                 lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
                 lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
+                lineEndPos.z = 10;
                 lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
+                vertexKeep = lineEndPos;                                                                //頂点の座標キープ
                 line.SetPosition(1, lineEndPos);                                                        //頂点の設定
             }
 
@@ -244,7 +259,10 @@ public class UIManager : MonoBehaviour
             {   //タッチ終了
                 for (int n = i; n < j; n++)
                 {
-                    Destroy(instances[n], 0.0f);                                                        //タップ中に生成されたオブジェクトの削除
+                    pGauge2.fillAmount = gaugeKeep;                                                     //保持
+                    lineEndPos = vertexKeep;
+
+                    Destroy(instances[n], 0.3f);                                                        //タップ中に生成されたオブジェクトの削除
                 }
                 createFlg = true;
             }
