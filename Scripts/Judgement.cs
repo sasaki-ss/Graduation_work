@@ -4,13 +4,22 @@ using UnityEngine;
 
 public class Judgement : MonoBehaviour
 {
+    [SerializeField] AI al;
     //ラケットが当たったフラグ
     private bool hitFlg = false;
-
+    //ラケットが当たったフラグ
+    private bool hitFlg2 = false;
     //ラケットフラグのプロパティー
     public bool HitFlg
     {
         get { return this.hitFlg; }
+        set { this.hitFlg = value; }
+    }
+
+    public bool HitFlg2
+    {
+        get { return this.hitFlg2; }
+        set { this.hitFlg2 = value; }
     }
 
     // Start is called before the first frame update
@@ -22,28 +31,23 @@ public class Judgement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(hitFlg);
+
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider collision)
     {
-        //Debug.Log("衝突したオブジェクト：" + gameObject.name);
-        //Debug.Log("衝突されたオブジェクト：" + collision.gameObject.name);
+
+        // 物体がトリガーに接触しとき、１度だけ呼ばれる
 
         //ラケットと当たったら
-        if(gameObject.name == "Cube")
+        if (gameObject.name == "Cube")
         {
             hitFlg = true;
         }
-    }
-
-    //離れたら
-    void OnCollisionExit(Collision collision)
-    {
-        //ラケットと離れたら
-        if (gameObject.name == "Cube")
+        //ラケットと当たったら
+        if (gameObject.name == "Cube2")
         {
-            hitFlg = false;
+            hitFlg2 = true;
         }
     }
 }
