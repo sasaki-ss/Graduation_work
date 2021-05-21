@@ -5,18 +5,16 @@ using UnityEngine.UI;
 
 public class RandingPoint : MonoBehaviour
 {
-    [SerializeField]
+    /*このスクリプトでのみ使う変数*/
     private float alpha;        //α値
-    [SerializeField]
     private float red;          //赤
-    [SerializeField]
     private float green;        //緑
-    [SerializeField]
     private float blue;         //青
+    private float fedeOutSpeed; //フェイドアウトする速度
+
+    /*インスペクターに表示又は設定する変数*/
     [SerializeField]
     private float maxTime;      //最大時間
-    [SerializeField]
-    private float fedeOutSpeed; //フェイドアウトする速度
 
     private void Start()
     {

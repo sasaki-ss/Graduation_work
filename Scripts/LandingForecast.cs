@@ -50,10 +50,13 @@ public class LandingForecast : MonoBehaviour
         float z = Mathf.Cos(rad) * distance;
 
         //User2だった場合数値を反転させる
-        if (ball.Tag == "Player2")
+        if (ball.nowUsertag == "Player")
+        {
+            z = -z;
+        }
+        else if(ball.nowUsertag == "Player2")
         {
             x = -x;
-            z = -z;
         }
 
         //オブジェクトを表示する

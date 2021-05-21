@@ -5,44 +5,28 @@ using UnityEngine;
 //ボールクラス
 public class Ball : MonoBehaviour
 {
-    [SerializeField]
-    private Rigidbody rb;           //Rigidbody
-    [SerializeField]
-    private Vector3 endPoint;       //終点地点
-    [SerializeField]
-    private float flightTime;       //滞空時間
-    [SerializeField]
-    private float speedRate;        //滞空時間を基準とした移動速度倍率
+    /*このスクリプトでのみ使う変数*/
+    private Rigidbody   rb;             //Rigidbody
+    private Coroutine   coroutine;      //コルーチン
+    private Vector3     endPoint;       //終点地点
+    private Vector3     diff;           //距離
+    private int         nowShotUser;    //現在打っているユーザー
+    private float       flightTime;     //滞空時間
+    private float       speedRate;      //滞空時間を基準とした移動速度倍率
+    private float       e;              //反発係数
+    private bool        isNet;          //ネットフラグ
+    private bool        isBound;        //バウンドフラグ
+    private bool        isProjection;   //投射フラグ
+    private bool        isSafetyArea;   //セーフティエリアフラグ
 
-    private Coroutine coroutine;    //コルーチン
+    /*プロパティ関連*/
+    public string       nowUsertag { get; private set; }    //タグ
+    public int          boundCount { get; private set; }    //バウンド回数
 
+    /*インスペクターに表示又は設定する変数*/
+    private GameObject[]    userObj;        //ユーザーオブジェクト
     [SerializeField]
-    private float e;  //反発係数
-
-    [SerializeField]
-    private Vector3 diff;       //距離
-
-    private bool isNet;
-    [SerializeField]
-    private bool isBound;       //バウンドフラグ
-    [SerializeField]
-    private bool isProjection;  //投射フラグ
-
-    [SerializeField]
-    private GameObject[] userObj;   //ユーザーオブジェクト
-    [SerializeField]
-    private int nowShotUser;        //現在打っているユーザー
-    [SerializeField]
-    private string tag = "";        //タグ
-
-    [SerializeField]
-    private GameObject randingPoint;    //着地地点オブジェクト
-
-    //tagのゲッター
-    public string Tag
-    {
-        get { return this.tag; }
-    }
+    private GameObject      randingPoint;   //着地地点オブジェクト
 
     //初期化処理
     private void Start()
@@ -59,6 +43,9 @@ public class Ball : MonoBehaviour
         nowShotUser = 0;
         TagChange();
 
+        //バウンドカウントを初期化
+        boundCount = 0;
+
         //PhysiceMaterialを取得
         SphereCollider sc = this.GetComponent<SphereCollider>();
         PhysicMaterial bound = sc.material;
@@ -71,6 +58,7 @@ public class Ball : MonoBehaviour
 
         isNet = false;
         isProjection = false;
+        isSafetyArea = true;
     }
 
     //物理演算が行われる際の処理
@@ -113,6 +101,7 @@ public class Ball : MonoBehaviour
             _flightTime * _flightTime) / _flightTime;               //鉛直方向の初速度vn
 
         isProjection = true;
+        isSafetyArea = false;
 
         for (float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
         {
@@ -138,15 +127,22 @@ public class Ball : MonoBehaviour
         }
 
         //ボールがフィールドに着地した際の処理
-        if (other.gameObject.CompareTag("Field") ||
-            other.gameObject.CompareTag("OutSide"))
+        if (other.gameObject.CompareTag("SafetyArea"))
         {
-            //着地地点を生成
-            GameObject instObject = Instantiate(randingPoint);
+            //着地地点を生成する
+            GenerateRandingPoint();
+            boundCount++;
+            isSafetyArea = true;
 
-            //着地地点を設定
-            instObject.transform.position = new Vector3(this.transform.position.x, 0.02f,
-                this.transform.position.z);
+            Debug.Log("澤村りょう");
+        }
+
+        if (other.gameObject.CompareTag("OutSide") && !isSafetyArea)
+        {
+            //着地地点を生成する
+            GenerateRandingPoint();
+
+            Debug.Log("浦部ひろかず");
         }
     }
 
@@ -206,6 +202,19 @@ public class Ball : MonoBehaviour
         }
 
         //タグを指定したユーザーへ変更する
-        tag = userObj[nowShotUser].name;
+        nowUsertag = userObj[nowShotUser].name;
+        //バウンド回数もリセットする
+        boundCount = 0;
+    }
+
+    //着地地点生成処理
+    private void GenerateRandingPoint()
+    {
+        //着地地点を生成
+        GameObject instObject = Instantiate(randingPoint);
+
+        //着地地点を設定
+        instObject.transform.position = new Vector3(this.transform.position.x, 0.02f,
+            this.transform.position.z);
     }
 }
