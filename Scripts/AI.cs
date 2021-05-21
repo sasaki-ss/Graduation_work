@@ -25,7 +25,7 @@ public class AI : MonoBehaviour
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-    int a = 0;
+    int motionCnt = 0;
 
     void Start()
     {
@@ -36,8 +36,9 @@ public class AI : MonoBehaviour
     void Update()
     {
         float dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
-
-        if (ball.Tag == "Player" && dis >= 10)
+        
+        //nowUserTag
+        if (ball.nowUserTag == "Player" && dis >= 10 && ball.transform.position.x<=-20)
         {
             //プレイヤーを走るモーションにする
             this.animator.SetBool("is_Run", true);
@@ -52,16 +53,12 @@ public class AI : MonoBehaviour
 
             racket.transform.position = new Vector3(player.position.x, player.position.y + 1, player.position.z);
 
-            //スイングAnimationにする予定
-            this.animator.SetBool("is_RightShake", true);
-
             //円の大きさを測る
             this.CharaStatus.CharaCircle = Base.CircleScale();
 
             //プレイヤー状態を振るに変更
             this.CharaStatus.RacketSwing = 2;
         }
-
 
         //移動中かどうか
         if (Base.PositionJudge(player.position, nowPosition))
@@ -83,16 +80,19 @@ public class AI : MonoBehaviour
             this.CharaStatus.RacketSwing = 0;
         }
 
+        if(dis <=50)
+        {
+            this.animator.SetBool("is_RightShake", true);
+        }
+
         //振る状態時なら50カウント後に待機状態に戻す
         if (this.animator.GetBool("is_RightShake") == true)
         {
-            a++;
+            motionCnt++;
 
-            if (a > 50)
+            if (motionCnt > 50)
             {
-                a = 0;
-
-                racket.transform.position = new Vector3(0, -100, 0);
+                motionCnt = 0;
 
                 //プレイヤー状態を待機に変更
                 this.CharaStatus.RacketSwing = 0;
@@ -101,17 +101,21 @@ public class AI : MonoBehaviour
                 this.animator.SetBool("is_RightShake", false);
             }
         }
-
+        //nowUserTag
         //振ったラケットが当たったら
-        if (ball.Tag == "Player" && dis <= 20)
+        //if文おかしいけど現状はこのままで
+        if (ball.nowUserTag == "Player" && dis <= 10)
         {
             //振る
             Base.Swing(CharaStatus.CharaPower);
+
+            racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;
         }
 
+        //Debug.Log(judgement.HitFlg2);
+
         //現在の座標を取得
         nowPosition = player.position;
-
     }
 }

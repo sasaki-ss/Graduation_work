@@ -141,10 +141,10 @@ public class Base : MonoBehaviour
 
         //この二つ変数をProjectileMotion関数に渡す
 
-        //とりあえず最低5秒滞空時間があるとしてます　(8～10秒)
-        flightTime = (float)Shot.GetTapTime / 120 * 4 + 10;
-            //とりあえず6で割ってます数値的には1.6666666
-            speed = (float)_power / 6;
+        //とりあえず最低5秒滞空時間があるとしてます　(5～12秒)
+        flightTime = (float)Shot.GetTapTime / 12 + 4;
+            //とりあえず7で割ってます数値的には1.42
+            speed = (float)_power / 7;
 
             flg = true;
     }

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Judgement : MonoBehaviour
 {
-    [SerializeField] AI al;
     //ラケットが当たったフラグ
     private bool hitFlg = false;
     //ラケットが当たったフラグ
