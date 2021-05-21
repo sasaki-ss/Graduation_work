@@ -27,7 +27,8 @@ public class CharacterMove : MonoBehaviour
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-    int a = 0;
+    int motionCnt = 0;
+    bool autoFlg = false;
 
     void Start()
     {
@@ -49,11 +50,11 @@ public class CharacterMove : MonoBehaviour
             //100カウント後に待機モーションに
             if (animator.GetBool("is_RightShake") == true)
             {
-                a++;
+                motionCnt++;
 
-                if (a > 100)
+                if (motionCnt > 100)
                 {
-                    a = 0;
+                    motionCnt = 0;
                     //プレイヤーを待機モーションにする
                     animator.SetBool("is_RightShake", false);
 
@@ -70,11 +71,11 @@ public class CharacterMove : MonoBehaviour
             //100カウント後に待機モーションに
             if (animator.GetBool("is_LeftShake") == true)
             {
-                a++;
+                motionCnt++;
 
-                if (a > 100)
+                if (motionCnt > 100)
                 {
-                    a = 0;
+                    motionCnt = 0;
                     //プレイヤーを待機モーションにする
                     animator.SetBool("is_LeftShake", false);
                 }
@@ -89,11 +90,11 @@ public class CharacterMove : MonoBehaviour
             //100カウント後に待機モーションに
             if (animator.GetBool("is_Volley") == true)
             {
-                a++;
+                motionCnt++;
 
-                if (a > 100)
+                if (motionCnt > 100)
                 {
-                    a = 0;
+                    motionCnt = 0;
                     //プレイヤーを待機モーションにする
                     animator.SetBool("is_Volley", false);
                 }
@@ -121,15 +122,21 @@ public class CharacterMove : MonoBehaviour
             GetComponent<NavMeshAgent>().ResetPath();
 
             //クリック時間によって処理を分ける
-            if (Base.Shot.GetTapTime <= 10)
+            if (Base.Shot.GetTapTime <= 20) 
             {
                 //移動の処理
-                GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
+                Vector3 xyz = Base.Move(Input.mousePosition, hit);
+
+                //ネット越えないように
+                if(xyz.x>=20)
+                {
+                    GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
+                }
             }
             //長押し
             else
             {
-                racket.transform.position = new Vector3(player.position.x - 5, player.position.y, player.position.z);
+                racket.transform.position = new Vector3(player.position.x - 5, player.position.y +1, player.position.z);
 
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
@@ -142,24 +149,28 @@ public class CharacterMove : MonoBehaviour
             }
         }
 
-        float dis = Vector3.Distance(GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
-        /*
-        if (ball.Tag == "Player2")
+        //オート移動処理
+        if (ball.nowUserTag == "Player2" && ball.transform.position.x >= 7) 
         {
-            if (dis <= 50)
-            {
-                //移動させる
-                GetComponent<NavMeshAgent>().destination = ball.transform.position;
-            }
-            else
-            {
-                //現状の移動指定地を削除
-                GetComponent<NavMeshAgent>().ResetPath();
-            }
-        }*/
+            //二点間の距離を測る
+            float dis = Vector3.Distance(GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
 
-            //移動中かどうか
-            if (Base.PositionJudge(player.position, nowPosition))
+            //ある程度まで近づいたら
+            if (dis >= 50 && autoFlg == true) 
+            {
+                Vector3 xyz = new Vector3(ball.transform.position.x+60, ball.transform.position.y, ball.transform.position.z);
+
+                //移動させる
+                GetComponent<NavMeshAgent>().destination = xyz;
+
+                //自動移動は一回のみ
+                autoFlg = false;
+
+            }
+        }
+
+        //移動中かどうか
+        if (Base.PositionJudge(player.position, nowPosition))
         {
             //プレイヤーを走るモーションにする
             animator.SetBool("is_Run", true);
@@ -174,23 +185,19 @@ public class CharacterMove : MonoBehaviour
         {
             //プレイヤーを待機モーションにする
             animator.SetBool("is_Run", false);
+
             //プレイヤー状態を待機に変更
             CharaStatus.RacketSwing = 0;
-        }
-
-        //オート移動処理(コメントアウト)
-        {
-
         }
 
         //振る状態時なら50カウント後に待機状態に戻す
         if (animator.GetBool("is_RightShake") == true)
         {
-            a++;
+            motionCnt++;
 
-            if (a > 50)
+            if (motionCnt > 50)
             {
-                a = 0;
+                motionCnt = 0;
 
                 racket.transform.position = new Vector3(0, -100, 0);
 
@@ -203,10 +210,15 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (ball.Tag == "Player2" && judgement.HitFlg == true) 
+        if (ball.nowUserTag == "Player2" && judgement.HitFlg == true) 
         {
             //振る
             Base.Swing(CharaStatus.CharaPower);
+
+            //自動移動フラグがたつ
+            autoFlg = true;
+            
+            //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
             judgement.HitFlg = false;
         }
 
