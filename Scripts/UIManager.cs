@@ -201,10 +201,12 @@ public class UIManager : MonoBehaviour
                     j = i;                                                                              //現在のinstances配列の続きからカウントする
 
                     //ゲージの座標設定
-                    plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
-                    pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
-                    pgViewPos.z = 0;                                                                    //z軸の設定
-                    pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+                    //plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
+                    //pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
+                    //pgViewPos.z = 0;                                                                    //z軸の設定
+                    //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+                    pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
+                    pgPos = pgPos + new Vector3(-430, -800, 0);
 
                     //線の座標設定
                     linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
