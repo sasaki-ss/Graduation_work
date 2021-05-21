@@ -20,7 +20,7 @@ public class Ball : MonoBehaviour
     private bool        isSafetyArea;   //セーフティエリアフラグ
 
     /*プロパティ関連*/
-    public string       nowUsertag { get; private set; }    //タグ
+    public string       nowUserTag { get; private set; }    //タグ
     public int          boundCount { get; private set; }    //バウンド回数
 
     /*インスペクターに表示又は設定する変数*/
@@ -202,7 +202,7 @@ public class Ball : MonoBehaviour
         }
 
         //タグを指定したユーザーへ変更する
-        nowUsertag = userObj[nowShotUser].name;
+        nowUserTag = userObj[nowShotUser].name;
         //バウンド回数もリセットする
         boundCount = 0;
     }
