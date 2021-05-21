@@ -24,10 +24,6 @@ public class UIManager : MonoBehaviour
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
 
-    //得点を格納する変数
-    private int pScore;                 //プレイヤーのスコア
-    private int oScore;                 //相手のスコア
-
     //テキスト
     private Text textScore;             //スコアの表示
     private Text textPlayerName;        //プレイヤー名
@@ -73,6 +69,9 @@ public class UIManager : MonoBehaviour
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
+    private GameObject Score;           //スコア
+    private Score score;                //スコアのスクリプト
+
     void Start()
     {
         //タップ関連の初期化
@@ -109,6 +108,9 @@ public class UIManager : MonoBehaviour
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
 
+        Score = GameObject.Find("Score");
+        score = Score.GetComponent<Score>();
+
         CreateInit();                                   //初期化と生成
 
     }
@@ -116,10 +118,11 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lgPlayer.value = (float)pcStatus.CharaStamina;  //スタミナ取得
+        tMger.update();                                                 //更新(タップ監視)
 
-        tMger.update();                                 //更新(タップ監視)
-        TapDoing();                                     //タップ中のUIの生成管理
+        textScore.text = score.user1Score + " - " + score.user2Score;   //得点取得
+        lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
+        TapDoing();                                                     //タップ中のUIの生成管理
 
     }
 
@@ -132,15 +135,13 @@ public class UIManager : MonoBehaviour
         textScore = null;
         textPlayerName = null;
         textOpponentName = null;
-        pScore = 0;
-        oScore = 0;
 
         //点数のテキスト
         instances[i] = (GameObject)Instantiate(textPref, scorePos, Quaternion.identity);    //インスタンス生成
         instances[i].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
         instances[i].name = "TextScore";                                                    //オブジェクト名変更
         textScore = instances[0].GetComponent<Text>();                                      //テキスト
-        textScore.text = pScore + " - " + oScore;                                           //テキスト内容設定
+        textScore.text = score.user1Score + " - " + score.user2Score;                       //テキスト内容設定
         i++;
 
         //プレイヤー名の表示
