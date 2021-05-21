@@ -2,11 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//ユーザースコアデータ
 public class UserScoreData
 {
+    /*プロパティ関連*/
     public int score { get; private set; }
     public bool isMatchP { get; private set; }
 
+    //コンストラクタ
     public UserScoreData(int _score,bool _isMatchP)
     {
         score = _score;
@@ -17,15 +20,18 @@ public class UserScoreData
 //ゲームマネージャー
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance;
+    /*このスクリプトでのみ使う変数*/
+    public static GameManager instance;     //インスタンス
+    private Score               score;      //スコアクラス
 
-    [SerializeField]
-    Score score;            //スコアクラス
+    /*プロパティ関連*/
+    public bool isDeuce { get; set; }    //デュースフラグ
+
+    /*インスペクターに表示又は設定する変数*/
     [SerializeField]
     private int winScore;   //勝利スコア
 
-    public bool isDeuce { get; set; }    //デュースフラグ
-
+    //初期化処理
     private void Start()
     {
         score = this.GetComponentInChildren<Score>();
@@ -44,6 +50,15 @@ public class GameManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             score.AddScore("Player2");
+        }
+
+        //ボールを取得
+        Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
+
+        //バウンド回数が2回の場合
+        if(ball.boundCount == 2)
+        {
+            score.AddScore(ball.tag);
         }
 
         //ユーザーデータを取得
