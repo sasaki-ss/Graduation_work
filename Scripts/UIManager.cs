@@ -24,10 +24,6 @@ public class UIManager : MonoBehaviour
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
 
-    //得点を格納する変数
-    private int pScore;                 //プレイヤーのスコア
-    private int oScore;                 //相手のスコア
-
     //テキスト
     private Text textScore;             //スコアの表示
     private Text textPlayerName;        //プレイヤー名
@@ -41,6 +37,7 @@ public class UIManager : MonoBehaviour
 
     //線
     private LineRenderer line;          //飛ばす方向の線
+    private AnimationCurve lineCurve;   //線の幅のアニメーションカーブ
 
     //保持用
     private float gaugeKeep;            //ゲージのキープ
@@ -72,6 +69,9 @@ public class UIManager : MonoBehaviour
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
+    private GameObject Score;           //スコア
+    private Score score;                //スコアのスクリプト
+
     void Start()
     {
         //タップ関連の初期化
@@ -83,7 +83,10 @@ public class UIManager : MonoBehaviour
         lgPref = (GameObject)Resources.Load("LineGaugePref");
         pgPref1 = (GameObject)Resources.Load("PowerGaugePref1");
         pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
-        linePref = (GameObject)Resources.Load("linePref"); 
+        linePref = (GameObject)Resources.Load("linePref");
+
+        //アニメーションカーブの初期化
+        lineCurve = new AnimationCurve();
 
         //座標設定
         scorePos = new Vector2(-100.0f, Screen.height/2);
@@ -105,6 +108,9 @@ public class UIManager : MonoBehaviour
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
 
+        Score = GameObject.Find("Score");
+        score = Score.GetComponent<Score>();
+
         CreateInit();                                   //初期化と生成
 
     }
@@ -112,10 +118,11 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        lgPlayer.value = (float)pcStatus.CharaStamina;  //スタミナ取得
+        tMger.update();                                                 //更新(タップ監視)
 
-        tMger.update();                                 //更新(タップ監視)
-        TapDoing();                                     //タップ中のUIの生成管理
+        textScore.text = score.user1Score + " - " + score.user2Score;   //得点取得
+        lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
+        TapDoing();                                                     //タップ中のUIの生成管理
 
     }
 
@@ -128,15 +135,13 @@ public class UIManager : MonoBehaviour
         textScore = null;
         textPlayerName = null;
         textOpponentName = null;
-        pScore = 0;
-        oScore = 0;
 
         //点数のテキスト
         instances[i] = (GameObject)Instantiate(textPref, scorePos, Quaternion.identity);    //インスタンス生成
         instances[i].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
         instances[i].name = "TextScore";                                                    //オブジェクト名変更
         textScore = instances[0].GetComponent<Text>();                                      //テキスト
-        textScore.text = pScore + " - " + oScore;                                           //テキスト内容設定
+        textScore.text = score.user1Score + " - " + score.user2Score;                       //テキスト内容設定
         i++;
 
         //プレイヤー名の表示
@@ -194,67 +199,73 @@ public class UIManager : MonoBehaviour
 
             if (touch_state._touch_phase == TouchPhase.Moved)
             {
-                if (createFlg)
-                {   //Beganの代わり
-                    #region タップ中に表示されるUIの生成
+                if (10 <= shot.GetTapTime)
+                {
+                    if (createFlg)
+                    {
+                        #region タップ中に表示されるUIの生成
+                        //Beganの代わり
+                        j = i;                                                                              //現在のinstances配列の続きからカウントする
 
-                    j = i;                                                                              //現在のinstances配列の続きからカウントする
+                        //ゲージの座標設定
+                        //plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
+                        //pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
+                        //pgViewPos.z = 0;                                                                    //z軸の設定
+                        //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
+                        pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
+                        pgPos = pgPos + new Vector3(-430, -800, 0);
 
-                    //ゲージの座標設定
-                    //plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
-                    //pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
-                    //pgViewPos.z = 0;                                                                    //z軸の設定
-                    //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
-                    pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-                    pgPos = pgPos + new Vector3(-430, -800, 0);
+                        //線の座標設定
+                        linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
+                        linePos.z = 10;
+                        linePos = uiCam.ScreenToWorldPoint(linePos);
+                        lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y, 10.0f);              //タップしている間移動する頂点の座標
+                        lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
 
-                    //線の座標設定
-                    linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
-                    linePos.z = 10;
-                    linePos = uiCam.ScreenToWorldPoint(linePos);
-                    lineEndPos = new Vector3(shot.GetTapWhile.x, shot.GetTapWhile.y,10.0f);              //タップしている間移動する頂点の座標
+                        //パワーゲージ(枠組み)
+                        instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
+                        instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                        instances[j].name = "pGauge1";                                                      //オブジェクト名変更
+                        pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
+                        j++;
+
+                        //パワーゲージ(青い部分)
+                        instances[j] = (GameObject)Instantiate(pgPref2, pgPos, Quaternion.identity);        //インスタンス生成
+                        instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                        instances[j].name = "pGauge2";                                                      //オブジェクト名変更
+                        pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
+                        j++;
+
+                        //線
+                        instances[j] = (GameObject)Instantiate(linePref, linePos, Quaternion.identity);     //インスタンス生成
+                        instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
+                        instances[j].name = "line";                                                         //オブジェクト名変更
+                        line = instances[j].GetComponent<LineRenderer>();                                   //イメージ
+                        lineCurve.AddKey(0.05f, 0.05f);                                                     //線の太さ(点1)
+                        lineCurve.AddKey(0.3f, 0.3f);                                                       //線の太さ2(点2)
+                        line.numCapVertices = 10;                                                           //角を丸くする
+                        line.numCornerVertices = 10;                                                        //線の各セグメントを丸くする
+                        line.widthCurve = lineCurve;                                                        //設定したアニメーションカーブを適用
+                        line.SetPosition(0, linePos);                                                       //頂点の座標設定(原点)
+                        line.SetPosition(1, lineEndPos);                                                    //頂点の座標設定(移動する点)
+                        j++;
+
+                        createFlg = false;                                                                  //生成しました
+
+                        #endregion
+                    }
+
+                    //タッチ中
+                    pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
+                    gaugeKeep = pGauge2.fillAmount;                                                         //ゲージキープ
+
+                    lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
+                    lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
+                    lineEndPos.z = 10;
                     lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
-                    
-                    //パワーゲージ(枠組み)
-                    instances[j] = (GameObject)Instantiate(pgPref1, pgPos, Quaternion.identity);        //インスタンス生成
-                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
-                    instances[j].name = "pGauge1";                                                      //オブジェクト名変更
-                    pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
-                    j++;
-
-                    //パワーゲージ(青い部分)
-                    instances[j] = (GameObject)Instantiate(pgPref2, pgPos, Quaternion.identity);        //インスタンス生成
-                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
-                    instances[j].name = "pGauge2";                                                      //オブジェクト名変更
-                    pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
-                    j++;
-
-                    //線
-                    instances[j] = (GameObject)Instantiate(linePref, linePos, Quaternion.identity);     //インスタンス生成
-                    instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
-                    instances[j].name = "line";                                                         //オブジェクト名変更
-                    line = instances[j].GetComponent<LineRenderer>();                                   //イメージ
-                    line.SetWidth(0.1f, 0.1f);                                                          //線の幅
-                    line.SetVertexCount(2);                                                             //頂点の数
-                    line.SetPosition(0, linePos);                                                       //頂点の座標設定(原点)
-                    line.SetPosition(1, lineEndPos);                                                    //頂点の座標設定(移動する点)
-                    j++;
-
-                    createFlg = false;                                                                  //生成しました
-
-                    #endregion
+                    vertexKeep = lineEndPos;                                                                //頂点の座標キープ
+                    line.SetPosition(1, lineEndPos);                                                        //頂点の設定
                 }
-
-                //タッチ中
-                pGauge2.fillAmount = 1.0f - ((float)shot.GetTapTime / 60.0f) / 2.0f;                    //タッチ中のパワーゲージ設定
-                gaugeKeep = pGauge2.fillAmount;                                                         //ゲージキープ
-                
-                lineEndPos.x = shot.GetTapWhile.x;                                                      //頂点のx座標の変更
-                lineEndPos.y = shot.GetTapWhile.y;                                                      //頂点のy座標の変更
-                lineEndPos.z = 10;
-                lineEndPos = uiCam.ScreenToWorldPoint(lineEndPos);
-                vertexKeep = lineEndPos;                                                                //頂点の座標キープ
-                line.SetPosition(1, lineEndPos);                                                        //頂点の設定
             }
 
             if (touch_state._touch_phase == TouchPhase.Ended)
