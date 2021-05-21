@@ -15,7 +15,7 @@ public class CharacterMove : MonoBehaviour
 
 
     //生成するゲームオブジェクト
-    public GameObject Ball;
+    public Ball ball;
 
     //生成するゲームオブジェクト
     public GameObject racket;
@@ -121,7 +121,7 @@ public class CharacterMove : MonoBehaviour
             GetComponent<NavMeshAgent>().ResetPath();
 
             //クリック時間によって処理を分ける
-            if (Base.Shot.GetTapTime <= 10) 
+            if (Base.Shot.GetTapTime <= 10)
             {
                 //移動の処理
                 GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
@@ -129,7 +129,7 @@ public class CharacterMove : MonoBehaviour
             //長押し
             else
             {
-                racket.transform.position =new Vector3(player.position.x-5,player.position.y, player.position.z);
+                racket.transform.position = new Vector3(player.position.x - 5, player.position.y, player.position.z);
 
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
@@ -142,8 +142,24 @@ public class CharacterMove : MonoBehaviour
             }
         }
 
-        //移動中かどうか
-        if (Base.PositionJudge(player.position, nowPosition))
+        float dis = Vector3.Distance(GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
+        /*
+        if (ball.Tag == "Player2")
+        {
+            if (dis <= 50)
+            {
+                //移動させる
+                GetComponent<NavMeshAgent>().destination = ball.transform.position;
+            }
+            else
+            {
+                //現状の移動指定地を削除
+                GetComponent<NavMeshAgent>().ResetPath();
+            }
+        }*/
+
+            //移動中かどうか
+            if (Base.PositionJudge(player.position, nowPosition))
         {
             //プレイヤーを走るモーションにする
             animator.SetBool("is_Run", true);
@@ -164,12 +180,7 @@ public class CharacterMove : MonoBehaviour
 
         //オート移動処理(コメントアウト)
         {
-            /*
-            if (プレイヤーに対して向かってきている状態の弾なら)
-            {
-                AutoMove();
-            }
-            */
+
         }
 
         //振る状態時なら50カウント後に待機状態に戻す
@@ -192,10 +203,11 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (judgement.HitFlg == true && CharaStatus.RacketSwing == 0) 
+        if (ball.Tag == "Player2" && judgement.HitFlg == true) 
         {
             //振る
             Base.Swing(CharaStatus.CharaPower);
+            judgement.HitFlg = false;
         }
 
         //現在の座標を取得
