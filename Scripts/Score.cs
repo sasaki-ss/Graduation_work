@@ -38,22 +38,28 @@ public class Score : MonoBehaviour
     //スコアを加算する
     public void AddScore(string _playerTag)
     {
+        //デュースの際
         if (GameManager.instance.isDeuce)
         {
             matchPScore++;
             GameManager.instance.isDeuce = false;
         }
 
+        //タグが"Player"の場合
         if (_playerTag == "Player")
         {
             user1Score++;
             if (user1Score == matchPScore) isUser1MatchP = true;
         }
+        //タグが"Player2"の場合
         else
         {
             user2Score++;
             if (user2Score == matchPScore) isUser2MatchP = true;
         }
+
+        //スコア追加フラグをオンにする
+        GameManager.instance.isAddScore = true;
 
         Debug.Log("User1 : " + user1Score + " " + "User2 : " + user2Score);
     }

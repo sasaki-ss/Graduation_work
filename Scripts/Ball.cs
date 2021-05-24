@@ -14,7 +14,6 @@ public class Ball : MonoBehaviour
     private float       flightTime;     //滞空時間
     private float       speedRate;      //滞空時間を基準とした移動速度倍率
     private float       e;              //反発係数
-    private bool        isNet;          //ネットフラグ
     private bool        isBound;        //バウンドフラグ
     private bool        isProjection;   //投射フラグ
     private bool        isSafetyArea;   //セーフティエリアフラグ
@@ -22,6 +21,8 @@ public class Ball : MonoBehaviour
     /*プロパティ関連*/
     public string       nowUserTag { get; private set; }    //タグ
     public int          boundCount { get; private set; }    //バウンド回数
+    public bool         isOut { get; private set; }         //アウトフラグを取得
+    public bool         isNet { get; private set; }         //ネットフラグ
 
     /*インスペクターに表示又は設定する変数*/
     private GameObject[]    userObj;        //ユーザーオブジェクト
@@ -59,6 +60,7 @@ public class Ball : MonoBehaviour
         isNet = false;
         isProjection = false;
         isSafetyArea = true;
+        isOut = false;
     }
 
     //物理演算が行われる際の処理
@@ -122,8 +124,9 @@ public class Ball : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Net"))
         {
-            Debug.Log("当たったよ");
             isNet = true;
+
+            Debug.Log("当たったよ");
         }
 
         //ボールがフィールドに着地した際の処理
@@ -137,13 +140,16 @@ public class Ball : MonoBehaviour
             Debug.Log("澤村りょう");
         }
 
-        if (other.gameObject.CompareTag("OutSide") && !isSafetyArea)
+
+        if (other.gameObject.CompareTag("OutArea") && !isSafetyArea)
         {
             //着地地点を生成する
             GenerateRandingPoint();
+            isOut = true;
 
             Debug.Log("浦部ひろかず");
         }
+
     }
 
     //打つ処理
