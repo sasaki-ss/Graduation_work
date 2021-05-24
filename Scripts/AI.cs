@@ -128,7 +128,7 @@ public class AI : MonoBehaviour
             //Debug.Log(Shot.GetPower);
             //U‚é
             //ƒpƒ‰ƒ[ƒ^‚¿‚å‚±‚Á‚Æ’¼Ú‚¢‚¶‚Á‚Ä‚é
-            Base.Swing(CharaStatus.CharaPower *2f, Shot.GetPower * 13);
+            Base.Swing(CharaStatus.CharaPower *2.5f, Shot.GetPower + 15);
 
             racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;
