@@ -35,17 +35,20 @@ public class Judgement : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-
         // 物体がトリガーに接触しとき、１度だけ呼ばれる
 
-        //ラケットと当たったら
-        if (gameObject.name == "Cube")
+        //プレイヤー側のラケットと当たったら
+        if (this.gameObject.name == "PlayerRacket" && collision.name == "Ball")
         {
+            //Debug.Log("aaaaaaaaaaaaaaaaaaa");
+
             hitFlg = true;
         }
-        //ラケットと当たったら
-        if (gameObject.name == "Cube2")
+        //AI側のラケットと当たったら
+        if (this.gameObject.name == "AIRacket" && collision.name == "Ball") 
         {
+            //Debug.Log("aaa");
+
             hitFlg2 = true;
         }
     }

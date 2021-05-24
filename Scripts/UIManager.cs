@@ -65,6 +65,10 @@ public class UIManager : MonoBehaviour
     private GameObject Player;          //プレイヤーオブジェクトを格納する変数
     CharaStatus pcStatus;               //プレイヤーオブジェクトのスクリプトを格納する変数
 
+    //相手プレイヤーオブジェクトの格納
+    private GameObject opponentPlayer;  //相手プレイヤーオブジェクト
+    CharaStatus opcStatus;              //相手のステータススクリプトの格納
+
     //ショットのオブジェクト格納
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
@@ -105,6 +109,9 @@ public class UIManager : MonoBehaviour
         Player = GameObject.Find("Player");
         pcStatus = Player.GetComponent<CharaStatus>();
 
+        opponentPlayer = GameObject.Find("Player2");
+        opcStatus = opponentPlayer.GetComponent<CharaStatus>();
+
         Shot = GameObject.Find("Shot");
         shot = Shot.GetComponent<Shot>();
 
@@ -122,6 +129,7 @@ public class UIManager : MonoBehaviour
 
         textScore.text = score.user1Score + " - " + score.user2Score;   //得点取得
         lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
+        lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
 
     }
@@ -135,6 +143,8 @@ public class UIManager : MonoBehaviour
         textScore = null;
         textPlayerName = null;
         textOpponentName = null;
+        lgPlayer = null;
+        lgOpponent = null;
 
         //点数のテキスト
         instances[i] = (GameObject)Instantiate(textPref, scorePos, Quaternion.identity);    //インスタンス生成
@@ -178,7 +188,7 @@ public class UIManager : MonoBehaviour
         instances[i].name = "lgOpponent";                                                   //オブジェクト名変更
         lgOpponent = instances[i].GetComponent<Slider>();                                   //スライダー
         lgOpponent.minValue = 0;                                                            //最小値
-        lgOpponent.maxValue = 1;                                                            //最大値
+        lgOpponent.maxValue = (float)opcStatus.CharaStamina;                                //最大値
         lgOpponent.value = lgOpponent.maxValue;                                             //現在の値の設定
         i++;
 

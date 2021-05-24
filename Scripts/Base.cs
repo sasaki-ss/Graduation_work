@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 public class Base : MonoBehaviour
 {
-    [SerializeField] public Shot Shot;
 
     [SerializeField] Ball ball;
 
@@ -33,8 +32,6 @@ public class Base : MonoBehaviour
 
         tMger = new TouchManager(); //初期化
         ball = GameObject.Find("Ball").GetComponent<Ball>();
-        Shot = GameObject.Find("Shot").GetComponent<Shot>();
-        //オブジェクト名あとで変更
     }
 
     // Update is called once per frame
@@ -91,37 +88,37 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　円の大きさ
-    public int CircleScale()
+    public int CircleScale(double _scale)
     {
         int _CircleScale;
 
         //スライドの長さによって円の大きさが変わる
-        if (Shot.GetDistance >= 0 && Shot.GetDistance < 5)
+        if (_scale >= 0 && _scale < 5)
         {
             _CircleScale = 50;
         }
         else
-        if (Shot.GetDistance >= 5 && Shot.GetDistance < 10)
+        if (_scale >= 5 && _scale < 10)
         {
             _CircleScale = 42;
         }
         else
-        if (Shot.GetDistance >= 10 && Shot.GetDistance < 15)
+        if (_scale >= 10 && _scale < 15)
         {
             _CircleScale = 34;
         }
         else
-        if (Shot.GetDistance >= 15 && Shot.GetDistance < 20)
+        if (_scale >= 15 && _scale < 20)
         {
             _CircleScale = 26;
         }
         else
-        if (Shot.GetDistance >= 20 && Shot.GetDistance < 25)
+        if (_scale >= 20 && _scale < 25)
         {
             _CircleScale = 18;
         }
         else
-        if (Shot.GetDistance >= 25 && Shot.GetDistance < 30)
+        if (_scale >= 25 && _scale < 30)
         {
             _CircleScale = 10;
         }
@@ -134,17 +131,17 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　スイング
-    public void Swing(double _power)
+    public void Swing(double _power,double _flight)
     {
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
         //この二つ変数をProjectileMotion関数に渡す
-
-        //とりあえず最低5秒滞空時間があるとしてます　(5～12秒)
-        flightTime = (float)Shot.GetTapTime / 12 + 4;
-            //とりあえず7で割ってます数値的には1.42
-            speed = (float)_power / 7;
+        //とりあえず最低5秒滞空時間があるとしてます　(5～15秒)
+        flightTime = (float)_flight / 12 + 5;
+        //Debug.Log("a" + flightTime);
+        //とりあえず7で割ってます
+        speed = (float)_power / 7;
 
             flg = true;
     }

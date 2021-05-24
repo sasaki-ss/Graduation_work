@@ -2,24 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//ƒXƒRƒAƒNƒ‰ƒX
+//ã‚¹ã‚³ã‚¢ã‚¯ãƒ©ã‚¹
 public class Score : MonoBehaviour
 {
     [SerializeField]
-    private int matchPScore;    //ƒ}ƒbƒ`ƒ|ƒCƒ“ƒg‚Ì“¾“_
+    private int matchPScore;    //ãƒãƒƒãƒãƒã‚¤ãƒ³ãƒˆã®å¾—ç‚¹
 
-    public int user1Score { get; private set; }     //user1‚ÌƒXƒRƒA
-    public int user2Score { get; private set; }     //user2‚ÌƒXƒRƒA
-    public bool isUser1MatchP { get; private set; } //user1‚Ìƒ}ƒbƒ`ƒ|ƒCƒ“ƒgƒtƒ‰ƒO
-    public bool isUser2MatchP { get; private set; } //user2‚Ìƒ}ƒbƒ`ƒ|ƒCƒ“ƒgƒtƒ‰ƒO
+    public int user1Score { get; private set; }     //user1ã®ã‚¹ã‚³ã‚¢
+    public int user2Score { get; private set; }     //user2ã®ã‚¹ã‚³ã‚¢
+    public bool isUser1MatchP { get; private set; } //user1ã®ãƒãƒƒãƒãƒã‚¤ãƒ³ãƒˆãƒ•ãƒ©ã‚°
+    public bool isUser2MatchP { get; private set; } //user2ã®ãƒãƒƒãƒãƒã‚¤ãƒ³ãƒˆãƒ•ãƒ©ã‚°
 
-    //‰Šú‰»ˆ—
+    //åˆæœŸåŒ–å‡¦ç†
     private void Start()
     {
         Init();
     }
 
-    //‰Šú‰»ˆ—
+    //åˆæœŸåŒ–å‡¦ç†
     private void Init()
     {
         user1Score = 0;
@@ -28,39 +28,40 @@ public class Score : MonoBehaviour
         isUser2MatchP = false;
     }
 
-    //ƒ}ƒbƒ`ƒ|ƒCƒ“ƒg‚ğƒŠƒZƒbƒg‚·‚éˆ—(ƒfƒ…[ƒX‚ÌÛ‚Ég‚¤)
+    //ãƒãƒƒãƒãƒã‚¤ãƒ³ãƒˆã‚’ãƒªã‚»ãƒƒãƒˆã™ã‚‹å‡¦ç†(ãƒ‡ãƒ¥ãƒ¼ã‚¹ã®éš›ã«ä½¿ã†)
     public void MatchPReset()
     {
         isUser1MatchP = false;
         isUser2MatchP = false;
     }
 
-    //ƒXƒRƒA‚ğ‰ÁZ‚·‚é
+    //ã‚¹ã‚³ã‚¢ã‚’åŠ ç®—ã™ã‚‹
     public void AddScore(string _playerTag)
     {
-        //ƒfƒ…[ƒX‚ÌÛ
+        //ãƒ‡ãƒ¥ãƒ¼ã‚¹ã®éš›
         if (GameManager.instance.isDeuce)
         {
             matchPScore++;
             GameManager.instance.isDeuce = false;
         }
 
-        //ƒ^ƒO‚ª"Player"‚Ìê‡
+        //ã‚¿ã‚°ãŒ"Player"ã®å ´åˆ
         if (_playerTag == "Player")
         {
             user1Score++;
             if (user1Score == matchPScore) isUser1MatchP = true;
         }
-        //ƒ^ƒO‚ª"Player2"‚Ìê‡
+        //ã‚¿ã‚°ãŒ"Player2"ã®å ´åˆ
         else
         {
             user2Score++;
             if (user2Score == matchPScore) isUser2MatchP = true;
         }
-
-        //ƒXƒRƒA’Ç‰Áƒtƒ‰ƒO‚ğƒIƒ“‚É‚·‚é
+        
+        //ã‚¹ã‚³ã‚¢è¿½åŠ ãƒ•ãƒ©ã‚°ã‚’ã‚ªãƒ³ã«ã™ã‚‹
         GameManager.instance.isAddScore = true;
 
         Debug.Log("User1 : " + user1Score + " " + "User2 : " + user2Score);
+
     }
 }
