@@ -14,7 +14,7 @@ public class AI : MonoBehaviour
     [SerializeField] Transform player;
     [SerializeField] Judgement judgement;
     [SerializeField] Ball ball;
-
+    [SerializeField] public Shot Shot;
     //生成するゲームオブジェクト
     public GameObject racket;
 
@@ -30,7 +30,8 @@ public class AI : MonoBehaviour
     void Start()
     {
         //ラケットの取得
-        judgement = GameObject.Find("Cube").GetComponent<Judgement>();
+        judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
     void Update()
@@ -54,7 +55,7 @@ public class AI : MonoBehaviour
             racket.transform.position = new Vector3(player.position.x, player.position.y + 1, player.position.z);
 
             //円の大きさを測る
-            this.CharaStatus.CharaCircle = Base.CircleScale();
+            this.CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
 
             //プレイヤー状態を振るに変更
             this.CharaStatus.RacketSwing = 2;
@@ -106,8 +107,10 @@ public class AI : MonoBehaviour
         //if文おかしいけど現状はこのままで
         if (ball.nowUserTag == "Player" && dis <= 10)
         {
+            Debug.Log(Shot.GetPower);
             //振る
-            Base.Swing(CharaStatus.CharaPower);
+            //パラメータちょこっと直接いじってる
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower * 5);
 
             racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;

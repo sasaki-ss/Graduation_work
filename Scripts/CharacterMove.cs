@@ -12,7 +12,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] CharaStatus CharaStatus;
     [SerializeField] Transform player;
     [SerializeField] Judgement judgement;
-
+    [SerializeField] public Shot Shot;
 
     //生成するゲームオブジェクト
     public Ball ball;
@@ -33,7 +33,8 @@ public class CharacterMove : MonoBehaviour
     void Start()
     {
         //ラケットの取得
-        judgement = GameObject.Find("Cube").GetComponent<Judgement>();
+        judgement = GameObject.Find("PlayerRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
     void Update()
@@ -122,7 +123,7 @@ public class CharacterMove : MonoBehaviour
             GetComponent<NavMeshAgent>().ResetPath();
 
             //クリック時間によって処理を分ける
-            if (Base.Shot.GetTapTime <= 20) 
+            if (Shot.GetTapTime <= 20) 
             {
                 //移動の処理
                 Vector3 xyz = Base.Move(Input.mousePosition, hit);
@@ -136,13 +137,13 @@ public class CharacterMove : MonoBehaviour
             //長押し
             else
             {
-                racket.transform.position = new Vector3(player.position.x - 5, player.position.y +1, player.position.z);
+                //racket.transform.position = new Vector3(player.position.x - 5, player.position.y +1, player.position.z);
 
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
 
                 //円の大きさを測る
-                CharaStatus.CharaCircle = Base.CircleScale();
+                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
 
                 //プレイヤー状態を振るに変更
                 CharaStatus.RacketSwing = 2;
@@ -199,7 +200,7 @@ public class CharacterMove : MonoBehaviour
             {
                 motionCnt = 0;
 
-                racket.transform.position = new Vector3(0, -100, 0);
+                //racket.transform.position = new Vector3(0, -100, 0);
 
                 //プレイヤー状態を待機に変更
                 CharaStatus.RacketSwing = 0;
@@ -213,7 +214,7 @@ public class CharacterMove : MonoBehaviour
         if (ball.nowUserTag == "Player2" && judgement.HitFlg == true) 
         {
             //振る
-            Base.Swing(CharaStatus.CharaPower);
+            Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
 
             //自動移動フラグがたつ
             autoFlg = true;
