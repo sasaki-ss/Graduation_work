@@ -44,20 +44,13 @@ public class GameManager : MonoBehaviour
     //更新処理
     private void Update()
     {
-        /*後で消します*/
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            score.AddScore("Player");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            score.AddScore("Player2");
-        }
-
         //スコアが追加された際
         if (isAddScore)
         {
             //ゲームを次のラウンドへ
+            Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
+
+            iBall.Init();
         }
 
         //ボールを取得
@@ -91,7 +84,7 @@ public class GameManager : MonoBehaviour
         //バウンド回数が2回の場合
         if(ball.boundCount == 2 && !isAddScore)
         {
-            score.AddScore(ball.tag);
+            score.AddScore(ball.nowUserTag);
         }
         #endregion
 

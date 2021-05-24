@@ -44,9 +44,6 @@ public class Ball : MonoBehaviour
         nowShotUser = 0;
         TagChange();
 
-        //バウンドカウントを初期化
-        boundCount = 0;
-
         //PhysiceMaterialを取得
         SphereCollider sc = this.GetComponent<SphereCollider>();
         PhysicMaterial bound = sc.material;
@@ -57,10 +54,7 @@ public class Ball : MonoBehaviour
         //取得したboundとfieldから反発係数を算出
         e = (bound.bounciness + field.bounciness) / 2f;
 
-        isNet = false;
-        isProjection = false;
-        isSafetyArea = true;
-        isOut = false;
+        Init();
     }
 
     //物理演算が行われる際の処理
@@ -103,7 +97,6 @@ public class Ball : MonoBehaviour
             _flightTime * _flightTime) / _flightTime;               //鉛直方向の初速度vn
 
         isProjection = true;
-        isSafetyArea = false;
 
         for (float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
         {
@@ -130,37 +123,34 @@ public class Ball : MonoBehaviour
         }
 
         //ボールがフィールドに着地した際の処理
-        if (other.gameObject.CompareTag("SafetyArea"))
+        if (other.gameObject.CompareTag("SafetyArea") || 
+            other.gameObject.CompareTag("OutArea"))
         {
             //着地地点を生成する
             GenerateRandingPoint();
             boundCount++;
-            isSafetyArea = true;
 
-            Debug.Log("澤村りょう");
+            //セーフエリアの場合
+            if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
+            
+            //アウトエリアの場合
+            if (!isSafetyArea) isOut = true;
         }
-
-
-        if (other.gameObject.CompareTag("OutArea") && !isSafetyArea)
-        {
-            //着地地点を生成する
-            GenerateRandingPoint();
-            isOut = true;
-
-            Debug.Log("浦部ひろかず");
-        }
-
     }
 
     //打つ処理
     public void Strike(float _flightTime, float _speedRate)
     {
         //到達地点を更新する
-        LandingForecast lf = GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
+        LandingForecast lf = 
+            GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
         lf.PointSetting();
 
         //バウンドフラグをオフに
         isBound = false;
+
+        //セーフティフラグをオフに
+        isSafetyArea = false;
 
         //斜方投射フラグをオフに
         if (isProjection)
@@ -187,10 +177,13 @@ public class Ball : MonoBehaviour
         TagChange();
     }
 
-    private void Init()
+    public void Init()
     {
+        boundCount = 0;
         isBound = false;
         isProjection = false;
+        isOut = false;
+        isNet = false;
     }
 
     //タグ切り替え処理

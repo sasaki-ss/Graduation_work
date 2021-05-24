@@ -5,13 +5,15 @@ using UnityEngine;
 //スコアクラス
 public class Score : MonoBehaviour
 {
-    [SerializeField]
-    private int matchPScore;    //マッチポイントの得点
-
+    /*プロパティ関連*/
     public int user1Score { get; private set; }     //user1のスコア
     public int user2Score { get; private set; }     //user2のスコア
     public bool isUser1MatchP { get; private set; } //user1のマッチポイントフラグ
     public bool isUser2MatchP { get; private set; } //user2のマッチポイントフラグ
+
+    /*インスペクターに表示又は設定する変数*/
+    [SerializeField]
+    private int matchPScore;    //マッチポイントの得点
 
     //初期化処理
     private void Start()
