@@ -26,7 +26,7 @@ public class AI : MonoBehaviour
     RaycastHit hit;
 
     int motionCnt = 0;
-
+    bool swingFlg = false;
     void Start()
     {
         //ラケットの取得
@@ -81,7 +81,7 @@ public class AI : MonoBehaviour
             this.CharaStatus.RacketSwing = 0;
         }
 
-        if(dis <=50)
+        if (dis <=20)
         {
             this.animator.SetBool("is_RightShake", true);
         }
@@ -91,7 +91,12 @@ public class AI : MonoBehaviour
         {
             motionCnt++;
 
-            if (motionCnt > 50)
+            if (motionCnt > 60)
+            {
+                swingFlg = true;
+            }
+
+            if (motionCnt > 140)
             {
                 motionCnt = 0;
 
@@ -102,15 +107,21 @@ public class AI : MonoBehaviour
                 this.animator.SetBool("is_RightShake", false);
             }
         }
+
+        if (animator.GetBool("is_RightShake") == false)
+        {
+            swingFlg = false;
+        }
+
         //nowUserTag
         //振ったラケットが当たったら
         //if文おかしいけど現状はこのままで
-        if (ball.nowUserTag == "Player" && dis <= 10)
+        if (ball.nowUserTag == "Player" && swingFlg == true)
         {
-            Debug.Log(Shot.GetPower);
+            //Debug.Log(Shot.GetPower);
             //振る
             //パラメータちょこっと直接いじってる
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower * 5);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower * 20);
 
             racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;

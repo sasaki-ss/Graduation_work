@@ -30,6 +30,8 @@ public class CharacterMove : MonoBehaviour
     int motionCnt = 0;
     bool autoFlg = false;
 
+    bool swingFlg = false;
+
     void Start()
     {
         //ラケットの取得
@@ -198,6 +200,11 @@ public class CharacterMove : MonoBehaviour
 
             if (motionCnt > 50)
             {
+                swingFlg = true;
+            }
+
+            if (motionCnt > 60) 
+            { 
                 motionCnt = 0;
 
                 //racket.transform.position = new Vector3(0, -100, 0);
@@ -210,9 +217,15 @@ public class CharacterMove : MonoBehaviour
             }
         }
 
-        //振ったラケットが当たったら
-        if (ball.nowUserTag == "Player2" && judgement.HitFlg == true) 
+        if (animator.GetBool("is_RightShake") == false)
         {
+            swingFlg = false;
+        }
+
+            //振ったラケットが当たったら
+            if (ball.nowUserTag == "Player2" && judgement.HitFlg == true && swingFlg == true) 
+        {
+           // Debug.Log("ssssssssssss");
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
 

@@ -30,22 +30,25 @@ public class Judgement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("ssssssss");
+
     }
 
     private void OnTriggerEnter(Collider collision)
     {
-        Debug.Log("aaaaaaaaaaaaaaaaaaa");
         // 物体がトリガーに接触しとき、１度だけ呼ばれる
 
         //プレイヤー側のラケットと当たったら
-        if (gameObject.name == "PlayerRacket")
+        if (this.gameObject.name == "PlayerRacket" && collision.name == "Ball")
         {
+            //Debug.Log("aaaaaaaaaaaaaaaaaaa");
+
             hitFlg = true;
         }
         //AI側のラケットと当たったら
-        if (gameObject.name == "AIRacket")
+        if (this.gameObject.name == "AIRacket" && collision.name == "Ball") 
         {
+            //Debug.Log("aaa");
+
             hitFlg2 = true;
         }
     }
