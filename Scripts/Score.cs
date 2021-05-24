@@ -55,6 +55,6 @@ public class Score : MonoBehaviour
             if (user2Score == matchPScore) isUser2MatchP = true;
         }
 
-        Debug.Log("User1 : " + user1Score + " " + "User2 : " + user2Score);
+       // Debug.Log("User1 : " + user1Score + " " + "User2 : " + user2Score);
     }
 }
