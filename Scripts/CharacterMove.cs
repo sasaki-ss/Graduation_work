@@ -39,6 +39,17 @@ public class CharacterMove : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
+    public void Init()
+    {
+        player.transform.position = new Vector3(105, 0, 0);
+        motionCnt = 0;
+        autoFlg = false;
+        swingFlg = false;
+        //ラケットの取得
+        judgement = GameObject.Find("PlayerRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
+    }
+
     void Update()
     {
         //製作途中 右振り、左振り、ボレー(コメントアウト)

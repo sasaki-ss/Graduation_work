@@ -34,6 +34,16 @@ public class AI : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
+    public void Init()
+    {
+        player.transform.position = new Vector3(-105,0,0);
+        motionCnt = 0;
+        swingFlg = false;
+        //ラケットの取得
+        judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
+    }
+
     void Update()
     {
         float dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
@@ -51,8 +61,6 @@ public class AI : MonoBehaviour
         {
             //現状の移動指定地を削除
             this.GetComponent<NavMeshAgent>().ResetPath();
-
-            racket.transform.position = new Vector3(player.position.x, player.position.y + 1, player.position.z);
 
             //円の大きさを測る
             this.CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
@@ -113,7 +121,6 @@ public class AI : MonoBehaviour
             swingFlg = false;
         }
 
-        //nowUserTag
         //振ったラケットが当たったら
         //if文おかしいけど現状はこのままで
         if (ball.nowUserTag == "Player" && swingFlg == true)
@@ -121,7 +128,7 @@ public class AI : MonoBehaviour
             //Debug.Log(Shot.GetPower);
             //振る
             //パラメータちょこっと直接いじってる
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower * 20);
+            Base.Swing(CharaStatus.CharaPower *2f, Shot.GetPower * 13);
 
             racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;
