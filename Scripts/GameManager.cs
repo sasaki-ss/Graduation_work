@@ -17,16 +17,28 @@ public class UserScoreData
     }
 }
 
+public enum GameState
+{
+   Serve,
+   DuringRound
+}
+
 //ゲームマネージャー
 public class GameManager : MonoBehaviour
 {
+    /*外部参照に使う変数*/
+    public static GameManager   instance;       //インスタンス
+
     /*このスクリプトでのみ使う変数*/
-    public static GameManager   instance;   //インスタンス
-    private Score               score;      //スコアクラス
+    private Score               score;          //スコアクラス
+    private GameObject          serveAreaObj;   //サーブエリアオブジェクト
+    private GameObject          safetyAreaObj;  //セーフティエリアオブジェクト
+
 
     /*プロパティ関連*/
-    public bool isDeuce { get; set; }    //デュースフラグ
-    public bool isAddScore { get; set; } //スコアフラグ
+    public bool isDeuce { get; set; }           //デュースフラグ
+    public bool isAddScore { get; set; }        //スコアフラグ
+    public GameState gameState { get; set; }    //ゲームの状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -36,9 +48,16 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         score = this.GetComponentInChildren<Score>();
+        serveAreaObj = GameObject.Find("ServeArea");
+        safetyAreaObj = GameObject.Find("SafetyArea");
+
+        safetyAreaObj.SetActive(false);
+
         instance = this;
         isDeuce = false;
         isAddScore = false;
+
+        gameState = GameState.Serve;
     }
 
     //更新処理
