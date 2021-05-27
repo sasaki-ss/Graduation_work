@@ -34,6 +34,16 @@ public class AI : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
+    public void Init()
+    {
+        player.transform.position = new Vector3(-105,0,0);
+        motionCnt = 0;
+        swingFlg = false;
+        //ラケットの取得
+        judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
+    }
+
     void Update()
     {
         float dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
@@ -52,13 +62,11 @@ public class AI : MonoBehaviour
             //現状の移動指定地を削除
             this.GetComponent<NavMeshAgent>().ResetPath();
 
-            racket.transform.position = new Vector3(player.position.x, player.position.y + 1, player.position.z);
-
             //円の大きさを測る
             this.CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
 
             //プレイヤー状態を振るに変更
-            this.CharaStatus.RacketSwing = 2;
+            this.CharaStatus.NowState = 2;
         }
 
         //移動中かどうか
@@ -68,7 +76,7 @@ public class AI : MonoBehaviour
             this.animator.SetBool("is_Run", true);
 
             //プレイヤー状態を移動に変更
-            this.CharaStatus.RacketSwing = 1;
+            this.CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
             this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
@@ -78,7 +86,7 @@ public class AI : MonoBehaviour
             //プレイヤーを待機モーションにする
             this.animator.SetBool("is_Run", false);
             //プレイヤー状態を待機に変更
-            this.CharaStatus.RacketSwing = 0;
+            this.CharaStatus.NowState = 0;
         }
 
         if (dis <=20)
@@ -101,7 +109,7 @@ public class AI : MonoBehaviour
                 motionCnt = 0;
 
                 //プレイヤー状態を待機に変更
-                this.CharaStatus.RacketSwing = 0;
+                this.CharaStatus.NowState = 0;
 
                 //プレイヤーを待機モーションにする
                 this.animator.SetBool("is_RightShake", false);
@@ -113,7 +121,6 @@ public class AI : MonoBehaviour
             swingFlg = false;
         }
 
-        //nowUserTag
         //振ったラケットが当たったら
         //if文おかしいけど現状はこのままで
         if (ball.nowUserTag == "Player" && swingFlg == true)
@@ -121,7 +128,7 @@ public class AI : MonoBehaviour
             //Debug.Log(Shot.GetPower);
             //振る
             //パラメータちょこっと直接いじってる
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower * 20);
+            Base.Swing(CharaStatus.CharaPower *2.5f, Shot.GetPower + 15);
 
             racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;

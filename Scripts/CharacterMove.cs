@@ -39,6 +39,17 @@ public class CharacterMove : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
+    public void Init()
+    {
+        player.transform.position = new Vector3(105, 0, 0);
+        motionCnt = 0;
+        autoFlg = false;
+        swingFlg = false;
+        //ラケットの取得
+        judgement = GameObject.Find("PlayerRacket").GetComponent<Judgement>();
+        Shot = GameObject.Find("Shot").GetComponent<Shot>();
+    }
+
     void Update()
     {
         //製作途中 右振り、左振り、ボレー(コメントアウト)
@@ -148,7 +159,7 @@ public class CharacterMove : MonoBehaviour
                 CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
 
                 //プレイヤー状態を振るに変更
-                CharaStatus.RacketSwing = 2;
+                CharaStatus.NowState = 2;
             }
         }
 
@@ -179,7 +190,7 @@ public class CharacterMove : MonoBehaviour
             animator.SetBool("is_Run", true);
 
             //プレイヤー状態を移動に変更
-            CharaStatus.RacketSwing = 1;
+            CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
             CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
@@ -190,7 +201,7 @@ public class CharacterMove : MonoBehaviour
             animator.SetBool("is_Run", false);
 
             //プレイヤー状態を待機に変更
-            CharaStatus.RacketSwing = 0;
+            CharaStatus.NowState = 0;
         }
 
         //振る状態時なら50カウント後に待機状態に戻す
@@ -210,7 +221,7 @@ public class CharacterMove : MonoBehaviour
                 //racket.transform.position = new Vector3(0, -100, 0);
 
                 //プレイヤー状態を待機に変更
-                CharaStatus.RacketSwing = 0;
+                CharaStatus.NowState = 0;
 
                 //プレイヤーを待機モーションにする
                 animator.SetBool("is_RightShake", false);
