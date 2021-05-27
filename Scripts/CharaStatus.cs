@@ -53,13 +53,6 @@ public class CharaStatus : MonoBehaviour
         set { this.racketFlg = value; }
     }
 
-    //サーブフラグのプロパティー
-    public bool ServeFlg
-    {
-        get { return this.serveFlg; }
-        set { this.serveFlg = value; }
-    }
-
     //円の大きさのプロパティー
     public int CharaCircle
     {
