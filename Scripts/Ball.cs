@@ -115,26 +115,43 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.CompareTag("Net"))
+        //ゲームの状態がサーブの場合
+        if(GameManager.instance.gameState == GameState.Serve)
         {
-            isNet = true;
-
-            Debug.Log("当たったよ");
+            if (other.gameObject.CompareTag("ServeArea"))
+            {
+                Debug.Log("セーブ成功");
+            }
+            else
+            {
+                Debug.Log("セーブ失敗");
+            }
         }
 
-        //ボールがフィールドに着地した際の処理
-        if (other.gameObject.CompareTag("SafetyArea") || 
-            other.gameObject.CompareTag("OutArea"))
+        if(GameManager.instance.gameState == GameState.DuringRound)
         {
-            //着地地点を生成する
-            GenerateRandingPoint();
-            boundCount++;
+            //ボールがネットに当たった際
+            if (other.gameObject.CompareTag("Net"))
+            {
+                isNet = true;
 
-            //セーフエリアの場合
-            if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
-            
-            //アウトエリアの場合
-            if (!isSafetyArea) isOut = true;
+                Debug.Log("当たったよ");
+            }
+
+            //ボールがフィールドに着地した際の処理
+            if (other.gameObject.CompareTag("SafetyArea") ||
+                other.gameObject.CompareTag("OutArea"))
+            {
+                //着地地点を生成する
+                GenerateRandingPoint();
+                boundCount++;
+
+                //セーフエリアの場合
+                if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
+
+                //アウトエリアの場合
+                if (!isSafetyArea && boundCount == 1) isOut = true;
+            }
         }
     }
 
@@ -184,6 +201,7 @@ public class Ball : MonoBehaviour
         isProjection = false;
         isOut = false;
         isNet = false;
+        isSafetyArea = false;
     }
 
     //タグ切り替え処理
