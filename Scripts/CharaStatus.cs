@@ -15,8 +15,10 @@ public class CharaStatus : MonoBehaviour
     private int charaCircle = 0;
     //ラケットを振ったフラグ
     private bool racketFlg = false;
-    //Swingの状態
-    private int racketSwing = 0;
+    //サーブフラグ
+    private bool serveFlg = false;
+    //プレイヤーの状態(モーションでの)
+    private int nowState = 0;
 
     private double maxStamina =10;
 
@@ -51,6 +53,13 @@ public class CharaStatus : MonoBehaviour
         set { this.racketFlg = value; }
     }
 
+    //サーブフラグのプロパティー
+    public bool ServeFlg
+    {
+        get { return this.serveFlg; }
+        set { this.serveFlg = value; }
+    }
+
     //円の大きさのプロパティー
     public int CharaCircle
     {
@@ -58,11 +67,11 @@ public class CharaStatus : MonoBehaviour
         set { this.charaCircle = value; }
     }
 
-    //ラケットスイングのプロパティー  0:通常 1:移動 2:振る
-    public int RacketSwing
+    //プレイヤーの状態のプロパティー  0:通常 1:移動 2:振る
+    public int NowState
     {
-        get { return this.racketSwing; }
-        set { this.racketSwing = value; }
+        get { return this.nowState; }
+        set { this.nowState = value; }
     }
 
     void Start()
