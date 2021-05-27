@@ -81,8 +81,9 @@ public class GameManager : MonoBehaviour
             score.AddScore(addScoreUser);
         }
 
-        //バウンド回数が2回の場合
-        if(ball.boundCount == 2 && !isAddScore)
+        //バウンド回数が2回以上の場合
+        //※正確なバウンド数が取れないため
+        if(ball.boundCount >= 2 && !isAddScore)
         {
             score.AddScore(ball.nowUserTag);
         }

@@ -134,7 +134,7 @@ public class Ball : MonoBehaviour
             if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
             
             //アウトエリアの場合
-            if (!isSafetyArea) isOut = true;
+            if (!isSafetyArea && boundCount == 1) isOut = true;
         }
     }
 
@@ -184,6 +184,7 @@ public class Ball : MonoBehaviour
         isProjection = false;
         isOut = false;
         isNet = false;
+        isSafetyArea = false;
     }
 
     //タグ切り替え処理
