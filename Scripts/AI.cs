@@ -14,10 +14,8 @@ public class AI : MonoBehaviour
     [SerializeField] Transform player;
     [SerializeField] Judgement judgement;
     [SerializeField] Ball ball;
+    [SerializeField] GameObject net;
     [SerializeField] public Shot Shot;
-    //生成するゲームオブジェクト
-    public GameObject racket;
-
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
@@ -25,8 +23,9 @@ public class AI : MonoBehaviour
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-    int motionCnt = 0;
-    bool swingFlg = false;
+      int motionCnt = 0;
+     bool swingFlg  = false;
+    float dis       = 0;
     void Start()
     {
         //ラケットの取得
@@ -39,6 +38,16 @@ public class AI : MonoBehaviour
         player.transform.position = new Vector3(-105,0,0);
         motionCnt = 0;
         swingFlg = false;
+        dis = 0;
+        //if文でこっちがサーブなのか判定してから
+        /*
+        if()
+        {
+           //対角線上に配置する予定
+           player.transform.position = new Vector3(-105,0,0);
+        }
+        */
+
         //ラケットの取得
         judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -46,10 +55,26 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-        float dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
-        
+        //キャラとボールの距離を測る
+        dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
+
+        //自動移動時の処理
+        AutoMove();
+
+        //移動中か判定する処理
+        JudgeMove();
+
+        //ラケットを振った時の処理
+        Swing();
+
+        //現在の座標を取得
+        nowPosition = player.position;
+    }
+
+    void AutoMove()
+    {
         //nowUserTag
-        if (ball.nowUserTag == "Player" && dis >= 10 && ball.transform.position.x<=-20)
+        if (ball.nowUserTag == "Player" && dis >= 50 && ball.transform.position.x <= -20)
         {
             //プレイヤーを走るモーションにする
             this.animator.SetBool("is_Run", true);
@@ -68,7 +93,10 @@ public class AI : MonoBehaviour
             //プレイヤー状態を振るに変更
             this.CharaStatus.NowState = 2;
         }
+    }
 
+    void JudgeMove()
+    {
         //移動中かどうか
         if (Base.PositionJudge(player.position, nowPosition))
         {
@@ -85,11 +113,30 @@ public class AI : MonoBehaviour
         {
             //プレイヤーを待機モーションにする
             this.animator.SetBool("is_Run", false);
+
             //プレイヤー状態を待機に変更
             this.CharaStatus.NowState = 0;
         }
 
-        if (dis <=20)
+        if (animator.GetBool("is_Run") == false)
+        {
+            //スピードを決める
+            float speed = 0.1f;
+
+            //自分と相手とのベクトル差を取得
+            Vector3 relativePos = net.transform.position - player.transform.position;
+
+            //方向を回転情報にする
+            Quaternion rotation = Quaternion.LookRotation(relativePos);
+
+            //対象に向かせる
+            player.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed);
+        }
+    }
+
+    void Swing()
+    {
+        if (dis <= 15)
         {
             this.animator.SetBool("is_RightShake", true);
         }
@@ -125,18 +172,11 @@ public class AI : MonoBehaviour
         //if文おかしいけど現状はこのままで
         if (ball.nowUserTag == "Player" && swingFlg == true)
         {
-            //Debug.Log(Shot.GetPower);
             //振る
             //パラメータちょこっと直接いじってる
-            Base.Swing(CharaStatus.CharaPower *2.5f, Shot.GetPower + 15);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10);
 
-            racket.transform.position = new Vector3(0, -100, 0);
             judgement.HitFlg2 = false;
         }
-
-        //Debug.Log(judgement.HitFlg2);
-
-        //現在の座標を取得
-        nowPosition = player.position;
     }
 }
