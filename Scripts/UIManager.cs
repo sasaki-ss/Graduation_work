@@ -105,12 +105,12 @@ public class UIManager : MonoBehaviour
         lineCurve = new AnimationCurve();
 
         //座標設定
-        scorePos = new Vector2(-100.0f, Screen.height/2);
+        scorePos = new Vector2(0.0f, Screen.height/2);
         pNamePos = new Vector2(-Screen.width / 2, Screen.height / 2);
-        oNamePos = new Vector2((Screen.width / 2 )- 140, Screen.height / 2);
+        oNamePos = new Vector2(Screen.width / 2 , Screen.height / 2);
         rTextPos = new Vector2(0.0f,0.0f);
-        plgPos = pNamePos + new Vector2(210.0f, -100.0f);
-        olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
+        plgPos = pNamePos + new Vector2(215.0f, -100.0f);
+        olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
 
         //カメラの取得
@@ -151,7 +151,9 @@ public class UIManager : MonoBehaviour
         {
             RoundBetween();                                                 //ラウンドの間のUIの生成管理x
         }
-
+        Debug.Log("i"+i);
+        Debug.Log("j"+j);
+        Debug.Log("r"+r);
 
     }
 
@@ -173,6 +175,7 @@ public class UIManager : MonoBehaviour
         instances[i].name = "TextScore";                                                    //オブジェクト名変更
         textScore = instances[0].GetComponent<Text>();                                      //テキスト
         textScore.text = score.user1Score + " - " + score.user2Score;                       //テキスト内容設定
+        textScore.alignment = TextAnchor.UpperCenter;                                       //テキストアンカー
         i++;
 
         //プレイヤー名の表示
@@ -182,6 +185,7 @@ public class UIManager : MonoBehaviour
         textPlayerName = instances[i].GetComponent<Text>();                                 //テキスト
         textPlayerName.text = "プレイヤー";                                                 //テキスト内容設定
         textPlayerName.fontSize = 60;                                                       //フォントサイズの変更
+        textPlayerName.alignment = TextAnchor.UpperLeft;                                   //テキストアンカー
         i++;
 
         //相手名の表示
@@ -191,6 +195,7 @@ public class UIManager : MonoBehaviour
         textOpponentName = instances[i].GetComponent<Text>();                               //テキスト
         textOpponentName.text = "相手";                                                     //テキスト内容設定
         textOpponentName.fontSize = 60;                                                     //フォントサイズの変更
+        textOpponentName.alignment = TextAnchor.UpperRight;                                //テキストアンカー
         i++;
 
         //プレイヤーのスタミナゲージ
@@ -211,6 +216,7 @@ public class UIManager : MonoBehaviour
         lgOpponent.minValue = 0;                                                            //最小値
         lgOpponent.maxValue = (float)opcStatus.CharaStamina;                                //最大値
         lgOpponent.value = lgOpponent.maxValue;                                             //現在の値の設定
+        lgOpponent.transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);               //ゲージ回転(中心から減るようにする)
         i++;
 
         #endregion
@@ -335,7 +341,8 @@ public class UIManager : MonoBehaviour
         instances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
         textRoundBetween = instances[r].GetComponent<Text>();                                   //テキスト
         textRoundBetween.color = Color.white;                                                   //色変更
-        textRoundBetween.fontSize = 80;
+        textRoundBetween.fontSize = 80;                                                         //フォントサイズ
+        textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
         
         r++;
 
@@ -352,9 +359,14 @@ public class UIManager : MonoBehaviour
 
         }
 
+        else
+        {
+            textRoundBetween.text = "";            //得点取得
+        }
         for(int n = i + j; n < r; n++)
         {
             Destroy(instances[n]);                                                              //タップ中に生成されたオブジェクトの削除
+            Debug.Log("xxxx");
         }
         #endregion
     }
