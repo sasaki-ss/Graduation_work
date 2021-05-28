@@ -33,11 +33,14 @@ public class GameManager : MonoBehaviour
     private Score               score;          //スコアクラス
     private GameObject          serveAreaObj;   //サーブエリアオブジェクト
     private GameObject          safetyAreaObj;  //セーフティエリアオブジェクト
-
+    private Vector3[]           serveAreaPos;   //セーブエリアの座標
+    private int                 serveUser;      //サーブするユーザー
+    private int                 changeCount;    //ラウンドカウント
 
     /*プロパティ関連*/
     public bool isDeuce { get; set; }           //デュースフラグ
     public bool isAddScore { get; set; }        //スコアフラグ
+    public bool isNextRound { get; set; }       //次のラウンドフラグ
     public GameState gameState { get; set; }    //ゲームの状態
 
     /*インスペクターに表示又は設定する変数*/
@@ -56,20 +59,31 @@ public class GameManager : MonoBehaviour
         instance = this;
         isDeuce = false;
         isAddScore = false;
+        isNextRound = false;
 
         gameState = GameState.Serve;
+
+        serveAreaPos = new Vector3[4]
+        {
+            new Vector3( 32,0, 21), //ユーザー1側右
+            new Vector3( 32,0,-21), //ユーザー1側左
+            new Vector3(-32,0, 21), //ユーザー2側右
+            new Vector3(-32,0,-21)  //ユーザー2側左
+        };
+
+        serveUser = 0;
+        changeCount = 2;
+
+        ServeAreaPosChange();
     }
 
     //更新処理
     private void Update()
     {
         //スコアが追加された際
-        if (isAddScore)
+        if (isAddScore && !isNextRound)
         {
-            //ゲームを次のラウンドへ
-            Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-
-            iBall.Init();
+            StartCoroutine(NextRound());
         }
 
         //ボールを取得
@@ -123,13 +137,90 @@ public class GameManager : MonoBehaviour
                 isDeuce = true;
                 score.MatchPReset();
                 winScore++;
-
-                Debug.Log("デュースになりました！！");
                 break;
             }
 
             j--;
         }
         #endregion
+    }
+
+    //サーバーユーザーを切り替える
+    private void ServeUserChange()
+    {
+        if(serveUser == 1)
+        {
+            serveUser = 0;
+        }
+        else
+        {
+            serveUser = 1;
+        }
+    }
+
+    private void ServeAreaPosChange()
+    {
+        //サーブユーザーがプレイヤー1の場合
+        if (serveUser == 0)
+        {
+            //スコアが偶数の場合
+            if (score.user1Score % 2 == 0)
+            {
+                serveAreaObj.transform.position = serveAreaPos[2];
+            }
+            //スコアが奇数の場合
+            else
+            {
+                serveAreaObj.transform.position = serveAreaPos[3];
+            }
+        }
+        //サーブユーザーがプレイヤー2の場合
+        else
+        {
+            //スコアが偶数の場合
+            if (score.user2Score % 2 == 0)
+            {
+                serveAreaObj.transform.position = serveAreaPos[1];
+            }
+            //スコアが奇数の場合
+            else
+            {
+                serveAreaObj.transform.position = serveAreaPos[0];
+            }
+        }
+    }
+
+    private IEnumerator NextRound()
+    {
+        float timeCnt = 1.0f;
+        isNextRound = true;
+
+        //ゲームを次のラウンドへ
+        Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
+
+        iBall.Init();
+
+
+        #region サーブユーザー切り替え処理
+        //切り替え処理
+        if (changeCount == 2)
+        {
+            ServeUserChange();
+            changeCount = 0;
+
+            ServeAreaPosChange();
+        }
+
+        changeCount++;
+        #endregion
+
+
+
+        while (timeCnt <= 0f)
+        {
+            yield return null;
+        }
+
+        isNextRound = false;
     }
 }

@@ -120,11 +120,11 @@ public class Ball : MonoBehaviour
         {
             if (other.gameObject.CompareTag("ServeArea"))
             {
-                Debug.Log("セーブ成功");
+                Debug.Log("サーブ成功");
             }
             else
             {
-                Debug.Log("セーブ失敗");
+                Debug.Log("サーブ失敗");
             }
         }
 
