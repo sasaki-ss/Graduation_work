@@ -166,6 +166,10 @@ public class AI : MonoBehaviour
         if (ball.nowUserTag == "Player" && hitFlg == true && swingFlg == true)
         {
             //振る
+            //角度によって判定
+            //スワイプの長さによって判定
+
+
             //パラメータちょこっと直接いじってる
             Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10);
 
@@ -181,7 +185,7 @@ public class AI : MonoBehaviour
         //プレイヤー側のラケットと当たったら
         if (collision.name == "Ball")
         {
-            Debug.Log("aaa");
+            //Debug.Log("aaa");
 
             hitFlg = true;
         }

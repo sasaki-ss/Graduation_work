@@ -4,6 +4,20 @@ using UnityEngine.AI;
 //using UnityEngine.Touch;
 public class CharacterMove : MonoBehaviour
 {
+    private double rad = 0;
+    private double distance = 0;
+    public double Rad
+    {
+        get { return this.rad; }
+        set { this.rad = value; }
+    }
+
+    public double Distance
+    {
+        get { return this.distance; }
+        set { this.distance = value; }
+    }
+
     //共通のやつ
     [SerializeField] Base Base;
 
@@ -51,6 +65,9 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
+        rad = (float)Shot.GetRadian;          //ラジアン値
+        distance = (float)Shot.GetDistance;   //距離
+
         //コメントアウト
         {
             /*
