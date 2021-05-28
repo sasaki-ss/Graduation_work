@@ -21,6 +21,7 @@ public class UIManager : MonoBehaviour
     private GameObject pgPref1;         //パワーゲージ(枠線)
     private GameObject pgPref2;         //パワーゲージ(青い部分)
     private GameObject linePref;        //線
+    private GameObject panelPref;       //パネル
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -29,6 +30,7 @@ public class UIManager : MonoBehaviour
     private Text textScore;             //スコアの表示
     private Text textPlayerName;        //プレイヤー名
     private Text textOpponentName;      //相手名
+    private Text textRoundBetween;      //ラウンド間に表示する
 
     //ゲージ
     private Slider lgPlayer;            //プレイヤーのスタミナゲージ
@@ -40,6 +42,9 @@ public class UIManager : MonoBehaviour
     private LineRenderer line;          //飛ばす方向の線
     private AnimationCurve lineCurve;   //線の幅のアニメーションカーブ
 
+    //パネル
+    private Image panel;                //ラウンド間に表示するパネル(画面を暗くすることでテキストUIを見やすくする)
+
     //保持用
     private float gaugeKeep;            //ゲージのキープ
     private Vector3 vertexKeep;         //頂点の座標キープ
@@ -50,11 +55,14 @@ public class UIManager : MonoBehaviour
     private Vector2 oNamePos;           //相手名の座標
     private Vector2 plgPos;             //プレイヤーのスタミナゲージの座標
     private Vector2 olgPos;             //相手のスタミナゲージの座標
+    private Vector3 rTextPos;           //ラウンド間に表示するテキストの座標
     private Vector3 pgPos;              //パワーゲージの座標
     private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
     private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
     private Vector3 linePos;            //線の原点
     private Vector3 lineEndPos;         //線の移動する頂点
+    private Vector3 panelPos;           //パネルの座標
+
 
     //カメラ
     private GameObject mCam;            //カメラ格納オブジェクト
@@ -91,6 +99,7 @@ public class UIManager : MonoBehaviour
         pgPref1 = (GameObject)Resources.Load("PowerGaugePref1");
         pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
         linePref = (GameObject)Resources.Load("linePref");
+        panelPref = (GameObject)Resources.Load("PanelPref");
 
         //アニメーションカーブの初期化
         lineCurve = new AnimationCurve();
@@ -99,8 +108,10 @@ public class UIManager : MonoBehaviour
         scorePos = new Vector2(-100.0f, Screen.height/2);
         pNamePos = new Vector2(-Screen.width / 2, Screen.height / 2);
         oNamePos = new Vector2((Screen.width / 2 )- 140, Screen.height / 2);
+        rTextPos = new Vector2(0.0f,0.0f);
         plgPos = pNamePos + new Vector2(210.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-70.0f, -100.0f);
+        panelPos = new Vector3(0.0f, 0.0f, 0.0f);
 
         //カメラの取得
         mCam = GameObject.Find("Main Camera");
@@ -136,7 +147,11 @@ public class UIManager : MonoBehaviour
         lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
         lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
-        RoundBetween();                                                 //ラウンドの間のUIの生成管理
+        if (GameManager.instance.isAddScore)
+        {
+            RoundBetween();                                                 //ラウンドの間のUIの生成管理x
+        }
+
 
     }
 
@@ -222,7 +237,7 @@ public class UIManager : MonoBehaviour
                     {   //得点フラグオフ(ゲーム中)の時に処理を行う
                         if (createFlg)
                         {
-                            #region タップ中に表示されるUIの生成
+                            //タップ中に表示されるUIの生成
                             //Beganの代わり
                             j = i;                                                                              //現在のinstances配列の続きからカウントする
 
@@ -271,7 +286,6 @@ public class UIManager : MonoBehaviour
 
                             createFlg = false;                                                                  //生成しました
 
-                            #endregion
                         }
 
                         //タッチ中
@@ -305,12 +319,43 @@ public class UIManager : MonoBehaviour
     void RoundBetween()
     {   //ラウンドの間に行う処理
         #region ラウンド切り替え時に行う処理
+
+        r = i + j;      //現在生成されているUIの要素数分をrに代入
+
+        //パネル
+        instances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
+        instances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        instances[r].name = "panel";                                                            //オブジェクト名変更
+        panel = instances[r].GetComponent<Image>();                                             //イメージ
+        r++;
+
+        //ラウンド間に表示するテキスト
+        instances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
+        instances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        instances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
+        textRoundBetween = instances[r].GetComponent<Text>();                                   //テキスト
+        textRoundBetween.color = Color.white;                                                   //色変更
+        textRoundBetween.fontSize = 80;
+        
+        r++;
+
         if (GameManager.instance.isAddScore)
-        {   //得点フラグオン(ラウンド切り替え時)に行う処理
-            
+        {   //得点フラグオン時に行う処理
+            if (GameManager.instance.isDeuce)
+            {   //デュースになった場合
+                textRoundBetween.text = "デュース";
+            }
+            else
+            {   //通常時
+                textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+            }
+
         }
 
-
+        for(int n = i + j; n < r; n++)
+        {
+            Destroy(instances[n]);                                                              //タップ中に生成されたオブジェクトの削除
+        }
         #endregion
     }
 }
