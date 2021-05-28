@@ -12,7 +12,6 @@ public class AI : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] CharaStatus CharaStatus;
     [SerializeField] Transform player;
-    [SerializeField] Judgement judgement;
     [SerializeField] Ball ball;
     [SerializeField] GameObject net;
     [SerializeField] public Shot Shot;
@@ -25,11 +24,11 @@ public class AI : MonoBehaviour
 
       int motionCnt = 0;
      bool swingFlg  = false;
+     bool hitFlg    = false;
+    bool autoFlg = true;
     float dis       = 0;
     void Start()
     {
-        //ラケットの取得
-        judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
@@ -37,7 +36,9 @@ public class AI : MonoBehaviour
     {
         player.transform.position = new Vector3(-105,0,0);
         motionCnt = 0;
+        autoFlg = true;
         swingFlg = false;
+        hitFlg = false;
         dis = 0;
         //if文でこっちがサーブなのか判定してから
         /*
@@ -48,8 +49,6 @@ public class AI : MonoBehaviour
         }
         */
 
-        //ラケットの取得
-        judgement = GameObject.Find("AIRacket").GetComponent<Judgement>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
@@ -73,25 +72,20 @@ public class AI : MonoBehaviour
 
     void AutoMove()
     {
-        //nowUserTag
-        if (ball.nowUserTag == "Player" && dis >= 50 && ball.transform.position.x <= -20)
+        //オート移動処理
+        if (ball.nowUserTag == "Player" && ball.transform.position.x <= -7)
         {
-            //プレイヤーを走るモーションにする
-            this.animator.SetBool("is_Run", true);
+            //ある程度まで近づいたら
+            if (dis >= 40 && autoFlg == true)
+            {
+                Vector3 xyz = new Vector3(ball.transform.position.x - 60, ball.transform.position.y, ball.transform.position.z);
 
-            //移動させる
-            this.GetComponent<NavMeshAgent>().destination = ball.transform.position;
-        }
-        else
-        {
-            //現状の移動指定地を削除
-            this.GetComponent<NavMeshAgent>().ResetPath();
+                //移動させる
+                GetComponent<NavMeshAgent>().destination = xyz;
 
-            //円の大きさを測る
-            this.CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
-
-            //プレイヤー状態を振るに変更
-            this.CharaStatus.NowState = 2;
+                //自動移動は一回のみ
+                autoFlg = false;
+            }
         }
     }
 
@@ -136,7 +130,7 @@ public class AI : MonoBehaviour
 
     void Swing()
     {
-        if (dis <= 15)
+        if (dis <= 20)
         {
             this.animator.SetBool("is_RightShake", true);
         }
@@ -169,14 +163,27 @@ public class AI : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        //if文おかしいけど現状はこのままで
-        if (ball.nowUserTag == "Player" && swingFlg == true)
+        if (ball.nowUserTag == "Player" && hitFlg == true && swingFlg == true)
         {
             //振る
             //パラメータちょこっと直接いじってる
             Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10);
 
-            judgement.HitFlg2 = false;
+            hitFlg = false;
+
+            autoFlg = true;
+        }
+    }
+    private void OnTriggerEnter(Collider collision)
+    {
+        // 物体がトリガーに接触しとき、１度だけ呼ばれる
+
+        //プレイヤー側のラケットと当たったら
+        if (collision.name == "Ball")
+        {
+            Debug.Log("aaa");
+
+            hitFlg = true;
         }
     }
 }
