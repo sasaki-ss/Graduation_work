@@ -11,7 +11,6 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] CharaStatus CharaStatus;
     [SerializeField] Transform player;
-    [SerializeField] Judgement judgement;
     [SerializeField] public Shot Shot;
     [SerializeField] GameObject net;
     [SerializeField] Ball ball;
@@ -25,11 +24,10 @@ public class CharacterMove : MonoBehaviour
      int motionCnt = 0;
     bool autoFlg   = false;
     bool swingFlg  = false;
+    bool hitFlg = false;
 
     void Start()
     {
-        //ラケットの取得
-        judgement = GameObject.Find("PlayerRacket").GetComponent<Judgement>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
@@ -39,6 +37,7 @@ public class CharacterMove : MonoBehaviour
         motionCnt = 0;
         autoFlg = false;
         swingFlg = false;
+        hitFlg = false;
         //if文でこっちがサーブなのか判定してから
         /*
         if()
@@ -47,9 +46,6 @@ public class CharacterMove : MonoBehaviour
            player.transform.position = new Vector3(-105,0,0);
         }
         */
-
-        //ラケットの取得
-        judgement = GameObject.Find("PlayerRacket").GetComponent<Judgement>();
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
@@ -192,12 +188,12 @@ public class CharacterMove : MonoBehaviour
         {
             motionCnt++;
 
-            if (motionCnt > 50)
+            if (motionCnt > 10)
             {
                 swingFlg = true;
             }
 
-            if (motionCnt > 60)
+            if (motionCnt > 50)
             {
                 motionCnt = 0;
 
@@ -212,7 +208,7 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (ball.nowUserTag == "Player2" && judgement.HitFlg == true && swingFlg == true)
+        if (ball.nowUserTag == "Player2" && hitFlg == true && swingFlg == true)
         {
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
@@ -221,7 +217,18 @@ public class CharacterMove : MonoBehaviour
             autoFlg = true;
 
             //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
-            judgement.HitFlg = false;
+            hitFlg = false;
+        }
+    }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        // 物体がトリガーに接触しとき、１度だけ呼ばれる
+
+        //プレイヤー側のラケットと当たったら
+        if (collision.name == "Ball")
+        {
+            hitFlg = true;
         }
     }
 }
