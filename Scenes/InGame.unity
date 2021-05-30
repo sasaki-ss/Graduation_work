@@ -640,6 +640,7 @@ MonoBehaviour:
   radius: 0
   diameter: 0
   correctionVal: 10
+  c: {fileID: 1834506131}
 --- !u!4 &647400825
 Transform:
   m_ObjectHideFlags: 0
@@ -811,7 +812,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
+  m_Size: {x: 6, y: 2, z: 2}
   m_Center: {x: 0.5, y: 1, z: 0.5}
 --- !u!95 &862302804 stripped
 Animator:
@@ -877,6 +878,7 @@ MonoBehaviour:
   ball: {fileID: 1172014078}
   net: {fileID: 430214870}
   Shot: {fileID: 429837359}
+  characterMove: {fileID: 1834506131}
 --- !u!1 &1172014073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,7 +1401,7 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0.5, y: 1, z: 0.5}
+  m_Center: {x: 1, y: 1, z: 1}
 --- !u!95 &1834506136 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}

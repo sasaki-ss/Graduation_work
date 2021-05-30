@@ -15,6 +15,7 @@ public class AI : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject net;
     [SerializeField] public Shot Shot;
+    [SerializeField] CharacterMove characterMove;
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
@@ -25,8 +26,9 @@ public class AI : MonoBehaviour
       int motionCnt = 0;
      bool swingFlg  = false;
      bool hitFlg    = false;
-    bool autoFlg = true;
+     bool autoFlg   = true;
     float dis       = 0;
+      int miss      = 0;  //移動をしない
     void Start()
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -40,6 +42,7 @@ public class AI : MonoBehaviour
         swingFlg = false;
         hitFlg = false;
         dis = 0;
+        miss = 0;
         //if文でこっちがサーブなのか判定してから
         /*
         if()
@@ -73,12 +76,13 @@ public class AI : MonoBehaviour
     void AutoMove()
     {
         //オート移動処理
-        if (ball.nowUserTag == "Player" && ball.transform.position.x <= -7)
+        //アウトかどうかで移動しないのも入れたい
+        if (miss != 7 && ball.nowUserTag == "Player" && ball.transform.position.x <= -7) 
         {
             //ある程度まで近づいたら
-            if (dis >= 40 && autoFlg == true)
+            if (dis >= 10 && autoFlg == true)
             {
-                Vector3 xyz = new Vector3(ball.transform.position.x - 60, ball.transform.position.y, ball.transform.position.z);
+                Vector3 xyz = new Vector3(ball.transform.position.x+ (float)characterMove.Rad, ball.transform.position.y, ball.transform.position.z+ (float)characterMove.Rad);
 
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
@@ -130,7 +134,7 @@ public class AI : MonoBehaviour
 
     void Swing()
     {
-        if (dis <= 20)
+        if (dis <=50)
         {
             this.animator.SetBool("is_RightShake", true);
         }
@@ -140,7 +144,7 @@ public class AI : MonoBehaviour
         {
             motionCnt++;
 
-            if (motionCnt > 60)
+            if (motionCnt > 0)
             {
                 swingFlg = true;
             }
@@ -154,12 +158,8 @@ public class AI : MonoBehaviour
 
                 //プレイヤーを待機モーションにする
                 this.animator.SetBool("is_RightShake", false);
+                swingFlg = false;
             }
-        }
-
-        if (animator.GetBool("is_RightShake") == false)
-        {
-            swingFlg = false;
         }
 
         //振ったラケットが当たったら
@@ -168,14 +168,26 @@ public class AI : MonoBehaviour
             //振る
             //角度によって判定
             //スワイプの長さによって判定
+            //プレイヤーから見たとき
+            /*
+             * 0.5 :左上ギリ
+             * 2.5 :右上ギリ
+             */
 
+            Vector2 parameter;
 
+            parameter = TargetPoint(Shot.GetPower, characterMove.Distance,characterMove.Rad);
+            characterMove.Rad = parameter.x;
+            characterMove.Distance = parameter.y;
             //パラメータちょこっと直接いじってる
+            //Debug.Log(parameter.x + ":::"+ parameter.y);
             Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10);
 
             hitFlg = false;
 
             autoFlg = true;
+
+            miss = Random.Range(0, 20);
         }
     }
     private void OnTriggerEnter(Collider collision)
@@ -189,5 +201,205 @@ public class AI : MonoBehaviour
 
             hitFlg = true;
         }
+    }
+
+    private Vector2 TargetPoint(double _shotPower, double _distance, double _rad)
+    {
+        float targetPointX = 0;
+        float targetPointY = 0;
+
+        int mode　= Random.Range(1, 4);
+        int pattern = Random.Range(1, 3);
+
+        if (mode == 2)
+        {
+            //値によって選ばれやすさの変更をする
+            if (_rad > 1.0 && _rad < 1.2)
+            {
+                pattern = Random.Range(1, 1);
+            }
+        }
+
+        if (mode == 3)
+        {
+            //値によって選ばれやすさの変更をする
+            if (_shotPower > 31 && _shotPower < 34)
+            {
+                pattern = Random.Range(3, 3);
+            }
+            else
+            if (_shotPower > 113 && _shotPower < 115)
+            {
+                pattern = Random.Range(2, 2);
+            }
+
+        }
+
+        if (pattern == 1)
+        {
+            //滞空時間によって変動
+            if (_shotPower > 0 && _shotPower < 30)
+            {
+                targetPointX = 1f;
+                targetPointY = 270 * 3f;
+            }
+            else
+            if (_shotPower > 30 && _shotPower < 60)
+            {
+                targetPointX = 2f;
+                targetPointY = 270 * 4.5f;
+            }
+            else
+            if (_shotPower > 60 && _shotPower < 90)
+            {
+                targetPointX = 1.8f;
+                targetPointY = 270 * 1.3f;
+            }
+            else
+            if (_shotPower > 90 && _shotPower < 120)
+            {
+                targetPointX = 1.5f;
+                targetPointY = 270 * 2.5f;
+            }
+            else
+            {
+                targetPointX = 1.8f;
+                targetPointY = 270 * 2.6f;
+            }
+        }
+
+
+
+        if (pattern == 2)
+        {
+            //距離によって変動
+            if (_distance > 0 && _distance < 30)
+            {
+                targetPointX = 0.5f;
+                targetPointY = 270 * 2.5f;
+            }
+            else
+            if (_distance > 30 && _distance < 60)
+            {
+                targetPointX = 2.5f;
+                targetPointY = 270 * 1.5f;
+            }
+            else
+            if (_distance > 60 && _distance < 90)
+            {
+                targetPointX = 0.75f;
+                targetPointY = 270 * 3.5f;
+            }
+            else
+            if (_distance > 90 && _distance < 120)
+            {
+                targetPointX = 0.9f;
+                targetPointY = 270 * 4f;
+            }
+            else
+            if (_distance > 120 && _distance < 150)
+            {
+                targetPointX = 1.5f;
+                targetPointY = 270 * 2f;
+            }
+            else
+            if (_distance > 150 && _distance < 180)
+            {
+                targetPointX = 1.8f;
+                targetPointY = 270 * 1.8f;
+            }
+            else
+            if (_distance > 180 && _distance < 210)
+            {
+                targetPointX = 1.8f;
+                targetPointY = 270 * 3f;
+            }
+            else
+            if (_distance > 210 && _distance < 240)
+            {
+                targetPointX = 1.8f;
+                targetPointY = 270 * 1.4f;
+            }
+            else
+            if (_distance > 240 && _distance < 270)
+            {
+                targetPointX = 2f;
+                targetPointY = 270 * 2.5f;
+            }
+            else
+            if (_distance > 270 && _distance < 300)
+            {
+                targetPointX = 2.2f;
+                targetPointY = 270 * 1.5f;
+            }
+            else
+            if (_distance > 300 && _distance < 330)
+            {
+                targetPointX = 1.6f;
+                targetPointY = 270 * 1.9f;
+            }
+            else
+            {
+                targetPointX = 1.5f;
+                targetPointY = 270 * 2f;
+            }
+        }
+
+
+
+        if (pattern == 3)
+        {
+            //ラジアン値によって変動
+            if (_rad > 0 && _rad < 0.5)
+            {
+                targetPointX = 3f;
+                targetPointY = 270 * 4f;
+            }
+            else
+            if (_rad > 0.5 && _rad < 1)
+            {
+                targetPointX = 0f;
+                targetPointY = 270 * 3f;
+            }
+            else
+            if (_rad > 1 && _rad < 1.5)
+            {
+                targetPointX = 1.5f;
+                targetPointY = 270 * 5f;
+            }
+            else
+            if (_rad > 1.5 && _rad < 1.75)
+            {
+                targetPointX = 1.9f;
+                targetPointY = 270 * 4.3f;
+            }
+            else
+            if (_rad > 1.75 && _rad < 2)
+            {
+                targetPointX = 0.6f;
+                targetPointY = 270 * 3f;
+            }
+            else
+            {
+                targetPointX = 2.1f;
+                targetPointY = 270 * 4f;
+            }
+        }
+
+        if (mode == 4)
+        {
+
+            targetPointX = Random.Range(1, 25) / 10;
+            targetPointY = 270 * Random.Range(10, 35) / 10;
+        }
+
+        Vector2 targetPoint = new Vector2(targetPointX, targetPointY);
+
+        Debug.Log("mode"+mode);
+        Debug.Log("pattern"+pattern);
+        Debug.Log("rad" + targetPointX);
+        Debug.Log("dis" + targetPointY);
+
+        return targetPoint;
     }
 }
