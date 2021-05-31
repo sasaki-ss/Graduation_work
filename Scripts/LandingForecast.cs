@@ -94,7 +94,5 @@ public class LandingForecast : MonoBehaviour
         pointB.transform.position = new Vector3(
             basePoint.x + addX, pointB.transform.position.y,
             basePoint.z + addZ);
-
-        Debug.Log(rad + " " + distance + " " + nowUser);
     }
 }
