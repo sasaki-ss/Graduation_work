@@ -17,6 +17,20 @@ public class CharaStatus : MonoBehaviour
     //プレイヤーの状態(モーションでの)
     private int nowState = 0;
 
+    private double rad = 0;
+    private double distance = 0;
+    public double Rad
+    {
+        get { return this.rad; }
+        set { this.rad = value; }
+    }
+
+    public double Distance
+    {
+        get { return this.distance; }
+        set { this.distance = value; }
+    }
+
     private double maxStamina =10;
 
     //キャラのNavMeshAgent

@@ -4,20 +4,6 @@ using UnityEngine.AI;
 //using UnityEngine.Touch;
 public class CharacterMove : MonoBehaviour
 {
-    private double rad = 0;
-    private double distance = 0;
-    public double Rad
-    {
-        get { return this.rad; }
-        set { this.rad = value; }
-    }
-
-    public double Distance
-    {
-        get { return this.distance; }
-        set { this.distance = value; }
-    }
-
     //共通のやつ
     [SerializeField] Base Base;
 
@@ -224,10 +210,10 @@ public class CharacterMove : MonoBehaviour
         //振ったラケットが当たったら
         if (ball.nowUserTag == "Player2" && hitFlg == true && swingFlg == true)
         {
-            rad = (float)Shot.GetRadian;          //ラジアン値
-            distance = (float)Shot.GetDistance;   //距離
+            CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+            CharaStatus.Distance = (float)Shot.GetDistance;   //距離
 
-            distance *=2;
+            CharaStatus.Distance *=2;
 
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
