@@ -121,13 +121,13 @@ public class Ball : MonoBehaviour
             if (other.gameObject.CompareTag("ServeArea"))
             {
                 Debug.Log("サーブ成功");
+                GameManager.instance.gameState = GameState.DuringRound;
             }
-            else if (!other.gameObject.CompareTag("SwingArea"))
+            else if (!other.gameObject.CompareTag("SwingArea") &&
+                !other.gameObject.CompareTag("Field"))
             {
                 Debug.Log("サーブ失敗");
             }
-
-            GameManager.instance.gameState = GameState.DuringRound;
         }
 
         if(GameManager.instance.gameState == GameState.DuringRound)
