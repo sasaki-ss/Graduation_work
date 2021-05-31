@@ -84,6 +84,7 @@ public class GameManager : MonoBehaviour
         if (isAddScore && !isNextRound)
         {
             StartCoroutine(NextRound());
+            isAddScore = false;
         }
 
         //ƒ{[ƒ‹‚ğæ“¾

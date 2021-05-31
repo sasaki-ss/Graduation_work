@@ -122,10 +122,12 @@ public class Ball : MonoBehaviour
             {
                 Debug.Log("サーブ成功");
             }
-            else
+            else if (!other.gameObject.CompareTag("SwingArea"))
             {
                 Debug.Log("サーブ失敗");
             }
+
+            GameManager.instance.gameState = GameState.DuringRound;
         }
 
         if(GameManager.instance.gameState == GameState.DuringRound)
