@@ -160,6 +160,9 @@ public class Ball : MonoBehaviour
     //打つ処理
     public void Strike(float _flightTime, float _speedRate)
     {
+        //タグを切り替える
+        TagChange();
+
         //到達地点を更新する
         LandingForecast lf = 
             GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
@@ -191,9 +194,6 @@ public class Ball : MonoBehaviour
         //斜方投射コルーチンを開始
         coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
             speedRate, Physics.gravity.y));
-
-        //タグを切り替える
-        TagChange();
     }
 
     public void Init()

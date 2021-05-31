@@ -10,7 +10,8 @@ public class LandingForecast : MonoBehaviour
     private GameObject shotObject;      //座標受け取り用
     [SerializeField]
     private Shot shot;                  //座標受け取り用
-
+    [SerializeField]
+    private CharaStatus[] cStatus;
     [SerializeField]
     private float radius;               //半径
     [SerializeField]
@@ -24,37 +25,42 @@ public class LandingForecast : MonoBehaviour
         radius = 2;
         diameter = radius * 2;
 
+        cStatus = new CharaStatus[2];
+
+        GameObject userObj = GameObject.Find("Player");
+        GameObject userObj2 = GameObject.Find("Player2");
+
+        cStatus[0] = userObj.GetComponent<CharaStatus>();
+        cStatus[1] = userObj2.GetComponent<CharaStatus>();
+
         //オブジェクト非表示
         randingPoint.SetActive(false);
 
         shot = shotObject.GetComponent<Shot>();
     }
 
-    //更新処理
-    private void Update()
-    {
-
-
-    }
-
     public void PointSetting()
     {
-        float rad = (float)shot.GetRadian;                          //ラジアン値
-        float distance = (float)shot.GetDistance / correctionVal;   //到達距離
+        Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
+        int nowUser = 0;
+
+        if (ball.nowUserTag == "Player2") nowUser = 1;
+
+        float rad = (float)cStatus[nowUser].Rad;                                //ラジアン値
+        float distance = (float)cStatus[nowUser].Distance / correctionVal;      //到達距離
 
         //ボールScriptを取得
-        Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
         //到達距離と三角関数を使ってx,zを算出
         float x = Mathf.Sin(rad) * distance;
         float z = Mathf.Cos(rad) * distance;
 
         //User2だった場合数値を反転させる
-        if (ball.nowUserTag == "Player")
+        if (ball.nowUserTag == "Player2")
         {
             z = -z;
         }
-        else if(ball.nowUserTag == "Player2")
+        else if(ball.nowUserTag == "Player")
         {
             x = -x;
         }
@@ -88,5 +94,7 @@ public class LandingForecast : MonoBehaviour
         pointB.transform.position = new Vector3(
             basePoint.x + addX, pointB.transform.position.y,
             basePoint.z + addZ);
+
+        Debug.Log(rad + " " + distance + " " + nowUser);
     }
 }
