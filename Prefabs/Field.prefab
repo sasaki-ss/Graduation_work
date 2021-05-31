@@ -150,7 +150,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1172296537}
   - component: {fileID: 1172296536}
-  - component: {fileID: 1172296535}
   m_Layer: 0
   m_Name: Court_Outside
   m_TagString: OutSide
@@ -205,17 +204,6 @@ Terrain:
   m_GroupingID: 0
   m_RenderingLayerMask: 1
   m_AllowAutoConnect: 1
---- !u!154 &1172296535
-TerrainCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1172296534}
-  m_Material: {fileID: 0}
-  m_Enabled: 1
-  m_TerrainData: {fileID: 15600000, guid: 8c5395897079b534aab7dd0ea3d80009, type: 2}
-  m_EnableTreeColliders: 1
 --- !u!1 &1361838919339750567
 GameObject:
   m_ObjectHideFlags: 0
@@ -689,7 +677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9149836939618701361}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 5.18, z: 0}
+  m_LocalPosition: {x: 1.5, y: 5.2, z: 0}
   m_LocalScale: {x: 11, y: 1.07, z: 128}
   m_Children: []
   m_Father: {fileID: 9201915911385958902}
