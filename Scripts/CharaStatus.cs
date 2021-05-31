@@ -13,10 +13,7 @@ public class CharaStatus : MonoBehaviour
     private double charaSpeed = 50;
     //円の大きさ
     private int charaCircle = 0;
-    //ラケットを振ったフラグ
-    private bool racketFlg = false;
-    //サーブフラグ
-    private bool serveFlg = false;
+
     //プレイヤーの状態(モーションでの)
     private int nowState = 0;
 
@@ -45,14 +42,6 @@ public class CharaStatus : MonoBehaviour
         get { return this.charaSpeed; }
         set { this.charaSpeed = value; }
     }
-
-    //ラケットフラグのプロパティー
-    public bool RacketFlg
-    {
-        get { return this.racketFlg; }
-        set { this.racketFlg = value; }
-    }
-
     //円の大きさのプロパティー
     public int CharaCircle
     {

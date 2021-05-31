@@ -4,6 +4,20 @@ using UnityEngine.AI;
 //using UnityEngine.Touch;
 public class CharacterMove : MonoBehaviour
 {
+    private double rad = 0;
+    private double distance = 0;
+    public double Rad
+    {
+        get { return this.rad; }
+        set { this.rad = value; }
+    }
+
+    public double Distance
+    {
+        get { return this.distance; }
+        set { this.distance = value; }
+    }
+
     //共通のやつ
     [SerializeField] Base Base;
 
@@ -131,7 +145,7 @@ public class CharacterMove : MonoBehaviour
             //ある程度まで近づいたら
             if (dis >= 50 && autoFlg == true)
             {
-                Vector3 xyz = new Vector3(ball.transform.position.x + 60, ball.transform.position.y, ball.transform.position.z);
+                Vector3 xyz = new Vector3(ball.transform.position.x + 100, ball.transform.position.y, ball.transform.position.z);
 
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
@@ -188,12 +202,12 @@ public class CharacterMove : MonoBehaviour
         {
             motionCnt++;
 
-            if (motionCnt > 10)
+            if (motionCnt > 30)
             {
                 swingFlg = true;
             }
 
-            if (motionCnt > 50)
+            if (motionCnt > 40)
             {
                 motionCnt = 0;
 
@@ -210,6 +224,11 @@ public class CharacterMove : MonoBehaviour
         //振ったラケットが当たったら
         if (ball.nowUserTag == "Player2" && hitFlg == true && swingFlg == true)
         {
+            rad = (float)Shot.GetRadian;          //ラジアン値
+            distance = (float)Shot.GetDistance;   //距離
+
+            distance *=2;
+
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
 

@@ -385,7 +385,7 @@ Transform:
   m_Children:
   - {fileID: 2132639380}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &520998115
 GameObject:
@@ -398,7 +398,6 @@ GameObject:
   - component: {fileID: 520998119}
   - component: {fileID: 520998118}
   - component: {fileID: 520998117}
-  - component: {fileID: 520998120}
   m_Layer: 0
   m_Name: AIRacket
   m_TagString: Untagged
@@ -469,20 +468,6 @@ Transform:
   m_Father: {fileID: 862302805}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 77.451, y: 22.453, z: 24.892}
---- !u!114 &520998120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 520998115}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c50bc3a5e6c941b3e51407f699e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFlg: 0
-  hitFlg2: 0
 --- !u!1 &521944216
 GameObject:
   m_ObjectHideFlags: 0
@@ -525,7 +510,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &549240590
 GameObject:
@@ -655,6 +640,7 @@ MonoBehaviour:
   radius: 0
   diameter: 0
   correctionVal: 10
+  c: {fileID: 1834506131}
 --- !u!4 &647400825
 Transform:
   m_ObjectHideFlags: 0
@@ -761,7 +747,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 597945134516721815, guid: 6df904eff31b9e446969e23a24db98ca, type: 3}
       propertyPath: m_RootOrder
-      value: 14
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 597945134516721815, guid: 6df904eff31b9e446969e23a24db98ca, type: 3}
       propertyPath: m_LocalPosition.x
@@ -826,7 +812,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
+  m_Size: {x: 6, y: 2, z: 2}
   m_Center: {x: 0.5, y: 1, z: 0.5}
 --- !u!95 &862302804 stripped
 Animator:
@@ -892,65 +878,7 @@ MonoBehaviour:
   ball: {fileID: 1172014078}
   net: {fileID: 430214870}
   Shot: {fileID: 429837359}
---- !u!114 &862302810
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 862302799}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c50bc3a5e6c941b3e51407f699e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFlg: 0
-  hitFlg2: 0
---- !u!1 &1026964769
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1026964771}
-  - component: {fileID: 1026964770}
-  m_Layer: 0
-  m_Name: RacketJudge
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1026964770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1026964769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c50bc3a5e6c941b3e51407f699e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFlg: 0
-  hitFlg2: 0
---- !u!4 &1026964771
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1026964769}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 100, y: 20, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  characterMove: {fileID: 1834506131}
 --- !u!1 &1172014073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,7 +1260,6 @@ GameObject:
   - component: {fileID: 1812654447}
   - component: {fileID: 1812654451}
   - component: {fileID: 1812654450}
-  - component: {fileID: 1812654449}
   m_Layer: 0
   m_Name: PlayerRacket
   m_TagString: Untagged
@@ -1354,20 +1281,6 @@ Transform:
   m_Father: {fileID: 1834506139}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1812654449
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1812654446}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c50bc3a5e6c941b3e51407f699e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFlg: 0
-  hitFlg2: 0
 --- !u!23 &1812654450
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1488,26 +1401,12 @@ BoxCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 0.5, y: 1, z: 0.5}
+  m_Center: {x: 1, y: 1, z: 1}
 --- !u!95 &1834506136 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
   m_PrefabInstance: {fileID: 1666853045}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1834506138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1834506128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f8c50bc3a5e6c941b3e51407f699e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  hitFlg: 0
-  hitFlg2: 0
 --- !u!4 &1834506139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
