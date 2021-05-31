@@ -15,7 +15,6 @@ public class AI : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject net;
     [SerializeField] public Shot Shot;
-    [SerializeField] CharacterMove characterMove;
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
@@ -82,7 +81,7 @@ public class AI : MonoBehaviour
             //ある程度まで近づいたら
             if (dis >= 10 && autoFlg == true)
             {
-                Vector3 xyz = new Vector3(ball.transform.position.x+ (float)characterMove.Rad, ball.transform.position.y, ball.transform.position.z+ (float)characterMove.Rad);
+                Vector3 xyz = new Vector3(ball.transform.position.x, ball.transform.position.y, ball.transform.position.z);
 
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
@@ -176,9 +175,9 @@ public class AI : MonoBehaviour
 
             Vector2 parameter;
 
-            parameter = TargetPoint(Shot.GetPower, characterMove.Distance,characterMove.Rad);
-            characterMove.Rad = parameter.x;
-            characterMove.Distance = parameter.y;
+            parameter = TargetPoint(Shot.GetPower, CharaStatus.Distance, CharaStatus.Rad);
+            CharaStatus.Rad = parameter.x;
+            CharaStatus.Distance = parameter.y;
             //パラメータちょこっと直接いじってる
             //Debug.Log(parameter.x + ":::"+ parameter.y);
             Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10);
