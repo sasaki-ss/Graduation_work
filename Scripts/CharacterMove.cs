@@ -14,7 +14,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] public Shot Shot;
     [SerializeField] GameObject net;
     [SerializeField] Ball ball;
-
+    [SerializeField] GameObject pointB;
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
@@ -31,7 +31,7 @@ public class CharacterMove : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
-    public void Init()
+    void Init()
     {
         player.transform.position = new Vector3(105, 0, 0);
         motionCnt = 0;
@@ -125,13 +125,49 @@ public class CharacterMove : MonoBehaviour
         //オート移動処理
         if (ball.nowUserTag == "Player2" && ball.transform.position.x >= 7)
         {
-            //二点間の距離を測る
-            float dis = Vector3.Distance(GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
-
-            //ある程度まで近づいたら
-            if (dis >= 50 && autoFlg == true)
+            if (autoFlg == true)
             {
-                Vector3 xyz = new Vector3(ball.transform.position.x + 100, ball.transform.position.y, ball.transform.position.z);
+
+                Vector3 xyz = new Vector3(0, 0, 0);
+
+                //プレイヤーのコートの左側
+                if (pointB.transform.position.z < -40 && pointB.transform.position.z > -0)
+                {
+                    xyz = new Vector3(110, 0, -25);
+                }
+
+                //プレイヤーのコートの右側 
+                if (pointB.transform.position.z > -9 && pointB.transform.position.z < 9)
+                {
+                    xyz = new Vector3(110, 0, -2);
+
+                }
+
+                //プレイヤーのコートの中央
+                if (pointB.transform.position.z > 10 && pointB.transform.position.z < 40)
+                {
+                    xyz = new Vector3(110, 0, 25);
+
+                }
+
+                //プレイヤーのコートの前中央
+                if (pointB.transform.position.x < 0 && pointB.transform.position.x > 40)
+                {
+                    xyz = new Vector3(40, 0, 25);
+                }
+
+                //プレイヤーのコートの中央
+                if (pointB.transform.position.x < 41 && pointB.transform.position.x > 80)
+                {
+                    xyz = new Vector3(80, 0, 25);
+
+                }
+
+                //プレイヤーのコートの後中央
+                if (pointB.transform.position.x < 81 && pointB.transform.position.x > 120)
+                {
+                    xyz = new Vector3(110, 0, 25);
+                }
 
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
