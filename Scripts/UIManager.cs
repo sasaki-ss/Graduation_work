@@ -9,7 +9,8 @@ public class UIManager : MonoBehaviour
     private bool createFlg;             //タップ中のUIの生成フラグ
 
     //UIの要素数
-    private const int UINum = 10;        //生成するUIの要素数
+    private const int UINum = 8;        //生成するUIの要素数
+    private const int RoundUINum = 2;   //ラウンド間に表示するUIの要素数
 
     private int i = 0;                  //UIの要素数のカウント
     private int j = 0;                  //ゲーム中生成したり削除するオブジェクトの要素数
@@ -25,6 +26,7 @@ public class UIManager : MonoBehaviour
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
+    private GameObject[] roundInstances;
 
     //テキスト
     private Text textScore;             //スコアの表示
@@ -326,20 +328,21 @@ public class UIManager : MonoBehaviour
     {   //ラウンドの間に行う処理
         #region ラウンド切り替え時に行う処理
 
-        r = i + j;      //現在生成されているUIの要素数分をrに代入
+        roundInstances = new GameObject[RoundUINum];
+        r = 0;      //現在生成されているUIの要素数分をrに代入
 
         //パネル
-        instances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
-        instances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        instances[r].name = "panel";                                                            //オブジェクト名変更
-        panel = instances[r].GetComponent<Image>();                                             //イメージ
+        roundInstances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "panel";                                                            //オブジェクト名変更
+        panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
         r++;
 
         //ラウンド間に表示するテキスト
-        instances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
-        instances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        instances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
-        textRoundBetween = instances[r].GetComponent<Text>();                                   //テキスト
+        roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
+        textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
         textRoundBetween.color = Color.white;                                                   //色変更
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
@@ -363,10 +366,9 @@ public class UIManager : MonoBehaviour
         {
             textRoundBetween.text = "";            //得点取得
         }
-        for(int n = i + j; n < r; n++)
+        for(int n = 0; n < r; n++)
         {
-            Destroy(instances[n]);                                                              //タップ中に生成されたオブジェクトの削除
-            Debug.Log("xxxx");
+            Destroy(roundInstances[n],1.0f);                                                         //タップ中に生成されたオブジェクトの削除
         }
         #endregion
     }
