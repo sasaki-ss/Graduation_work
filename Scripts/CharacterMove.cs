@@ -266,8 +266,6 @@ public class CharacterMove : MonoBehaviour
             CharaStatus.Rad = (float)Shot.GetRadian;          //ƒ‰ƒWƒAƒ“’l
             CharaStatus.Distance = (float)Shot.GetDistance;   //‹——£
 
-            CharaStatus.Distance *=2;
-
             //U‚é
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
 
