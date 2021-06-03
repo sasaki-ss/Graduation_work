@@ -122,6 +122,8 @@ public class Ball : MonoBehaviour
             {
                 Debug.Log("サーブ成功");
                 GameManager.instance.gameState = GameState.DuringRound;
+                GameManager.instance.ChangeField();
+                boundCount++;
             }
             else if (!other.gameObject.CompareTag("SwingArea") &&
                 !other.gameObject.CompareTag("Field"))
@@ -160,6 +162,12 @@ public class Ball : MonoBehaviour
     //打つ処理
     public void Strike(float _flightTime, float _speedRate)
     {
+        if(GameManager.instance.gameState == GameState.Serve &&
+            boundCount == 0 && isProjection && !isBound)
+        {
+            isOut = true;
+        }
+
         //タグを切り替える
         TagChange();
 

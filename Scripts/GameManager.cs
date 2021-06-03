@@ -84,7 +84,7 @@ public class GameManager : MonoBehaviour
         if (isAddScore && !isNextRound)
         {
             StartCoroutine(NextRound());
-            isAddScore = false;
+            //isAddScore = false;
         }
 
         //ボールを取得
@@ -193,12 +193,12 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator NextRound()
     {
-        float timeCnt = 1.0f;
+        float timeCnt = 10.0f;
         isNextRound = true;
 
         //ゲームを次のラウンドへ
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-
+        
         iBall.Init();
 
 
@@ -223,5 +223,11 @@ public class GameManager : MonoBehaviour
         }
 
         isNextRound = false;
+    }
+
+    public void ChangeField()
+    {
+        serveAreaObj.SetActive(false);
+        safetyAreaObj.SetActive(true);
     }
 }
