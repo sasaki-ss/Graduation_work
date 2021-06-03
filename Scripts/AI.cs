@@ -28,9 +28,12 @@ public class AI : MonoBehaviour
      bool swingFlg  = false;
      bool hitFlg    = false;
      bool autoFlg   = true;
-     bool boundFlg  = true;
-    float dis       = 0;
-      int miss      = 0;  //移動をしない
+    float dis = 0;
+    
+    //現状動かない
+    bool boundFlg = true;
+
+    int miss      = 0;  //移動をしない
     void Start()
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -38,7 +41,11 @@ public class AI : MonoBehaviour
 
     public void Init()
     {
-        player.transform.position = new Vector3(-105,0,0);
+        //現状の移動指定地を削除
+        GetComponent<NavMeshAgent>().ResetPath();
+
+
+        player.transform.position = new Vector3(-150,0,0);
         motionCnt = 0;
         autoFlg = true;
         boundFlg = true;
@@ -46,20 +53,32 @@ public class AI : MonoBehaviour
         hitFlg = false;
         dis = 0;
         miss = 0;
+
         //if文でこっちがサーブなのか判定してから
-        /*
-        if()
+        if (ball.nowUserTag == "Player")
         {
-           //対角線上に配置する予定
-           player.transform.position = new Vector3(-105,0,0);
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(-105, 0, -25);
         }
-        */
+        else
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(-105, 0, 25);
+        }
 
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
+
+        Base.InitCnt += 1;
+        Debug.Log("AI");
     }
 
     void Update()
     {
+        if (Base.InitCnt == 1) 
+        {
+            Init();
+        }
+
         //キャラとボールの距離を測る
         dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
 
@@ -78,35 +97,40 @@ public class AI : MonoBehaviour
 
     void AutoMove()
     {
-        if(ball.boundCount !=0)
+        //Debug.Log(ball.boundCount);
+
+        if (ball.boundCount != 0)
         {
             boundFlg = false;
         }
+
         //オート移動処理
-        if(pointB.transform.position.x > -200 && pointB.transform.position.x < 7)
+        if (ball.boundCount != 0 && pointB.transform.position.x > -200 && pointB.transform.position.x < 7)
         {
+
+
             if (autoFlg == true)
             {
 
-                Vector3 xyz = new Vector3(0, 0, 0);
+                Vector3 xyz = new Vector3(-110, 0, 0);
 
                 //プレイヤーのコートの左側
                 if (pointB.transform.position.z < -40 && pointB.transform.position.z > -0)
                 {
-                    xyz = new Vector3(-110, 0, -25);
+                    xyz = new Vector3(-105, 0, -25);
                 }
 
                 //プレイヤーのコートの右側 
                 if (pointB.transform.position.z > -9 && pointB.transform.position.z < 9)
                 {
-                    xyz = new Vector3(-110, 0, -2);
+                    xyz = new Vector3(-105, 0, -2);
 
                 }
 
                 //プレイヤーのコートの中央
                 if (pointB.transform.position.z > 10 && pointB.transform.position.z < 40)
                 {
-                    xyz = new Vector3(-110, 0, 25);
+                    xyz = new Vector3(-105, 0, 25);
 
                 }
 
@@ -128,7 +152,7 @@ public class AI : MonoBehaviour
                 {
                     xyz = new Vector3(-110, 0, 25);
                 }
-                xyz = new Vector3(pointB.transform.position.x, 0, pointB.transform.position.z);
+                //xyz = new Vector3(pointB.transform.position.x, 0, pointB.transform.position.z);
 
 
                 //移動させる
@@ -136,6 +160,8 @@ public class AI : MonoBehaviour
 
                 //自動移動は一回のみ
                 autoFlg = false;
+
+                Debug.Log(xyz);
             }
         }
     }

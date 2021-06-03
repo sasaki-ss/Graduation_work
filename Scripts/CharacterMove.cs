@@ -33,24 +33,41 @@ public class CharacterMove : MonoBehaviour
 
     void Init()
     {
-        player.transform.position = new Vector3(105, 0, 0);
+        player.transform.position = new Vector3(110, 0, 0);
         motionCnt = 0;
         autoFlg = false;
         swingFlg = false;
         hitFlg = false;
+
+        //現状の移動指定地を削除
+        GetComponent<NavMeshAgent>().ResetPath();
+
         //if文でこっちがサーブなのか判定してから
-        /*
-        if()
+
+        if(ball.nowUserTag =="Player2")
         {
            //対角線上に配置する予定
-           player.transform.position = new Vector3(-105,0,0);
+           player.transform.position = new Vector3(105,0,-25);
         }
-        */
+        else
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(105, 0, 25);
+        }
+   
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
+
+        Base.InitCnt += 1;
+        Debug.Log("Player");
     }
 
     void Update()
     {
+        if (Base.InitCnt == 2) 
+        {
+            Init();
+        }
+
         //コメントアウト
         {
             /*

@@ -22,10 +22,17 @@ public class Base : MonoBehaviour
     float speed;
 
     bool flg;
+    int initCnt;
+    public int InitCnt
+    {
+        get { return this.initCnt; }
+        set { this.initCnt = value; }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        initCnt = 0;
         flightTime = 0;
         speed = 0;
         flg = false;
@@ -40,6 +47,12 @@ public class Base : MonoBehaviour
         tMger.update(); //更新
 
         touch_state = tMger.getTouch();    //タッチ取得
+
+        if (initCnt == 3) 
+        {
+            initCnt = 0;
+            Debug.Log("Base3");
+        }
     }
 
     void FixedUpdate()
@@ -50,6 +63,17 @@ public class Base : MonoBehaviour
             ball.Strike(flightTime, speed);
             flg = false;
         }
+    }
+
+    //共通処理部分の初期化
+    public void Init()
+    {
+        initCnt = 1;
+
+        flightTime = 0;
+        speed = 0;
+        flg = false;
+        Debug.Log("Base");
     }
 
     //共通処理　移動
