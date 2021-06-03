@@ -45,7 +45,7 @@ public class Base : MonoBehaviour
     void FixedUpdate()
     {
         //ここにProjectileMotion関数で使うための情報を入れる関数が来る
-        if (flg == true) 
+        if (flg == true)
         {
             ball.Strike(flightTime, speed);
             flg = false;
@@ -131,18 +131,19 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　スイング
-    public void Swing(double _power,double _flight)
+    public void Swing(double _power, double _flight)
     {
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
         //この二つ変数をProjectileMotion関数に渡す
         //とりあえず最低5秒滞空時間があるとしてます　(5～15秒)
-        flightTime = (float)_flight / 12 + 5;
+        flightTime = (float)_flight / 12 + 3;
         //Debug.Log("a" + flightTime);
         //とりあえず7で割ってます
         speed = (float)_power / 7;
 
-            flg = true;
+        flg = true;
     }
 }
+
