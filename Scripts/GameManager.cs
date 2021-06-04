@@ -30,12 +30,14 @@ public class GameManager : MonoBehaviour
     public static GameManager   instance;       //インスタンス
 
     /*このスクリプトでのみ使う変数*/
-    private Score               score;          //スコアクラス
-    private GameObject          serveAreaObj;   //サーブエリアオブジェクト
-    private GameObject          safetyAreaObj;  //セーフティエリアオブジェクト
-    private Vector3[]           serveAreaPos;   //セーブエリアの座標
-    private int                 serveUser;      //サーブするユーザー
-    private int                 changeCount;    //ラウンドカウント
+    private Score               score;              //スコアクラス
+    private GameObject          serveAreaObj;       //サーブエリアオブジェクト
+    private GameObject          safetyAreaObj;      //セーフティエリアオブジェクト
+    [SerializeField]
+    private GameObject[]        serveOutAreaObj;    //サーブアウトエリアオブジェクト
+    private Vector3[]           serveAreaPos;       //セーブエリアの座標
+    private int                 serveUser;          //サーブするユーザー
+    private int                 changeCount;        //ラウンドカウント
 
     /*プロパティ関連*/
     public bool isDeuce { get; set; }           //デュースフラグ
@@ -54,6 +56,11 @@ public class GameManager : MonoBehaviour
         serveAreaObj = GameObject.Find("ServeArea");
         safetyAreaObj = GameObject.Find("SafetyArea");
 
+        serveOutAreaObj = new GameObject[3];
+        serveOutAreaObj[0] = GameObject.Find("Area1");
+        serveOutAreaObj[1] = GameObject.Find("Area2");
+        serveOutAreaObj[2] = GameObject.Find("Area3");
+
         safetyAreaObj.SetActive(false);
 
         instance = this;
@@ -65,10 +72,10 @@ public class GameManager : MonoBehaviour
 
         serveAreaPos = new Vector3[4]
         {
-            new Vector3( 32,0, 21), //ユーザー1側右
-            new Vector3( 32,0,-21), //ユーザー1側左
-            new Vector3(-32,0, 21), //ユーザー2側右
-            new Vector3(-32,0,-21)  //ユーザー2側左
+            new Vector3( 32f,0f, 21f), //ユーザー1側右
+            new Vector3( 32f,0f,-21f), //ユーザー1側左
+            new Vector3(-32f,0f, 21f), //ユーザー2側右
+            new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
         serveUser = 0;
@@ -84,7 +91,6 @@ public class GameManager : MonoBehaviour
         if (isAddScore && !isNextRound)
         {
             StartCoroutine(NextRound());
-            //isAddScore = false;
         }
 
         //ボールを取得
@@ -168,12 +174,16 @@ public class GameManager : MonoBehaviour
             if (score.user1Score % 2 == 0)
             {
                 serveAreaObj.transform.position = serveAreaPos[2];
+                serveOutAreaObj[1].transform.position = new Vector3(-32.27f, 0f, -22f);
             }
             //スコアが奇数の場合
             else
             {
                 serveAreaObj.transform.position = serveAreaPos[3];
+                serveOutAreaObj[1].transform.position = new Vector3(-32.27f, 0f, 22f);
             }
+            serveOutAreaObj[0].transform.position = new Vector3(59.7f, 0f, 0f);
+            serveOutAreaObj[2].transform.position = new Vector3(-91.7f, 0f, 0f);
         }
         //サーブユーザーがプレイヤー2の場合
         else
@@ -182,12 +192,16 @@ public class GameManager : MonoBehaviour
             if (score.user2Score % 2 == 0)
             {
                 serveAreaObj.transform.position = serveAreaPos[1];
+                serveOutAreaObj[1].transform.position = new Vector3(32.27f, 0f, 22f);
             }
             //スコアが奇数の場合
             else
             {
                 serveAreaObj.transform.position = serveAreaPos[0];
+                serveOutAreaObj[1].transform.position = new Vector3(32.27f, 0f, -22f);
             }
+            serveOutAreaObj[0].transform.position = new Vector3(-59.7f, 0f, 0f);
+            serveOutAreaObj[2].transform.position = new Vector3(91.7f, 0f, 0f);
         }
     }
 
@@ -199,7 +213,7 @@ public class GameManager : MonoBehaviour
         //ゲームを次のラウンドへ
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
         
-        iBall.Init();
+        //iBall.Init();
 
 
         #region サーブユーザー切り替え処理
@@ -223,10 +237,16 @@ public class GameManager : MonoBehaviour
         }
 
         isNextRound = false;
+        //isAddScore = false;
     }
 
     public void ChangeField()
     {
+        foreach(var obj in serveOutAreaObj)
+        {
+            obj.SetActive(false);
+        }
+
         serveAreaObj.SetActive(false);
         safetyAreaObj.SetActive(true);
     }

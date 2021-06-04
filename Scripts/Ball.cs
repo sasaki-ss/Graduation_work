@@ -16,6 +16,7 @@ public class Ball : MonoBehaviour
     private float       e;              //反発係数
     private bool        isBound;        //バウンドフラグ
     private bool        isProjection;   //投射フラグ
+    [SerializeField]
     private bool        isSafetyArea;   //セーフティエリアフラグ
 
     /*プロパティ関連*/
@@ -29,8 +30,7 @@ public class Ball : MonoBehaviour
     [SerializeField]
     private GameObject      randingPoint;   //着地地点オブジェクト
 
-    //初期化処理
-    private void Start()
+    private void Awake()
     {
         //Rigidbodyを取得
         rb = this.GetComponent<Rigidbody>();
@@ -40,19 +40,23 @@ public class Ball : MonoBehaviour
         userObj[0] = GameObject.Find("Player");
         userObj[1] = GameObject.Find("Player2");
 
-        //打っているユーザーの初期化
-        nowShotUser = 0;
-        TagChange();
-
         //PhysiceMaterialを取得
         SphereCollider sc = this.GetComponent<SphereCollider>();
         PhysicMaterial bound = sc.material;
 
-        MeshCollider mc = GameObject.Find("Court_Base").GetComponent<MeshCollider>();
-        PhysicMaterial field = mc.material;
+        BoxCollider bc = GameObject.Find("SafetyArea").GetComponent<BoxCollider>();
+        PhysicMaterial field = bc.material;
 
         //取得したboundとfieldから反発係数を算出
         e = (bound.bounciness + field.bounciness) / 2f;
+    }
+
+    //初期化処理
+    private void Start()
+    {
+        //打っているユーザーの初期化
+        nowShotUser = 0;
+        TagChange();
 
         Init();
     }
@@ -115,6 +119,9 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+
+        Debug.Log(other.gameObject.name);
+
         //ゲームの状態がサーブの場合
         if(GameManager.instance.gameState == GameState.Serve)
         {
@@ -123,10 +130,9 @@ public class Ball : MonoBehaviour
                 Debug.Log("サーブ成功");
                 GameManager.instance.gameState = GameState.DuringRound;
                 GameManager.instance.ChangeField();
-                boundCount++;
+                //boundCount++;
             }
-            else if (!other.gameObject.CompareTag("SwingArea") &&
-                !other.gameObject.CompareTag("Field"))
+            else if (!other.gameObject.CompareTag("SwingArea"))
             {
                 Debug.Log("サーブ失敗");
             }
