@@ -164,8 +164,8 @@ public class Base : MonoBehaviour
         //‚Æ‚è‚ ‚¦‚¸Å’á3•b‘Ø‹óŠÔ‚ª‚ ‚é‚Æ‚µ‚Ä‚Ü‚·@(3`5•b)
         flightTime = (float)_flight / 60 + 3;
         //Debug.Log("a" + flightTime);
-        //‚Æ‚è‚ ‚¦‚¸7.5‚ÅŠ„‚Á‚Ä‚Ü‚·
-        speed = (float)_power / 7.5f;
+        //‚Æ‚è‚ ‚¦‚¸10‚ÅŠ„‚Á‚Ä‚Ü‚·
+        speed = (float)_power / 10;
 
         flg = true;
     }

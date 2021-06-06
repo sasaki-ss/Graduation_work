@@ -27,7 +27,7 @@ public class AI : MonoBehaviour
       int motionCnt = 0;
      bool swingFlg  = false;
      bool hitFlg    = false;
-     bool autoFlg   = true;
+    bool resetFlg = false;
     float dis = 0;
     
     //現状動かない
@@ -47,9 +47,9 @@ public class AI : MonoBehaviour
 
         player.transform.position = new Vector3(-150,0,0);
         motionCnt = 0;
-        autoFlg = true;
         boundFlg = true;
         swingFlg = false;
+        resetFlg = false;
         hitFlg = false;
         dis = 0;
         miss = 0;
@@ -69,7 +69,7 @@ public class AI : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
         Base.InitCnt += 1;
-        Debug.Log("AI");
+        //Debug.Log("AI");
     }
 
     void Update()
@@ -93,77 +93,186 @@ public class AI : MonoBehaviour
 
         //現在の座標を取得
         nowPosition = player.position;
+
+        //アップデートで直接やるとAnimationの処理が今の所マシな動きになってくれる
+        if (resetFlg == true)
+        {
+            //振る
+            //角度によって判定
+            //スワイプの長さによって判定
+            //プレイヤーから見たとき
+            // 0.5 :左上ギリ
+            // 2.5 :右上ギリ
+
+            Vector2 parameter;
+
+            parameter = TargetPoint();
+            CharaStatus.Rad = parameter.x;
+            CharaStatus.Distance = parameter.y;
+
+            //パラメータちょこっと直接いじってる
+            //Debug.Log(parameter.x + ":::"+ parameter.y);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20);
+
+            this.animator.SetBool("is_RightShake", false);
+            motionCnt = 0;
+            swingFlg = false;
+            hitFlg = false;
+            resetFlg = false;
+        }
+
+        //ミスってもカウント後は元に戻しておく
+        if(motionCnt >300)
+        {
+            this.animator.SetBool("is_RightShake", false);
+            motionCnt = 0;
+            swingFlg = false;
+            hitFlg = false;
+            resetFlg = false;
+        }
     }
 
     void AutoMove()
     {
-        //Debug.Log(ball.boundCount);
-
-        if (ball.boundCount != 0)
-        {
-            boundFlg = false;
-        }
-
         //オート移動処理
-        if (ball.boundCount != 0 && pointB.transform.position.x > -200 && pointB.transform.position.x < 7)
+
+        // Debug.Log("x:"+pointB.transform.position.x+ "y:" + pointB.transform.position.y+ "z:" + pointB.transform.position.z );
+
+        //x-7～x119がAIコートの内側
+        //z55～z-55がAIコートの内側
+
+        int patternX = 0;
+        int patternZ= 0;
+
+        //Xの場合
+        if (pointB.transform.position.x < -7 && pointB.transform.position.x >= -30) 
         {
-
-
-            if (autoFlg == true)
-            {
-
-                Vector3 xyz = new Vector3(-110, 0, 0);
-
-                //プレイヤーのコートの左側
-                if (pointB.transform.position.z < -40 && pointB.transform.position.z > -0)
-                {
-                    xyz = new Vector3(-105, 0, -25);
-                }
-
-                //プレイヤーのコートの右側 
-                if (pointB.transform.position.z > -9 && pointB.transform.position.z < 9)
-                {
-                    xyz = new Vector3(-105, 0, -2);
-
-                }
-
-                //プレイヤーのコートの中央
-                if (pointB.transform.position.z > 10 && pointB.transform.position.z < 40)
-                {
-                    xyz = new Vector3(-105, 0, 25);
-
-                }
-
-                //プレイヤーのコートの前中央
-                if (pointB.transform.position.x < 0 && pointB.transform.position.x > -40)
-                {
-                    xyz = new Vector3(-40, 0, 25);
-                }
-
-                //プレイヤーのコートの中央
-                if (pointB.transform.position.x < 41 && pointB.transform.position.x > -80)
-                {
-                    xyz = new Vector3(-80, 0, 25);
-
-                }
-
-                //プレイヤーのコートの後中央
-                if (pointB.transform.position.x < -81 && pointB.transform.position.x > -120)
-                {
-                    xyz = new Vector3(-110, 0, 25);
-                }
-                //xyz = new Vector3(pointB.transform.position.x, 0, pointB.transform.position.z);
-
-
-                //移動させる
-                GetComponent<NavMeshAgent>().destination = xyz;
-
-                //自動移動は一回のみ
-                autoFlg = false;
-
-                Debug.Log(xyz);
-            }
+           // Debug.Log("-7～-30");
+            patternX = 1;
         }
+        else
+        if (pointB.transform.position.x < -30 && pointB.transform.position.x >= -60)
+        {
+            //Debug.Log("-30～-60");
+            patternX = 2;
+        }
+        else
+        if (pointB.transform.position.x < -60 && pointB.transform.position.x >= -90)
+        {
+            //Debug.Log("-60～-90");
+            patternX = 3;
+        }
+        else
+        if (pointB.transform.position.x < -90 && pointB.transform.position.x >= -119)
+        {
+            //Debug.Log("-90～-119");
+            patternX = 4;
+        }
+        else
+        {
+            //Debug.Log("-119～or-7<x");
+            patternX = 0;
+        }
+
+        //Zの場合
+        if (pointB.transform.position.z > -55 && pointB.transform.position.z <= -27.5)
+        {
+            //Debug.Log("-55～-27.5");
+            patternZ = 1;
+        }
+        else
+        if (pointB.transform.position.z > -27.5 && pointB.transform.position.z <= 0)
+        {
+            //Debug.Log("-27.5～0");
+            patternZ = 2;
+        }
+        else
+        if (pointB.transform.position.z > 0 && pointB.transform.position.z <= 27.5)
+        {
+            //Debug.Log("0～27.5");
+            patternZ = 3;
+        }
+        else
+        if (pointB.transform.position.z > 27.5 && pointB.transform.position.z <= 55)
+        {
+            //Debug.Log("27.5～55");
+            patternZ = 4;
+        }
+        else
+        {
+            //Debug.Log("55～or-55～");
+            patternZ = 0;
+        }
+
+        //Debug.Log(patternX +":::"+ patternZ);
+
+        Vector3 xyz = new Vector3(0, 0, 0);
+
+        //場所に応じて移動(X座標)
+        switch (patternX)
+        {
+            case 1:
+                xyz.x = -40;
+                break;
+            case 2:
+                xyz.x = -70;
+                break;
+            case 3:
+                xyz.x = -100;
+                break;
+            case 4:
+                xyz.x = -130;
+                break;
+            default:
+                break;
+        }
+
+        //場所に応じて移動(Z座標)
+        switch (patternZ)
+        {
+            case 1:
+                xyz.z = -40;
+                break;
+            case 2:
+                xyz.z = -13;
+                break;
+            case 3:
+                xyz.z = 13;
+                break;
+            case 4:
+                xyz.z = 40;
+                break;
+            default:
+                break;
+        }
+
+        //Debug.Log(xyz.x+ ":　　　:" +xyz.z);
+
+        //乱数の設定(設定した数値が出ればAIは動けない)
+        int miss = Random.Range(1,20);
+
+        float disZ = this.transform.position.z - pointB.transform.position.z;
+
+        if (disZ <= -15)
+        {
+            xyz.z += 25;
+        }
+        else
+        if (disZ >= 15)
+        {
+            xyz.z -= 25;
+        }
+
+        //バウンドカウントとサーブフラグを参照して最初のサーブだけワンバウンドしてから反応させる
+        //※上記の処理はまだない
+        if (miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0) 
+        {
+            //移動させる
+            GetComponent<NavMeshAgent>().destination = xyz;
+            swingFlg = true;
+        }
+
+        //Debug.Log(swingFlg);
     }
 
     void JudgeMove()
@@ -207,63 +316,31 @@ public class AI : MonoBehaviour
 
     void Swing()
     {
-        if (dis <=30)
-        {
-            this.animator.SetBool("is_RightShake", true);
-        }
+        float dis = Vector3.Distance(this.transform.position, pointB.transform.position);
 
-        //振る状態時なら50カウント後に待機状態に戻す
-        if (this.animator.GetBool("is_RightShake") == true)
+        //違和感のない範囲にいたら
+        if (dis <= 35)
         {
-            motionCnt++;
+            // Debug.Log("現在の距離: " + dis);
 
-            if (motionCnt > 0)
+            if (swingFlg == true && animator.GetBool("is_Run") == false)
             {
-                swingFlg = true;
+                //プレイヤーをスイングモーションにする
+                this.animator.SetBool("is_RightShake", true);
+                //Debug.Log("ふるるるるる");
+                motionCnt++;
             }
 
-            if (motionCnt > 140)
+            if (this.animator.GetBool("is_RightShake") == true)
             {
-                motionCnt = 0;
-
-                //プレイヤー状態を待機に変更
-                this.CharaStatus.NowState = 0;
-
-                //プレイヤーを待機モーションにする
-                this.animator.SetBool("is_RightShake", false);
-                swingFlg = false;
+                if ( hitFlg == true)
+                {
+                    resetFlg = true;
+                }
             }
-        }
-
-        //振ったラケットが当たったら
-        if (ball.nowUserTag == "Player" && hitFlg == true && swingFlg == true)
-        {
-            //振る
-            //角度によって判定
-            //スワイプの長さによって判定
-            //プレイヤーから見たとき
-            /*
-             * 0.5 :左上ギリ
-             * 2.5 :右上ギリ
-             */
-
-            Vector2 parameter;
-
-            parameter = TargetPoint();
-            CharaStatus.Rad = parameter.x;
-            CharaStatus.Distance = parameter.y;
-
-            //パラメータちょこっと直接いじってる
-            //Debug.Log(parameter.x + ":::"+ parameter.y);
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20);
-
-            hitFlg = false;
-
-            autoFlg = true;
-
-            miss = Random.Range(0, 20);
         }
     }
+
     private void OnTriggerEnter(Collider collision)
     {
         // 物体がトリガーに接触しとき、１度だけ呼ばれる
@@ -271,9 +348,22 @@ public class AI : MonoBehaviour
         //プレイヤー側のラケットと当たったら
         if (collision.name == "Ball")
         {
-            //Debug.Log("aaa");
+            //Debug.Log("hu");
 
             hitFlg = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider collision)
+    {
+        // 物体がトリガーに離れたとき、１度だけ呼ばれる
+
+        //プレイヤー側のラケットと離れたとき
+        if (collision.name == "Ball")
+        {
+            //Debug.Log("hu");
+
+            hitFlg = false;
         }
     }
 
@@ -303,8 +393,8 @@ public class AI : MonoBehaviour
         }
 
 
-        Debug.Log("pointB:"+ pointB.transform.position.x +":::"+ pointB.transform.position.z);
-        if (mode ==2)
+        // Debug.Log("pointB:"+ pointB.transform.position.x +":::"+ pointB.transform.position.z);
+        if (mode == 2) 
         { 
 
             //プレイヤーのコートの前中央
