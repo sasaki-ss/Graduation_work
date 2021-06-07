@@ -15,6 +15,7 @@ public class AI : MonoBehaviour
     [SerializeField] public Shot Shot;
     [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pointB;
+    [SerializeField] Score score;
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
@@ -34,17 +35,38 @@ public class AI : MonoBehaviour
     void Start()
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
-
-        //if文でこっちがサーブなのか判定してから
+        //こっちサーブの時
         if (ball.nowUserTag == "Player")
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(-105, 0, -25);
+            //if文でこっちがサーブなのか判定してから
+            if (score.user2Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, 25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, -25);
+            }
         }
         else
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(-105, 0, 25);
+            //if文でこっちがサーブなのか判定してから
+            if (score.user1Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, 25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, -25);
+            }
         }
     }
 
@@ -54,7 +76,7 @@ public class AI : MonoBehaviour
         GetComponent<NavMeshAgent>().ResetPath();
 
 
-        player.transform.position = new Vector3(-150,0,0);
+        player.transform.position = new Vector3(-150, 0, 0);
         motionCnt = 0;
         boundFlg = true;
         swingFlg = true;
@@ -64,16 +86,38 @@ public class AI : MonoBehaviour
         dis = 0;
         miss = 0;
 
-        //if文でこっちがサーブなのか判定してから
+        //こっちサーブの時
         if (ball.nowUserTag == "Player")
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(-105, 0, -25);
+            //if文でこっちがサーブなのか判定してから
+            if (score.user2Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, 25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, -25);
+            }
         }
         else
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(-105, 0, 25);
+            //if文でこっちがサーブなのか判定してから
+            if (score.user1Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, 25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(-105, 0, -25);
+            }
         }
 
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -84,7 +128,7 @@ public class AI : MonoBehaviour
 
     void Update()
     {
-        if (Base.InitCnt == 1) 
+        if (Base.InitCnt == 1)
         {
             Init();
         }
@@ -122,7 +166,7 @@ public class AI : MonoBehaviour
 
             //パラメータちょこっと直接いじってる
             //Debug.Log(parameter.x + ":::"+ parameter.y);
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20,0);
 
             start_SwingFlg = false;
 
@@ -134,7 +178,7 @@ public class AI : MonoBehaviour
         }
 
         //ミスってもカウント後は元に戻しておく
-        if(motionCnt >300)
+        if (motionCnt > 300)
         {
             this.animator.SetBool("is_RightShake", false);
             motionCnt = 0;
@@ -154,12 +198,12 @@ public class AI : MonoBehaviour
         //z55～z-55がAIコートの内側
 
         int patternX = 0;
-        int patternZ= 0;
+        int patternZ = 0;
 
         //Xの場合
-        if (pointB.transform.position.x < -7 && pointB.transform.position.x >= -30) 
+        if (pointB.transform.position.x < -7 && pointB.transform.position.x >= -30)
         {
-           // Debug.Log("-7～-30");
+            // Debug.Log("-7～-30");
             patternX = 1;
         }
         else
@@ -261,10 +305,10 @@ public class AI : MonoBehaviour
         //Debug.Log(xyz.x+ ":　　　:" +xyz.z);
 
         //乱数の設定(設定した数値が出ればAIは動けない)
-        int miss = Random.Range(1,20);
+        int miss = Random.Range(1, 20);
 
         //最初のみ
-        if(start_SwingFlg == true)
+        if (start_SwingFlg == true)
         {
             if (pointB.transform.position.x >= -62 && pointB.transform.position.x <= 0)
             {
@@ -350,7 +394,7 @@ public class AI : MonoBehaviour
 
             if (this.animator.GetBool("is_RightShake") == true)
             {
-                if ( hitFlg == true)
+                if (hitFlg == true)
                 {
                     resetFlg = true;
                 }
@@ -411,8 +455,8 @@ public class AI : MonoBehaviour
 
 
         // Debug.Log("pointB:"+ pointB.transform.position.x +":::"+ pointB.transform.position.z);
-        if (mode == 2) 
-        { 
+        if (mode == 2)
+        {
 
             //プレイヤーのコートの前中央
             if (pointB.transform.position.x < 0 && pointB.transform.position.x > -40)
@@ -448,7 +492,7 @@ public class AI : MonoBehaviour
             }
         }
 
-        if(mode == 4)
+        if (mode == 4)
         {
 
             targetPointX = Random.Range(1, 25) / 10;

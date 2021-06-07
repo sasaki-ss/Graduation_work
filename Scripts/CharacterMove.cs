@@ -15,29 +15,51 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] GameObject net;
     [SerializeField] Ball ball;
     [SerializeField] GameObject pointB;
+    [SerializeField] Score score;
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-     int motionCnt = 0;
-    bool autoFlg   = false;
-    bool swingFlg  = false;
+    int motionCnt = 0;
+    bool autoFlg = false;
+    bool swingFlg = false;
     bool hitFlg = false;
 
     void Start()
     {
-        //if文でこっちがサーブなのか判定してから
+        //if文で判定してから場所決め
+        //こっちサーブの時
         if (ball.nowUserTag == "Player2")
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(105, 0, -25);
+            if (score.user1Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, -25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, 25);
+            }
         }
         else
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(105, 0, 25);
+            if (score.user2Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, -25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, 25);
+            }
         }
 
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -54,19 +76,39 @@ public class CharacterMove : MonoBehaviour
         //現状の移動指定地を削除
         GetComponent<NavMeshAgent>().ResetPath();
 
-        //if文でこっちがサーブなのか判定してから
-
-        if(ball.nowUserTag =="Player2")
+        //if文で判定してから場所決め
+        //こっちサーブの時
+        if (ball.nowUserTag == "Player2")
         {
-           //対角線上に配置する予定
-           player.transform.position = new Vector3(105,0,-25);
+            if (score.user1Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, -25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, 25);
+            }
         }
         else
         {
-            //対角線上に配置する予定
-            player.transform.position = new Vector3(105, 0, 25);
+            if (score.user2Score % 2 == 0)
+            {
+                //奇数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, -25);
+            }
+            else
+            {
+                //偶数
+                //対角線上に配置する予定
+                player.transform.position = new Vector3(105, 0, 25);
+            }
         }
-   
+
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
         Base.InitCnt += 1;
@@ -75,7 +117,7 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
-        if (Base.InitCnt == 2) 
+        if (Base.InitCnt == 2)
         {
             Init();
         }
@@ -264,7 +306,7 @@ public class CharacterMove : MonoBehaviour
                     break;
             }
 
-            if(xyz.x!=0&& xyz.z!=0)
+            if (xyz.x != 0 && xyz.z != 0)
             {
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
@@ -345,10 +387,10 @@ public class CharacterMove : MonoBehaviour
         {
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
-
+            //Debug.Log(Shot.GetTapTime);
+            //Debug.Log(Shot.GetPower);
             //振る
-            Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
-
+            Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime);
             //自動移動フラグがたつ
             autoFlg = true;
 
