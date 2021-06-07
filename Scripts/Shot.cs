@@ -12,6 +12,7 @@ public class Shot : MonoBehaviour
     private static double MAX_TAPTIME = FRAME * 2;   //タップ時間の最大
 
     private double tapTime;   //タップしている時間
+    private double kTapTime;  //保存用
     private double power;     //プレイヤーに渡す用の変数
     
     private Vector2 tapStart; //タップし始めた場所
@@ -23,7 +24,7 @@ public class Shot : MonoBehaviour
 
     public double GetTapTime
     {
-        get { return tapTime; }
+        get { return kTapTime; }
     }
     public double GetPower
     {
@@ -112,6 +113,7 @@ public class Shot : MonoBehaviour
     void PowerConversion()
     {   //入力時間をパワーに変換する
         power = tapTime / (FRAME / 2);  //時間によるパワーの計算式 tapTime/30 で最大値4になる  
+        kTapTime = tapTime;
         //Debug.Log("入力時間"+power);
     }
 

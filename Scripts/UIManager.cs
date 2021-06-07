@@ -153,9 +153,6 @@ public class UIManager : MonoBehaviour
         {
             RoundBetween();                                                 //ƒ‰ƒEƒ“ƒh‚ÌŠÔ‚ÌUI‚Ì¶¬ŠÇ—x
         }
-        Debug.Log("i"+i);
-        Debug.Log("j"+j);
-        Debug.Log("r"+r);
 
     }
 
