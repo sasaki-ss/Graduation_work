@@ -95,7 +95,7 @@ public class CharaStatus : MonoBehaviour
         //スタミナが3割の時の移動速度
         else if(charaStamina >= maxStamina / 10 * 3 && charaStamina < maxStamina / 10 * 5)
         {
-            charaSpeed = 25;
+            charaSpeed = 30;
             //Debug.Log("すたみな3割：");
         }
         //スタミナが5割の時の移動速度

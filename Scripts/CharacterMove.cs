@@ -33,24 +33,41 @@ public class CharacterMove : MonoBehaviour
 
     void Init()
     {
-        player.transform.position = new Vector3(105, 0, 0);
+        player.transform.position = new Vector3(110, 0, 0);
         motionCnt = 0;
         autoFlg = false;
         swingFlg = false;
         hitFlg = false;
+
+        //現状の移動指定地を削除
+        GetComponent<NavMeshAgent>().ResetPath();
+
         //if文でこっちがサーブなのか判定してから
-        /*
-        if()
+
+        if(ball.nowUserTag =="Player2")
         {
            //対角線上に配置する予定
-           player.transform.position = new Vector3(-105,0,0);
+           player.transform.position = new Vector3(105,0,-25);
         }
-        */
+        else
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(105, 0, 25);
+        }
+   
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
+
+        Base.InitCnt += 1;
+        Debug.Log("Player");
     }
 
     void Update()
     {
+        if (Base.InitCnt == 2) 
+        {
+            Init();
+        }
+
         //コメントアウト
         {
             /*
@@ -123,57 +140,122 @@ public class CharacterMove : MonoBehaviour
     void AutoMove()
     {
         //オート移動処理
-        if (ball.nowUserTag == "Player2" && ball.transform.position.x >= 7)
+        if (ball.nowUserTag == "Player2")
         {
-            if (autoFlg == true)
+            // Debug.Log("x:"+pointB.transform.position.x+ "y:" + pointB.transform.position.y+ "z:" + pointB.transform.position.z );
+
+            //x7～x119がコートの内側
+            //z55～z-55がコートの内側
+
+            int patternX = 0;
+            int patternZ = 0;
+
+            //Xの場合
+            if (pointB.transform.position.x > 7 && pointB.transform.position.x <= 30)
             {
+                // Debug.Log("7～30");
+                patternX = 1;
+            }
+            else
+            if (pointB.transform.position.x > 30 && pointB.transform.position.x <= 60)
+            {
+                //Debug.Log("30～60");
+                patternX = 2;
+            }
+            else
+            if (pointB.transform.position.x > 60 && pointB.transform.position.x <= 90)
+            {
+                //Debug.Log("60～90");
+                patternX = 3;
+            }
+            else
+            if (pointB.transform.position.x > 90 && pointB.transform.position.x <= 119)
+            {
+                //Debug.Log("90～119");
+                patternX = 4;
+            }
+            else
+            {
+                //Debug.Log("119～or7>x");
+                patternX = 0;
+            }
 
-                Vector3 xyz = new Vector3(0, 0, 0);
+            //Zの場合
+            if (pointB.transform.position.z > -55 && pointB.transform.position.z <= -27.5)
+            {
+                //Debug.Log("-55～-27.5");
+                patternZ = 1;
+            }
+            else
+            if (pointB.transform.position.z > -27.5 && pointB.transform.position.z <= 0)
+            {
+                //Debug.Log("-27.5～0");
+                patternZ = 2;
+            }
+            else
+            if (pointB.transform.position.z > 0 && pointB.transform.position.z <= 27.5)
+            {
+                //Debug.Log("0～27.5");
+                patternZ = 3;
+            }
+            else
+            if (pointB.transform.position.z > 27.5 && pointB.transform.position.z <= 55)
+            {
+                //Debug.Log("27.5～55");
+                patternZ = 4;
+            }
+            else
+            {
+                //Debug.Log("55～or-55～");
+                patternZ = 0;
+            }
 
-                //プレイヤーのコートの左側
-                if (pointB.transform.position.z < -40 && pointB.transform.position.z > -0)
-                {
-                    xyz = new Vector3(110, 0, -25);
-                }
+            //Debug.Log(patternX +":::"+ patternZ);
 
-                //プレイヤーのコートの右側 
-                if (pointB.transform.position.z > -9 && pointB.transform.position.z < 9)
-                {
-                    xyz = new Vector3(110, 0, -2);
+            Vector3 xyz = new Vector3(0, 0, 0);
 
-                }
+            //場所に応じて移動(X座標)
+            switch (patternX)
+            {
+                case 1:
+                    xyz.x = 40;
+                    break;
+                case 2:
+                    xyz.x = 70;
+                    break;
+                case 3:
+                    xyz.x = 100;
+                    break;
+                case 4:
+                    xyz.x = 130;
+                    break;
+                default:
+                    break;
+            }
 
-                //プレイヤーのコートの中央
-                if (pointB.transform.position.z > 10 && pointB.transform.position.z < 40)
-                {
-                    xyz = new Vector3(110, 0, 25);
+            //場所に応じて移動(Z座標)
+            switch (patternZ)
+            {
+                case 1:
+                    xyz.z = -40;
+                    break;
+                case 2:
+                    xyz.z = -13;
+                    break;
+                case 3:
+                    xyz.z = 13;
+                    break;
+                case 4:
+                    xyz.z = 40;
+                    break;
+                default:
+                    break;
+            }
 
-                }
-
-                //プレイヤーのコートの前中央
-                if (pointB.transform.position.x < 0 && pointB.transform.position.x > 40)
-                {
-                    xyz = new Vector3(40, 0, 25);
-                }
-
-                //プレイヤーのコートの中央
-                if (pointB.transform.position.x < 41 && pointB.transform.position.x > 80)
-                {
-                    xyz = new Vector3(80, 0, 25);
-
-                }
-
-                //プレイヤーのコートの後中央
-                if (pointB.transform.position.x < 81 && pointB.transform.position.x > 120)
-                {
-                    xyz = new Vector3(110, 0, 25);
-                }
-
+            if(xyz.x!=0&& xyz.z!=0)
+            {
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
-
-                //自動移動は一回のみ
-                autoFlg = false;
             }
         }
     }
@@ -248,8 +330,6 @@ public class CharacterMove : MonoBehaviour
         {
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
-
-            CharaStatus.Distance *=2;
 
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower);
