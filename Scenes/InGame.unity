@@ -371,6 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6517f9ff2df61264e9e5cc143f296368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serveOutAreaObj: []
   winScore: 5
 --- !u!4 &487528677
 Transform:
@@ -989,6 +990,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17e1d462a7148ec4799d883ad5a10e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isSafetyArea: 0
   randingPoint: {fileID: 3968183328985318338, guid: a09540d99ec52d645879281268003818, type: 3}
 --- !u!54 &1172014079
 Rigidbody:
@@ -1666,7 +1668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 835619407247028611, guid: 7ef940602da8e7e4f88ab05e22404322, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 835619407247028611, guid: 7ef940602da8e7e4f88ab05e22404322, type: 3}
       propertyPath: m_LocalPosition.y
