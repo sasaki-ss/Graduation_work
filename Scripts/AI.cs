@@ -302,7 +302,7 @@ public class AI : MonoBehaviour
             this.CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
         }
         else
         {
@@ -344,6 +344,8 @@ public class AI : MonoBehaviour
                 this.animator.SetBool("is_RightShake", true);
                 //Debug.Log("ふるるるるる");
                 motionCnt++;
+                //プレイヤーのスタミナを減らす
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
             }
 
             if (this.animator.GetBool("is_RightShake") == true)

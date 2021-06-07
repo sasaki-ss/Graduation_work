@@ -883,7 +883,7 @@ MonoBehaviour:
   ball: {fileID: 1172014078}
   net: {fileID: 430214870}
   Shot: {fileID: 429837359}
-  gameManager: {fileID: 487528675}
+  gameManager: {fileID: 487528676}
   pointB: {fileID: 2076708612}
 --- !u!1 &1172014073
 GameObject:
@@ -994,7 +994,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17e1d462a7148ec4799d883ad5a10e4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isSafetyArea: 0
   randingPoint: {fileID: 3968183328985318338, guid: a09540d99ec52d645879281268003818, type: 3}
 --- !u!54 &1172014079
 Rigidbody:

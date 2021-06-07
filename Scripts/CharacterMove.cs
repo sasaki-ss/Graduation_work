@@ -284,7 +284,7 @@ public class CharacterMove : MonoBehaviour
             CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.001f;
+            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
         }
         else
         {
@@ -334,6 +334,9 @@ public class CharacterMove : MonoBehaviour
                 animator.SetBool("is_RightShake", false);
 
                 swingFlg = false;
+
+                //プレイヤーのスタミナを減らす
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
             }
         }
 
