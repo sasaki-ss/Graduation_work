@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -15,7 +13,7 @@ public class AI : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject net;
     [SerializeField] public Shot Shot;
-    [SerializeField] GameObject gameManager;
+    [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pointB;
 
     //前の座標と今の座標を比べるために使う変数
@@ -24,19 +22,30 @@ public class AI : MonoBehaviour
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-      int motionCnt = 0;
-     bool swingFlg  = false;
-     bool hitFlg    = false;
+    int motionCnt = 0;
+    bool swingFlg = false;
+    bool hitFlg = false;
     bool resetFlg = false;
+    bool start_SwingFlg = true;
     float dis = 0;
-    
-    //現状動かない
     bool boundFlg = true;
+    int miss = 0;  //移動をしない
 
-    int miss      = 0;  //移動をしない
     void Start()
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
+
+        //if文でこっちがサーブなのか判定してから
+        if (ball.nowUserTag == "Player")
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(-105, 0, -25);
+        }
+        else
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(-105, 0, 25);
+        }
     }
 
     public void Init()
@@ -48,7 +57,8 @@ public class AI : MonoBehaviour
         player.transform.position = new Vector3(-150,0,0);
         motionCnt = 0;
         boundFlg = true;
-        swingFlg = false;
+        swingFlg = true;
+        start_SwingFlg = false;
         resetFlg = false;
         hitFlg = false;
         dis = 0;
@@ -113,6 +123,8 @@ public class AI : MonoBehaviour
             //パラメータちょこっと直接いじってる
             //Debug.Log(parameter.x + ":::"+ parameter.y);
             Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20);
+
+            start_SwingFlg = false;
 
             this.animator.SetBool("is_RightShake", false);
             motionCnt = 0;
@@ -212,16 +224,16 @@ public class AI : MonoBehaviour
         switch (patternX)
         {
             case 1:
-                xyz.x = -40;
+                xyz.x = -45;
                 break;
             case 2:
-                xyz.x = -70;
+                xyz.x = -75;
                 break;
             case 3:
-                xyz.x = -100;
+                xyz.x = -105;
                 break;
             case 4:
-                xyz.x = -130;
+                xyz.x = -135;
                 break;
             default:
                 break;
@@ -251,25 +263,28 @@ public class AI : MonoBehaviour
         //乱数の設定(設定した数値が出ればAIは動けない)
         int miss = Random.Range(1,20);
 
-        float disZ = this.transform.position.z - pointB.transform.position.z;
-
-        if (disZ <= -15)
+        //最初のみ
+        if(start_SwingFlg == true)
         {
-            xyz.z += 25;
+            if (pointB.transform.position.x >= -62 && pointB.transform.position.x <= 0)
+            {
+                if (miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
+                {
+                    //移動させる
+                    GetComponent<NavMeshAgent>().destination = xyz;
+                    swingFlg = true;
+                }
+            }
         }
+        //通常
         else
-        if (disZ >= 15)
         {
-            xyz.z -= 25;
-        }
-
-        //バウンドカウントとサーブフラグを参照して最初のサーブだけワンバウンドしてから反応させる
-        //※上記の処理はまだない
-        if (miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0) 
-        {
-            //移動させる
-            GetComponent<NavMeshAgent>().destination = xyz;
-            swingFlg = true;
+            if (gameManager.gameState != GameState.Serve && miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
+            {
+                //移動させる
+                GetComponent<NavMeshAgent>().destination = xyz;
+                swingFlg = true;
+            }
         }
 
         //Debug.Log(swingFlg);
@@ -319,7 +334,7 @@ public class AI : MonoBehaviour
         float dis = Vector3.Distance(this.transform.position, pointB.transform.position);
 
         //違和感のない範囲にいたら
-        if (dis <= 35)
+        if (dis <= 50)
         {
             // Debug.Log("現在の距離: " + dis);
 
