@@ -28,6 +28,18 @@ public class CharacterMove : MonoBehaviour
 
     void Start()
     {
+        //if文でこっちがサーブなのか判定してから
+        if (ball.nowUserTag == "Player2")
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(105, 0, -25);
+        }
+        else
+        {
+            //対角線上に配置する予定
+            player.transform.position = new Vector3(105, 0, 25);
+        }
+
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
