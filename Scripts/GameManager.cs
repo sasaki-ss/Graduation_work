@@ -126,6 +126,7 @@ public class GameManager : MonoBehaviour
         if(ball.boundCount >= 2 && !isAddScore)
         {
             score.AddScore(ball.nowUserTag);
+            Debug.Log("“¾“_‚ª“ü‚è‚Ü‚µ‚½I " + ball.nowUserTag);
         }
         #endregion
 

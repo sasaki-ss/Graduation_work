@@ -11,12 +11,13 @@ public class Ball : MonoBehaviour
     private Vector3     endPoint;       //終点地点
     private Vector3     diff;           //距離
     private int         nowShotUser;    //現在打っているユーザー
+    private int         colCoolTime;    //当たり判定クールタイム
     private float       flightTime;     //滞空時間
     private float       speedRate;      //滞空時間を基準とした移動速度倍率
     private float       e;              //反発係数
     private bool        isBound;        //バウンドフラグ
     private bool        isProjection;   //投射フラグ
-    [SerializeField]
+    private bool        isCoolTime;     //クールタイムフラグ
     private bool        isSafetyArea;   //セーフティエリアフラグ
 
     /*プロパティ関連*/
@@ -64,6 +65,13 @@ public class Ball : MonoBehaviour
     //物理演算が行われる際の処理
     private void FixedUpdate()
     {
+        if(colCoolTime == 10)
+        {
+            isCoolTime = false;
+            colCoolTime = 0;
+        }
+        Debug.Log("バウンド回数 : " + boundCount);
+
         //ネットに当たってるとき
         if (isNet)
         {
@@ -88,6 +96,8 @@ public class Ball : MonoBehaviour
             coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
                 speedRate, Physics.gravity.y));
         }
+
+        if (isCoolTime) colCoolTime++;
     }
 
     private IEnumerator ProjectileMotion(Vector3 _endPoint, float _flightTime,
@@ -119,26 +129,8 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-
-        Debug.Log(other.gameObject.name);
-
-        //ゲームの状態がサーブの場合
-        if(GameManager.instance.gameState == GameState.Serve)
-        {
-            if (other.gameObject.CompareTag("ServeArea"))
-            {
-                Debug.Log("サーブ成功");
-                GameManager.instance.gameState = GameState.DuringRound;
-                GameManager.instance.ChangeField();
-                //boundCount++;
-            }
-            else if (!other.gameObject.CompareTag("SwingArea"))
-            {
-                Debug.Log("サーブ失敗");
-            }
-        }
-
-        if(GameManager.instance.gameState == GameState.DuringRound)
+        if (isCoolTime) return;
+        if (GameManager.instance.gameState == GameState.DuringRound)
         {
             //ボールがネットに当たった際
             if (other.gameObject.CompareTag("Net"))
@@ -161,6 +153,26 @@ public class Ball : MonoBehaviour
 
                 //アウトエリアの場合
                 if (!isSafetyArea && boundCount == 1) isOut = true;
+
+                isCoolTime = true;
+            }
+        }
+
+        //ゲームの状態がサーブの場合
+        if (GameManager.instance.gameState == GameState.Serve)
+        {
+            if (other.gameObject.CompareTag("ServeArea"))
+            {
+                Debug.Log("サーブ成功");
+                GameManager.instance.gameState = GameState.DuringRound;
+                GameManager.instance.ChangeField();
+                //boundCount++;
+
+                isCoolTime = true;
+            }
+            else if (!other.gameObject.CompareTag("SwingArea"))
+            {
+                Debug.Log("サーブ失敗");
             }
         }
     }
@@ -213,11 +225,13 @@ public class Ball : MonoBehaviour
     public void Init()
     {
         boundCount = 0;
+        colCoolTime = 0;
         isBound = false;
         isProjection = false;
         isOut = false;
         isNet = false;
         isSafetyArea = false;
+        isCoolTime = false;
     }
 
     //タグ切り替え処理
@@ -238,6 +252,8 @@ public class Ball : MonoBehaviour
         nowUserTag = userObj[nowShotUser].name;
         //バウンド回数もリセットする
         boundCount = 0;
+
+        Debug.Log("バウンド回数をリセットしました " + Time.time);
     }
 
     //着地地点生成処理
