@@ -155,14 +155,15 @@ public class Base : MonoBehaviour
     }
 
     //共通処理　スイング
-    public void Swing(double _power, double _flight)
+    public void Swing(double _power, double _flight, double _taptime)
     {
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
         //この二つ変数をProjectileMotion関数に渡す
         //とりあえず最低4秒滞空時間があるとしてます　(4～6秒)
-        flightTime = (float)_flight / 60 + 4;
+        flightTime = (float)_flight / 60 + (float)_taptime;
+        //Debug.Log(flightTime);
         //Debug.Log("a" + flightTime);
         //とりあえず5で割ってます
         speed = (float)_power / 6;
