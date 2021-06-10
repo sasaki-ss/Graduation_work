@@ -8,7 +8,6 @@ public class Base : MonoBehaviour
 {
     [SerializeField] Ball ball;
 
-
     //タッチ時に使う処理
     Vector2 touch;
     Vector3 touchPosition;
@@ -59,7 +58,18 @@ public class Base : MonoBehaviour
         //ここにProjectileMotion関数で使うための情報を入れる関数が来る
         if (flg == true)
         {
-            ball.Strike(flightTime, speed);
+            //サーブフラグをオフに
+            if (GameManager.instance.isServe == true)
+            {
+                GameManager.instance.isServe = false;
+                ball.Serve(flightTime, speed);
+            }
+            //ラリーとかでのスイングの時
+            else
+            {
+                ball.Strike(flightTime, speed);
+            }
+
             flg = false;
         }
     }
@@ -156,25 +166,18 @@ public class Base : MonoBehaviour
     //共通処理　スイング
     public void Swing(double _power, double _flight, double _taptime)
     {
-        //サーブフラグをオフに
-        if(GameManager.instance.isServe == true)
-        {
-            GameManager.instance.isServe = false;
-        }
-
-
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
         //この二つ変数をProjectileMotion関数に渡す
-        //とりあえず最低4秒滞空時間があるとしてます　(4～6秒)
-        flightTime = (float)_flight / 60 + (float)_taptime;
+        //とりあえず最低4秒滞空時間があるとしてます　
+        flightTime = (float)_flight / 60 + (float)_taptime / 5;
         //Debug.Log(flightTime);
         //Debug.Log("a" + flightTime);
         //とりあえず5で割ってます
         speed = (float)_power / 6;
 
-        flg = true;
+        flg = true;    
     }
 }
 

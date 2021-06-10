@@ -209,6 +209,31 @@ public class CharacterMove : MonoBehaviour
 
                     GetComponent<NavMeshAgent>().destination = xyz;          
                 }
+                else
+                {
+                    //スイングAnimationにする予定
+                    animator.SetBool("is_RightShake", true);
+
+                    //円の大きさを測る
+                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+
+                    //プレイヤー状態を振るに変更
+                    CharaStatus.NowState = 2;
+
+                    CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                    CharaStatus.Distance = (float)Shot.GetDistance;   //距離
+
+                    float a = 0, b = 0;
+
+                    //振る
+                    a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 5 ;
+                    b = (float)CharaStatus.CharaPower / 6;
+
+                    //サーブフラグオフ
+                    GameManager.instance.isServe = false;
+                    //サーブ関数呼ぶ
+                    ball.Serve(a, b);
+                }
             }
         }
     }
@@ -411,8 +436,12 @@ public class CharacterMove : MonoBehaviour
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
             //Debug.Log(Shot.GetTapTime);
             //Debug.Log(Shot.GetPower);
+
             //振る
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime);
+           
+            
+            
             //自動移動フラグがたつ
             autoFlg = true;
 
