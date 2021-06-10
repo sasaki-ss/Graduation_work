@@ -497,6 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605d56812e2812c4db76a4da1e9cf0d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 487528676}
   ball: {fileID: 0}
 --- !u!4 &521944218
 Transform:
@@ -1148,7 +1149,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -81
+      value: -77.3
       objectReference: {fileID: 0}
     - target: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1401,6 +1402,7 @@ MonoBehaviour:
   ball: {fileID: 1172014078}
   pointB: {fileID: 2076708612}
   score: {fileID: 2132639381}
+  gameManager: {fileID: 487528676}
 --- !u!65 &1834506132
 BoxCollider:
   m_ObjectHideFlags: 0
