@@ -16,7 +16,6 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject pointB;
     [SerializeField] Score score;
-    [SerializeField] GameManager gameManager;
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
@@ -160,7 +159,7 @@ public class CharacterMove : MonoBehaviour
     void TapMove()
     {
         //サーブフラグがtrueならしない
-        if(gameManager.isServe !=true)
+        if(GameManager.instance.isServe!= true)
         {
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)

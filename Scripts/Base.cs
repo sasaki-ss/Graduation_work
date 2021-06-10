@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 public class Base : MonoBehaviour
 {
-    [SerializeField] GameManager gameManager;
     [SerializeField] Ball ball;
 
 
@@ -158,9 +157,9 @@ public class Base : MonoBehaviour
     public void Swing(double _power, double _flight, double _taptime)
     {
         //サーブフラグをオフに
-        if(gameManager.isServe == true)
+        if(GameManager.instance.isServe == true)
         {
-            gameManager.isServe = false;
+            GameManager.instance.isServe = false;
         }
 
 
