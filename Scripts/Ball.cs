@@ -187,7 +187,33 @@ public class Ball : MonoBehaviour
         }
     }
 
-    //打つ処理
+    #region サーブ処理
+    public void Serve(float _flightTime,float _speedRate)
+    {
+        rb.isKinematic = true;
+        rb.useGravity = true;
+
+        //サーブ用のコルーチンを開始
+        coroutine = StartCoroutine(ThrowBall(_flightTime,_speedRate));
+    }
+
+    private IEnumerator ThrowBall(float _flightTime, float _speedRate)
+    {
+        flightTime = _flightTime;
+        speedRate = _speedRate;
+
+        rb.AddForce(new Vector3(0f, 10f, 0f), ForceMode.Impulse);
+
+        while (this.transform.position.y >= 8.0f)
+        {
+            yield return null;
+        }
+
+        Strike(flightTime, speedRate);
+    }
+    #endregion
+
+    #region 打つ処理
     public void Strike(float _flightTime, float _speedRate)
     {
         if(GameManager.instance.gameState == GameState.Serve &&
@@ -231,6 +257,7 @@ public class Ball : MonoBehaviour
         coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
             speedRate, Physics.gravity.y));
     }
+    #endregion
 
     public void Init()
     {
