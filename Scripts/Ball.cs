@@ -6,19 +6,20 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     /*このスクリプトでのみ使う変数*/
-    private Rigidbody   rb;             //Rigidbody
-    private Coroutine   coroutine;      //コルーチン
-    private Vector3     endPoint;       //終点地点
-    private Vector3     diff;           //距離
-    private User        nowShotUser;    //現在打っているユーザー
-    private int         colCoolTime;    //当たり判定クールタイム
-    private float       flightTime;     //滞空時間
-    private float       speedRate;      //滞空時間を基準とした移動速度倍率
-    private float       e;              //反発係数
-    private bool        isBound;        //バウンドフラグ
-    private bool        isProjection;   //投射フラグ
-    private bool        isCoolTime;     //クールタイムフラグ
-    private bool        isSafetyArea;   //セーフティエリアフラグ
+    private Rigidbody       rb;             //Rigidbody
+    private TrailRenderer   tr;             //TrailRenderer
+    private Coroutine       coroutine;      //コルーチン
+    private Vector3         endPoint;       //終点地点
+    private Vector3         diff;           //距離
+    private User            nowShotUser;    //現在打っているユーザー
+    private int             colCoolTime;    //当たり判定クールタイム
+    private float           flightTime;     //滞空時間
+    private float           speedRate;      //滞空時間を基準とした移動速度倍率
+    private float           e;              //反発係数
+    private bool            isBound;        //バウンドフラグ
+    private bool            isProjection;   //投射フラグ
+    private bool            isCoolTime;     //クールタイムフラグ
+    private bool            isSafetyArea;   //セーフティエリアフラグ
 
     /*プロパティ関連*/
     public string       nowUserTag { get; private set; }    //タグ
@@ -35,6 +36,10 @@ public class Ball : MonoBehaviour
     {
         //Rigidbodyを取得
         rb = this.GetComponent<Rigidbody>();
+        //TrailRendererを取得
+        tr = this.GetComponent<TrailRenderer>();
+
+        tr.time = 0f;
 
         //Userオブジェクトを取得
         userObj = new GameObject[2];
@@ -122,6 +127,8 @@ public class Ball : MonoBehaviour
 
         isProjection = true;
 
+        tr.time = 0.5f;
+
         for (float t = 0f; t < _flightTime; t += (Time.deltaTime * _speedRate))
         {
             Vector3 p = Vector3.Lerp(startPoint, _endPoint,
@@ -135,6 +142,8 @@ public class Ball : MonoBehaviour
         }
         isBound = true;
         isProjection = false;
+
+        tr.time = 0f;
     }
 
     private void OnCollisionEnter(Collision other)
