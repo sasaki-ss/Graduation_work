@@ -371,7 +371,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6517f9ff2df61264e9e5cc143f296368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serveOutAreaObj: []
   winScore: 5
 --- !u!4 &487528677
 Transform:
@@ -885,6 +884,7 @@ MonoBehaviour:
   Shot: {fileID: 429837359}
   gameManager: {fileID: 487528676}
   pointB: {fileID: 2076708612}
+  score: {fileID: 2132639381}
 --- !u!1 &1172014073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1400,6 +1400,7 @@ MonoBehaviour:
   net: {fileID: 430214870}
   ball: {fileID: 1172014078}
   pointB: {fileID: 2076708612}
+  score: {fileID: 2132639381}
 --- !u!65 &1834506132
 BoxCollider:
   m_ObjectHideFlags: 0

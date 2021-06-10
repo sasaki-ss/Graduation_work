@@ -43,13 +43,13 @@ public class AI : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, 25);
+                player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, -25);
+                player.transform.position = new Vector3(-125, 0, -25);
             }
         }
         else
@@ -59,13 +59,13 @@ public class AI : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, 25);
+                player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, -25);
+                player.transform.position = new Vector3(-125, 0, -25);
             }
         }
     }
@@ -76,7 +76,7 @@ public class AI : MonoBehaviour
         GetComponent<NavMeshAgent>().ResetPath();
 
 
-        player.transform.position = new Vector3(-150, 0, 0);
+        player.transform.position = new Vector3(-125, 0, 0);
         motionCnt = 0;
         boundFlg = true;
         swingFlg = true;
@@ -94,13 +94,13 @@ public class AI : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, 25);
+                player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, -25);
+                player.transform.position = new Vector3(-125, 0, -25);
             }
         }
         else
@@ -110,13 +110,13 @@ public class AI : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, 25);
+                player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(-105, 0, -25);
+                player.transform.position = new Vector3(-125, 0, -25);
             }
         }
 
