@@ -16,6 +16,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject pointB;
     [SerializeField] Score score;
+    [SerializeField] GameManager gameManager;
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
@@ -158,35 +159,57 @@ public class CharacterMove : MonoBehaviour
 
     void TapMove()
     {
-        //クリック
-        if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
+        //サーブフラグがtrueならしない
+        if(gameManager.isServe !=true)
         {
-            //現状の移動指定地を削除
-            GetComponent<NavMeshAgent>().ResetPath();
-
-            //クリック時間によって処理を分ける
-            if (Shot.GetTapTime <= 10)
+            //クリック
+            if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
-                //移動の処理
-                Vector3 xyz = Base.Move(Input.mousePosition, hit);
+                //現状の移動指定地を削除
+                GetComponent<NavMeshAgent>().ResetPath();
 
-                //ネット越えないように
-                if (xyz.x >= 20)
+                //クリック時間によって処理を分ける
+                if (Shot.GetTapTime <= 10)
                 {
-                    GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
+                    //移動の処理
+                    Vector3 xyz = Base.Move(Input.mousePosition, hit);
+
+                    //ネット越えないように
+                    if (xyz.x >= 20)
+                    {
+                        GetComponent<NavMeshAgent>().destination = Base.Move(Input.mousePosition, hit);
+                    }
+                }
+                //長押し
+                else
+                {
+                    //スイングAnimationにする予定
+                    animator.SetBool("is_RightShake", true);
+
+                    //円の大きさを測る
+                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+
+                    //プレイヤー状態を振るに変更
+                    CharaStatus.NowState = 2;
                 }
             }
-            //長押し
-            else
+        }
+        //横移動のみ
+        else
+        {
+            //クリック
+            if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
-                //スイングAnimationにする予定
-                animator.SetBool("is_RightShake", true);
+                //クリック時間によって処理を分ける
+                if (Shot.GetTapTime <= 10)
+                {
+                    //移動の処理
+                    Vector3 xyz = Base.Move(Input.mousePosition, hit);
 
-                //円の大きさを測る
-                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+                    xyz.x = 125;
 
-                //プレイヤー状態を振るに変更
-                CharaStatus.NowState = 2;
+                    GetComponent<NavMeshAgent>().destination = xyz;          
+                }
             }
         }
     }

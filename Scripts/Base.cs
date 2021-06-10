@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class Base : MonoBehaviour
 {
-
+    [SerializeField] GameManager gameManager;
     [SerializeField] Ball ball;
 
 
@@ -157,6 +157,13 @@ public class Base : MonoBehaviour
     //共通処理　スイング
     public void Swing(double _power, double _flight, double _taptime)
     {
+        //サーブフラグをオフに
+        if(gameManager.isServe == true)
+        {
+            gameManager.isServe = false;
+        }
+
+
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
