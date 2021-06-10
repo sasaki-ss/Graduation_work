@@ -37,13 +37,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, -25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, 25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
         else
@@ -52,13 +52,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, -25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, 25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
 
@@ -67,7 +67,7 @@ public class CharacterMove : MonoBehaviour
 
     void Init()
     {
-        player.transform.position = new Vector3(110, 0, 0);
+        player.transform.position = new Vector3(125, 0, 0);
         motionCnt = 0;
         autoFlg = false;
         swingFlg = false;
@@ -84,13 +84,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, -25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, 25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
         else
@@ -99,13 +99,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //Šï”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, -25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //‹ô”
                 //‘ÎŠpüã‚É”z’u‚·‚é—\’è
-                player.transform.position = new Vector3(105, 0, 25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
 
