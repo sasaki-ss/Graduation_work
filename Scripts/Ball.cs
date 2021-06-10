@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
     private Coroutine   coroutine;      //コルーチン
     private Vector3     endPoint;       //終点地点
     private Vector3     diff;           //距離
-    private int         nowShotUser;    //現在打っているユーザー
+    private User        nowShotUser;    //現在打っているユーザー
     private int         colCoolTime;    //当たり判定クールタイム
     private float       flightTime;     //滞空時間
     private float       speedRate;      //滞空時間を基準とした移動速度倍率
@@ -56,7 +56,7 @@ public class Ball : MonoBehaviour
     private void Start()
     {
         //打っているユーザーの初期化
-        nowShotUser = 0;
+        nowShotUser = User.User2;
         TagChange();
 
         Init();
@@ -65,39 +65,49 @@ public class Ball : MonoBehaviour
     //物理演算が行われる際の処理
     private void FixedUpdate()
     {
-        if(colCoolTime == 10)
+        if (GameManager.instance.isServe)
         {
-            isCoolTime = false;
-            colCoolTime = 0;
-        }
-        Debug.Log("バウンド回数 : " + boundCount);
+            Vector3 pPos = userObj[(int)GameManager.instance.serveUser].transform.position;
+            Vector3 pForwardVec = userObj[(int)GameManager.instance.serveUser].transform.forward;
 
-        //ネットに当たってるとき
-        if (isNet)
+            this.transform.position = new Vector3(pPos.x, 10f, pPos.z) + (pForwardVec * 5);
+        }
+        else
         {
-            //コルーチンを停止する
-            StopCoroutine(coroutine);
-        }
+            if (colCoolTime == 10)
+            {
+                isCoolTime = false;
+                colCoolTime = 0;
+            }
+            Debug.Log("バウンド回数 : " + boundCount);
 
-        //滞空時間が0.005f以下の場合バウンドを停止させる
-        if (isBound && flightTime < 1f)
-        {
-            isBound = false;
-        }
+            //ネットに当たってるとき
+            if (isNet)
+            {
+                //コルーチンを停止する
+                StopCoroutine(coroutine);
+            }
 
-        //バウンドの処理
-        if (isBound && !isProjection)
-        {
-            //到達地点、滞空時間、速度倍率に反発係数をかける
-            //物理法則は多分無視してる
-            endPoint += diff * e;
-            flightTime *= e;
-            speedRate *= e;
-            coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
-                speedRate, Physics.gravity.y));
-        }
+            //滞空時間が0.005f以下の場合バウンドを停止させる
+            if (isBound && flightTime < 1f)
+            {
+                isBound = false;
+            }
 
-        if (isCoolTime) colCoolTime++;
+            //バウンドの処理
+            if (isBound && !isProjection)
+            {
+                //到達地点、滞空時間、速度倍率に反発係数をかける
+                //物理法則は多分無視してる
+                endPoint += diff * e;
+                flightTime *= e;
+                speedRate *= e;
+                coroutine = StartCoroutine(ProjectileMotion(endPoint, flightTime,
+                    speedRate, Physics.gravity.y));
+            }
+
+            if (isCoolTime) colCoolTime++;
+        }
     }
 
     private IEnumerator ProjectileMotion(Vector3 _endPoint, float _flightTime,
@@ -232,24 +242,27 @@ public class Ball : MonoBehaviour
         isNet = false;
         isSafetyArea = false;
         isCoolTime = false;
+
+        rb.isKinematic = false;
+        rb.useGravity = false;
     }
 
     //タグ切り替え処理
     private void TagChange()
     {
         //ユーザーが0番目のとき
-        if(nowShotUser == 0)
+        if(nowShotUser == User.User1)
         {
-            nowShotUser = 1;
+            nowShotUser = User.User2;
         }
         //ユーザーが1番目のとき
         else
         {
-            nowShotUser = 0;
+            nowShotUser = User.User1;
         }
 
         //タグを指定したユーザーへ変更する
-        nowUserTag = userObj[nowShotUser].name;
+        nowUserTag = userObj[(int)nowShotUser].name;
         //バウンド回数もリセットする
         boundCount = 0;
 

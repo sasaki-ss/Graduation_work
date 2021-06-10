@@ -17,10 +17,18 @@ public class UserScoreData
     }
 }
 
+//ゲーム状態
 public enum GameState
 {
-   Serve,
-   DuringRound
+   Serve,           //サーブ
+   DuringRound      //ラウンド
+}
+
+//サーブユーザー
+public enum User
+{
+    User1,      //ユーザー1
+    User2       //ユーザー2
 }
 
 //ゲームマネージャー
@@ -33,17 +41,18 @@ public class GameManager : MonoBehaviour
     private Score               score;              //スコアクラス
     private GameObject          serveAreaObj;       //サーブエリアオブジェクト
     private GameObject          safetyAreaObj;      //セーフティエリアオブジェクト
-    [SerializeField]
     private GameObject[]        serveOutAreaObj;    //サーブアウトエリアオブジェクト
     private Vector3[]           serveAreaPos;       //セーブエリアの座標
-    private int                 serveUser;          //サーブするユーザー
+    private int                 serveMissCnt;       //サーブミス回数
     private int                 changeCount;        //ラウンドカウント
 
     /*プロパティ関連*/
-    public bool isDeuce { get; set; }           //デュースフラグ
-    public bool isAddScore { get; set; }        //スコアフラグ
-    public bool isNextRound { get; set; }       //次のラウンドフラグ
-    public GameState gameState { get; set; }    //ゲームの状態
+    public bool         isDeuce { get; set; }              //デュースフラグ
+    public bool         isAddScore { get; set; }           //スコアフラグ
+    public bool         isNextRound { get; set; }          //次のラウンドフラグ
+    public bool         isServe { get; set; }               //サーブフラグ
+    public GameState    gameState { get; set; }            //ゲームの状態
+    public User         serveUser { get; private set; }    //サーブするユーザー
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -65,10 +74,12 @@ public class GameManager : MonoBehaviour
 
         instance = this;
         isDeuce = false;
+        isServe = true;
         isAddScore = false;
         isNextRound = false;
 
         gameState = GameState.Serve;
+        serveUser = User.User1;
 
         serveAreaPos = new Vector3[4]
         {
@@ -78,7 +89,7 @@ public class GameManager : MonoBehaviour
             new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
-        serveUser = 0;
+        serveMissCnt = 0;
         changeCount = 2;
 
         ServeAreaPosChange();
@@ -106,19 +117,7 @@ public class GameManager : MonoBehaviour
         //アウトの場合
         if ((ball.isOut || ball.isNet) && !isAddScore)
         {
-            string addScoreUser = ball.nowUserTag;
-
-            //タグを反転させる
-            if (addScoreUser == "Player")
-            {
-                addScoreUser = "Player2";
-            }
-            else
-            {
-                addScoreUser = "Player";
-            }
-
-            score.AddScore(addScoreUser);
+            score.AddScore(InversionTag(ball.nowUserTag));
         }
 
         //バウンド回数が2回以上の場合
@@ -156,20 +155,20 @@ public class GameManager : MonoBehaviour
     //サーバーユーザーを切り替える
     private void ServeUserChange()
     {
-        if(serveUser == 1)
+        if(serveUser == User.User2)
         {
-            serveUser = 0;
+            serveUser = User.User1;
         }
         else
         {
-            serveUser = 1;
+            serveUser = User.User2;
         }
     }
 
     private void ServeAreaPosChange()
     {
         //サーブユーザーがプレイヤー1の場合
-        if (serveUser == 0)
+        if (serveUser == User.User1)
         {
             //スコアが偶数の場合
             if (score.user1Score % 2 == 0)
@@ -250,5 +249,38 @@ public class GameManager : MonoBehaviour
 
         serveAreaObj.SetActive(false);
         safetyAreaObj.SetActive(true);
+    }
+
+
+    private string InversionTag(string _str)
+    {
+        //タグを反転させる
+        if (_str == "Player")
+        {
+            _str = "Player2";
+        }
+        else
+        {
+            _str = "Player";
+        }
+
+        return _str;
+    }
+
+    public void FaultProc()
+    {
+
+        //ボールを取得
+        Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
+
+        switch (serveMissCnt)
+        {
+        case 0:
+            serveMissCnt++;
+            break;
+        case 1:
+            score.AddScore(InversionTag(ball.nowUserTag));
+            break;
+        }
     }
 }
