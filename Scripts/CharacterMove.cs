@@ -38,12 +38,16 @@ public class CharacterMove : MonoBehaviour
                 //奇数
                 //対角線上に配置する予定
                 player.transform.position = new Vector3(125, 0, -25);
+                Debug.Log("1");
+                double a = 0 % 2;
+                Debug.Log(a);
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, 25);
+                player.transform.position = new Vector3(125, 0, -25);
+                Debug.Log("2");
             }
         }
         else
@@ -52,13 +56,15 @@ public class CharacterMove : MonoBehaviour
             {
                 //奇数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, -25);
+                player.transform.position = new Vector3(125, 0, 25);
+                Debug.Log("3");
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, 25);
+                player.transform.position = new Vector3(125, 0, -25);
+                Debug.Log("4");
             }
         }
 
@@ -206,6 +212,33 @@ public class CharacterMove : MonoBehaviour
                     Vector3 xyz = Base.Move(Input.mousePosition, hit);
 
                     xyz.x = 125;
+
+                    //プレイヤー視点からだと自コートの右側
+                    if (this.transform.position.z >= 0) 
+                    {
+                        if (xyz.z <= 0)
+                        {
+                            xyz.z = 3;
+                        }
+                        else
+                        if (xyz.z > 45)
+                        {
+                            xyz.z = 42;
+                        }
+                    }
+                    //プレイヤー視点からだと自コートの左側
+                    else
+                    {
+                        if (xyz.z > 0)
+                        {
+                            xyz.z = -3;
+                        }
+                        else
+                        if (xyz.z < -45)
+                        {
+                            xyz.z = -42;
+                        }
+                    }
 
                     GetComponent<NavMeshAgent>().destination = xyz;          
                 }
