@@ -72,6 +72,7 @@ public class Ball : MonoBehaviour
     {
         if (GameManager.instance.isServe)
         {
+            Debug.Log("追従中");
             Vector3 pPos = userObj[(int)GameManager.instance.serveUser].transform.position;
             Vector3 pForwardVec = userObj[(int)GameManager.instance.serveUser].transform.forward;
 
@@ -199,17 +200,17 @@ public class Ball : MonoBehaviour
     #region サーブ処理
     public void Serve(float _flightTime,float _speedRate)
     {
-        rb.isKinematic = true;
-        rb.useGravity = true;
-
         //サーブ用のコルーチンを開始
         coroutine = StartCoroutine(ThrowBall(_flightTime,_speedRate));
     }
 
     private IEnumerator ThrowBall(float _flightTime, float _speedRate)
     {
+        Debug.Log("=======上昇開始=======");
         flightTime = _flightTime;
         speedRate = _speedRate;
+        rb.isKinematic = false;
+        rb.useGravity = true;
 
         rb.AddForce(new Vector3(0f, 10f, 0f), ForceMode.Impulse);
 
@@ -217,6 +218,8 @@ public class Ball : MonoBehaviour
         {
             yield return null;
         }
+
+        Debug.Log("=======発射！！=======");
 
         Strike(flightTime, speedRate);
     }
@@ -279,7 +282,7 @@ public class Ball : MonoBehaviour
         isSafetyArea = false;
         isCoolTime = false;
 
-        rb.isKinematic = false;
+        rb.isKinematic = true;
         rb.useGravity = false;
     }
 
