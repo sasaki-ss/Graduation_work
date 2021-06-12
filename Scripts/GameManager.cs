@@ -21,7 +21,8 @@ public class UserScoreData
 public enum GameState
 {
    Serve,           //サーブ
-   DuringRound      //ラウンド
+   DuringRound,     //ラウンド
+   GameSet          //ゲーム終了
 }
 
 //サーブユーザー
@@ -29,6 +30,14 @@ public enum User
 {
     User1,      //ユーザー1
     User2       //ユーザー2
+}
+
+//フォルト状態
+public enum FaultState
+{
+    None,
+    Fault,
+    DoubleFault,
 }
 
 //ゲームマネージャー
@@ -43,7 +52,6 @@ public class GameManager : MonoBehaviour
     private GameObject          safetyAreaObj;      //セーフティエリアオブジェクト
     private GameObject[]        serveOutAreaObj;    //サーブアウトエリアオブジェクト
     private Vector3[]           serveAreaPos;       //セーブエリアの座標
-    private int                 serveMissCnt;       //サーブミス回数
     private int                 changeCount;        //ラウンドカウント
 
     /*プロパティ関連*/
@@ -53,6 +61,7 @@ public class GameManager : MonoBehaviour
     public bool         isServe { get; set; }               //サーブフラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
+    public FaultState   faultState { get; private set; }    //フォルト状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -89,7 +98,6 @@ public class GameManager : MonoBehaviour
             new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
-        serveMissCnt = 0;
         changeCount = 2;
 
         ServeAreaPosChange();
@@ -135,6 +143,7 @@ public class GameManager : MonoBehaviour
             //ユーザーiが勝利スコアに到達かつユーザーjがマッチポイントでない場合
             if(userSData[i].score == winScore && !userSData[j].isMatchP)
             {
+                gameState = GameState.GameSet;
                 Debug.Log("勝ちました！！");
             }
 
@@ -207,14 +216,16 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator NextRound()
     {
-        float timeCnt = 10.0f;
+        float timeCnt = 1f;
         isNextRound = true;
 
         //ゲームを次のラウンドへ
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-        
-        //iBall.Init();
 
+        iBall.Init();
+
+        gameState = GameState.Serve;
+        isServe = true;
 
         #region サーブユーザー切り替え処理
         //切り替え処理
@@ -231,13 +242,14 @@ public class GameManager : MonoBehaviour
 
 
 
-        while (timeCnt <= 0f)
+        while (timeCnt >= 0f)
         {
+            timeCnt -= Time.deltaTime;
             yield return null;
         }
 
         isNextRound = false;
-        //isAddScore = false;
+        isAddScore = false;
     }
 
     public void ChangeField()
@@ -273,12 +285,13 @@ public class GameManager : MonoBehaviour
         //ボールを取得
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
-        switch (serveMissCnt)
+        switch (faultState)
         {
-        case 0:
-            serveMissCnt++;
+        case FaultState.None:
+            faultState = FaultState.Fault;
             break;
-        case 1:
+        case FaultState.Fault:
+            faultState = FaultState.DoubleFault;
             score.AddScore(InversionTag(ball.nowUserTag));
             break;
         }
