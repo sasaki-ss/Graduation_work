@@ -78,12 +78,12 @@ public class CharaStatus : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("キャラステータス：　パワー："+charaPower+"　スタミナ:"+ charaStamina + "　スピード:" + charaSpeed);
+        //Debug.Log(this.name+" :"+Rad + ":"+ Distance);
 
         //スタミナが無い
         if (charaStamina <= maxStamina / 10 * 0)
         {
-            charaSpeed = 0;
+            charaSpeed = 5;
             //Debug.Log("すたみな0割：");
         }
         //スタミナが1割の時の移動速度
