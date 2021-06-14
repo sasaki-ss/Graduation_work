@@ -151,7 +151,7 @@ public class UIManager : MonoBehaviour
         TapDoing();                                                     //タップ中のUIの生成管理
         if (GameManager.instance.isAddScore)
         {
-            RoundBetween();                                                 //ラウンドの間のUIの生成管理x
+            RoundBetween();                                             //ラウンドの間のUIの生成管理x
         }
 
     }
@@ -236,9 +236,10 @@ public class UIManager : MonoBehaviour
 
             if (touch_state._touch_phase == TouchPhase.Moved)
             {
+                //Debug.Log("tap time" + shot.GetTapTime);
                 if (10 <= shot.GetTapTime)
                 {
-                    if (!GameManager.instance.isAddScore)
+                    if (GameManager.instance.gameState == GameState.Serve || GameManager.instance.gameState == GameState.DuringRound)
                     {   //得点フラグオフ(ゲーム中)の時に処理を行う
                         if (createFlg)
                         {
@@ -290,7 +291,7 @@ public class UIManager : MonoBehaviour
                             j++;
 
                             createFlg = false;                                                                  //生成しました
-
+                            
                         }
 
                         //タッチ中
@@ -358,11 +359,21 @@ public class UIManager : MonoBehaviour
             }
 
         }
-
         else
         {
-            textRoundBetween.text = "";            //得点取得
+            textRoundBetween.text = "";
         }
+        
+        if(GameManager.instance.faultState == FaultState.Fault)
+        {
+            textRoundBetween.text = "フォルト";         //フォルト
+        }
+
+        else if(GameManager.instance.faultState == FaultState.DoubleFault)
+        {
+            textRoundBetween.text = "ダブルフォルト";   //ダブルフォルト
+        }
+
         for(int n = 0; n < r; n++)
         {
             Destroy(roundInstances[n],1.0f);                                                         //タップ中に生成されたオブジェクトの削除
