@@ -88,6 +88,7 @@ public class Shot : MonoBehaviour
                     //Debug.Log("開始座標" + tapStart);
                 }
                 tapTime += 1.0f;
+                kTapTime = tapTime;
                 tapWhile = tMger._touch_position;       //座標取得
             }
 
@@ -113,8 +114,6 @@ public class Shot : MonoBehaviour
     void PowerConversion()
     {   //入力時間をパワーに変換する
         power = tapTime / (FRAME / 2);  //時間によるパワーの計算式 tapTime/30 で最大値4になる  
-        kTapTime = tapTime;
-        //Debug.Log("入力時間"+power);
     }
 
     void VectorCalculation()
