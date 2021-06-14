@@ -418,7 +418,7 @@ public class AI : MonoBehaviour
                 animator.SetBool("is_RightShake", true);
 
                 //円の大きさを測る
-                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
                 //プレイヤー状態を振るに変更
                 CharaStatus.NowState = 2;

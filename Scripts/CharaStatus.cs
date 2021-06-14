@@ -79,7 +79,7 @@ public class CharaStatus : MonoBehaviour
     void Update()
     {
         //Debug.Log(this.name+" :"+Rad + ":"+ Distance);
-
+        //Debug.Log(this.name + ":" + CharaCircle);
         //スタミナが無い
         if (charaStamina <= maxStamina / 10 * 0)
         {
