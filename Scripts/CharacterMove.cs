@@ -196,7 +196,9 @@ public class CharacterMove : MonoBehaviour
             }
         }
         //横移動のみ
+        //こっちサーブの時
         else
+        if (ball.nowUserTag == "Player2")
         {
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
