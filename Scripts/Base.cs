@@ -82,7 +82,7 @@ public class Base : MonoBehaviour
         flightTime = 0;
         speed = 0;
         flg = false;
-        Debug.Log("Base");
+        Debug.Log("Base‚ÌInitˆ—‚ÌÀs");
     }
 
     //‹¤’Êˆ—@ˆÚ“®
