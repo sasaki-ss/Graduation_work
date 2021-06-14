@@ -31,7 +31,7 @@ public class AI : MonoBehaviour
     float dis = 0;
     bool boundFlg = true;
     int miss = 0;  //移動をしない
-
+    int cnt = 0;
     void Start()
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
@@ -75,7 +75,8 @@ public class AI : MonoBehaviour
         //現状の移動指定地を削除
         GetComponent<NavMeshAgent>().ResetPath();
 
-
+        this.CharaStatus.Rad = 0;
+        this.CharaStatus.Distance = 0;
         player.transform.position = new Vector3(-125, 0, 0);
         motionCnt = 0;
         boundFlg = true;
@@ -85,7 +86,7 @@ public class AI : MonoBehaviour
         hitFlg = false;
         dis = 0;
         miss = 0;
-
+        cnt = 0;
         //こっちサーブの時
         if (ball.nowUserTag == "Player")
         {
@@ -123,7 +124,7 @@ public class AI : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
         Base.InitCnt += 1;
-        //Debug.Log("AI");
+        Debug.Log("AIのInit処理の実行");
     }
 
     void Update()
@@ -377,28 +378,83 @@ public class AI : MonoBehaviour
     {
         float dis = Vector3.Distance(this.transform.position, pointB.transform.position);
 
-        //違和感のない範囲にいたら
-        if (dis <= 50)
+        //サーブフラグがtrueならしない
+        if (GameManager.instance.isServe != true)
         {
-            // Debug.Log("現在の距離: " + dis);
-
-            if (swingFlg == true && animator.GetBool("is_Run") == false)
+            //違和感のない範囲にいたら
+            if (dis <= 50)
             {
-                //プレイヤーをスイングモーションにする
-                this.animator.SetBool("is_RightShake", true);
-                //Debug.Log("ふるるるるる");
-                motionCnt++;
-                //プレイヤーのスタミナを減らす
-                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
-            }
+                // Debug.Log("現在の距離: " + dis);
 
-            if (this.animator.GetBool("is_RightShake") == true)
-            {
-                if (hitFlg == true)
+                if (swingFlg == true && animator.GetBool("is_Run") == false)
                 {
-                    resetFlg = true;
+                    //プレイヤーをスイングモーションにする
+                    this.animator.SetBool("is_RightShake", true);
+                    //Debug.Log("ふるるるるる");
+                    motionCnt++;
+                    //プレイヤーのスタミナを減らす
+                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+                }
+
+                if (this.animator.GetBool("is_RightShake") == true)
+                {
+                    if (hitFlg == true)
+                    {
+                        resetFlg = true;
+                    }
                 }
             }
+        }
+        else
+        if (ball.nowUserTag == "Player")
+        {
+            //とりあえず間隔をあける
+            cnt++;
+
+            if (cnt > 300)
+            {
+                Debug.Log("AIのサーブ");
+                //スイングAnimationにする予定
+                animator.SetBool("is_RightShake", true);
+
+                //円の大きさを測る
+                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
+
+                //プレイヤー状態を振るに変更
+                CharaStatus.NowState = 2;
+
+                //サーブ時左側なら
+                if (this.transform.position.z <= 0)
+                {
+                    Debug.Log("左側から");
+                    this.CharaStatus.Rad = 1.3f;          //ラジアン値
+                    this.CharaStatus.Distance = 2000;   //距離
+                }
+                //右側
+                else
+                {
+                    Debug.Log("右側から");
+                    this.CharaStatus.Rad = 1.3f;          //ラジアン値
+                    this.CharaStatus.Distance = 2000;   //距離
+                }
+
+                //Debug.Log(CharaStatus.Rad);
+                //Debug.Log(CharaStatus.Distance);
+
+                //振る
+                float a = 10;
+                float b = (float)CharaStatus.CharaPower / 5;
+
+                //Debug.Log(a);
+                //Debug.Log(b);
+
+                //サーブフラグオフ
+                GameManager.instance.isServe = false;
+
+                //サーブ関数呼ぶ
+                ball.Serve(a, b);
+                cnt = 0;
+            } 
         }
     }
 

@@ -82,7 +82,7 @@ public class Base : MonoBehaviour
         flightTime = 0;
         speed = 0;
         flg = false;
-        Debug.Log("Base");
+        Debug.Log("BaseのInit処理の実行");
     }
 
     //共通処理　移動
@@ -128,37 +128,40 @@ public class Base : MonoBehaviour
         //スライドの長さによって円の大きさが変わる
         if (_scale >= 0 && _scale < 5)
         {
-            _CircleScale = 50;
+            _CircleScale = 15;
         }
         else
-        if (_scale >= 5 && _scale < 10)
-        {
-            _CircleScale = 42;
-        }
-        else
-        if (_scale >= 10 && _scale < 15)
-        {
-            _CircleScale = 34;
-        }
-        else
-        if (_scale >= 15 && _scale < 20)
-        {
-            _CircleScale = 26;
-        }
-        else
-        if (_scale >= 20 && _scale < 25)
-        {
-            _CircleScale = 18;
-        }
-        else
-        if (_scale >= 25 && _scale < 30)
+        if (_scale >= 5 && _scale < 20)
         {
             _CircleScale = 10;
         }
         else
+        if (_scale >= 40 && _scale < 60)
+        {
+            _CircleScale = 8;
+        }
+        else
+        if (_scale >= 60 && _scale < 80)
+        {
+            _CircleScale = 6;
+        }
+        else
+        if (_scale >= 80 && _scale < 100)
+        {
+            _CircleScale = 4;
+        }
+        else
+        if (_scale >= 100)
         {
             _CircleScale = 2;
         }
+        else
+        {
+            _CircleScale = 0;
+        }
+
+        //Debug.Log(_scale);
+        //Debug.Log(_CircleScale);
 
         return _CircleScale;
     }

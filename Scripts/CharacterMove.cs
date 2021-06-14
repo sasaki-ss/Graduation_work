@@ -38,16 +38,12 @@ public class CharacterMove : MonoBehaviour
                 //奇数
                 //対角線上に配置する予定
                 player.transform.position = new Vector3(125, 0, -25);
-                Debug.Log("1");
-                double a = 0 % 2;
-                Debug.Log(a);
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, -25);
-                Debug.Log("2");
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
         else
@@ -56,15 +52,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //奇数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, 25);
-               // Debug.Log("3");
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, -25);
-                Debug.Log("4");
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
 
@@ -73,6 +67,8 @@ public class CharacterMove : MonoBehaviour
 
     void Init()
     {
+        this.CharaStatus.Rad = 0;
+        this.CharaStatus.Distance = 0;
         player.transform.position = new Vector3(125, 0, 0);
         motionCnt = 0;
         autoFlg = false;
@@ -90,13 +86,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //奇数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, 25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, -25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
         }
         else
@@ -118,7 +114,7 @@ public class CharacterMove : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
         Base.InitCnt += 1;
-        Debug.Log("Player");
+        Debug.Log("PlayerのInit処理の実行");
     }
 
     void Update()
@@ -192,7 +188,7 @@ public class CharacterMove : MonoBehaviour
                     animator.SetBool("is_RightShake", true);
 
                     //円の大きさを測る
-                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
                     //プレイヤー状態を振るに変更
                     CharaStatus.NowState = 2;
@@ -243,12 +239,13 @@ public class CharacterMove : MonoBehaviour
                     GetComponent<NavMeshAgent>().destination = xyz;          
                 }
                 else
+                if(ball.nowUserTag == "Player2")
                 {
                     //スイングAnimationにする予定
                     animator.SetBool("is_RightShake", true);
 
                     //円の大きさを測る
-                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetDistance);
+                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
                     //プレイヤー状態を振るに変更
                     CharaStatus.NowState = 2;
@@ -256,21 +253,19 @@ public class CharacterMove : MonoBehaviour
                     CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
                     CharaStatus.Distance = (float)Shot.GetDistance;   //距離
 
-
-
-              //      Debug.Log(CharaStatus.Rad);
-             //       Debug.Log(CharaStatus.Distance);
-
-                    float a = 0, b = 0;
+                    //Debug.Log(CharaStatus.Rad);
+                    //Debug.Log(CharaStatus.Distance);
 
                     //振る
-                    a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 3;
-                    b = (float)CharaStatus.CharaPower / 5;
+                    float a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 3;
+                    float b = (float)CharaStatus.CharaPower / 5;
 
-             //       Debug.Log(a);
-             //       Debug.Log(b);
+                    //Debug.Log(a);
+                    //Debug.Log(b);
+
                     //サーブフラグオフ
                     GameManager.instance.isServe = false;
+
                     //サーブ関数呼ぶ
                     ball.Serve(a, b);
                 }
