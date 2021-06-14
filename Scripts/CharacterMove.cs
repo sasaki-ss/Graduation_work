@@ -26,7 +26,7 @@ public class CharacterMove : MonoBehaviour
     bool autoFlg = false;
     bool swingFlg = false;
     bool hitFlg = false;
-
+    
     void Start()
     {
         //if文で判定してから場所決め
@@ -57,7 +57,7 @@ public class CharacterMove : MonoBehaviour
                 //奇数
                 //対角線上に配置する予定
                 player.transform.position = new Vector3(125, 0, 25);
-                Debug.Log("3");
+               // Debug.Log("3");
             }
             else
             {
@@ -90,13 +90,13 @@ public class CharacterMove : MonoBehaviour
             {
                 //奇数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, -25);
+                player.transform.position = new Vector3(125, 0, 25);
             }
             else
             {
                 //偶数
                 //対角線上に配置する予定
-                player.transform.position = new Vector3(125, 0, 25);
+                player.transform.position = new Vector3(125, 0, -25);
             }
         }
         else
@@ -256,12 +256,19 @@ public class CharacterMove : MonoBehaviour
                     CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
                     CharaStatus.Distance = (float)Shot.GetDistance;   //距離
 
+
+
+              //      Debug.Log(CharaStatus.Rad);
+             //       Debug.Log(CharaStatus.Distance);
+
                     float a = 0, b = 0;
 
                     //振る
-                    a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 5 ;
-                    b = (float)CharaStatus.CharaPower / 6;
+                    a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 3;
+                    b = (float)CharaStatus.CharaPower / 5;
 
+             //       Debug.Log(a);
+             //       Debug.Log(b);
                     //サーブフラグオフ
                     GameManager.instance.isServe = false;
                     //サーブ関数呼ぶ
