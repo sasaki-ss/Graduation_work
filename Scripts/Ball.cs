@@ -80,7 +80,7 @@ public class Ball : MonoBehaviour
         }
         else
         {
-            if (colCoolTime == 30)
+            if (colCoolTime == 60)
             {
                 isCoolTime = false;
                 colCoolTime = 0;
@@ -167,7 +167,7 @@ public class Ball : MonoBehaviour
                 //着地地点を生成する
                 GenerateRandingPoint();
                 boundCount++;
-
+                Debug.Log("バウンド回数 : " + boundCount + " " + Time.time);
                 //セーフエリアの場合
                 if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
 
@@ -186,13 +186,15 @@ public class Ball : MonoBehaviour
                 Debug.Log("サーブ成功");
                 GameManager.instance.gameState = GameState.DuringRound;
                 GameManager.instance.ChangeField();
-                //boundCount++;
+                boundCount++;
+                Debug.Log("バウンド回数 : " + boundCount + " " + Time.time);
 
                 isCoolTime = true;
             }
             else if (!other.gameObject.CompareTag("SwingArea"))
             {
                 Debug.Log("サーブ失敗");
+                GameManager.instance.FaultProc();
             }
         }
     }
@@ -232,6 +234,7 @@ public class Ball : MonoBehaviour
             boundCount == 0 && isProjection && !isBound)
         {
             isOut = true;
+            Debug.Log("バウンドしてから打ち返そうね！！！");
         }
 
         //タグを切り替える
