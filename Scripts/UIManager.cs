@@ -149,7 +149,7 @@ public class UIManager : MonoBehaviour
         lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
         lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
-        if (GameManager.instance.isAddScore)
+        if (GameManager.instance.isAddScore || GameManager.instance.faultState != FaultState.None)
         {
             RoundBetween();                                             //ラウンドの間のUIの生成管理x
         }
