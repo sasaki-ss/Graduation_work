@@ -65,7 +65,7 @@ public class CharacterMove : MonoBehaviour
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
     }
 
-    void Init()
+    public void Init()
     {
         this.CharaStatus.Rad = 0;
         this.CharaStatus.Distance = 0;
@@ -113,17 +113,11 @@ public class CharacterMove : MonoBehaviour
 
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
-        Base.InitCnt += 1;
         Debug.Log("PlayerのInit処理の実行");
     }
 
     void Update()
     {
-        if (Base.InitCnt == 2)
-        {
-            Init();
-        }
-
         //コメントアウト
         {
             /*

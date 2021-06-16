@@ -123,16 +123,11 @@ public class AI : MonoBehaviour
 
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
-        Base.InitCnt += 1;
         Debug.Log("AIのInit処理の実行");
     }
 
     void Update()
     {
-        if (Base.InitCnt == 1)
-        {
-            Init();
-        }
 
         //キャラとボールの距離を測る
         dis = Vector3.Distance(this.GetComponent<NavMeshAgent>().transform.position, ball.transform.position);
@@ -303,13 +298,13 @@ public class AI : MonoBehaviour
                 break;
         }
 
-        //Debug.Log(xyz.x+ ":　　　:" +xyz.z);
+        //Debug.Log(ball.boundCount);
 
         //乱数の設定(設定した数値が出ればAIは動けない)
         int miss = Random.Range(1, 20);
 
         //最初のみ
-        if (start_SwingFlg == true)
+        if (ball.boundCount != 0 && start_SwingFlg == true)
         {
             if (pointB.transform.position.x >= -62 && pointB.transform.position.x <= 0)
             {
@@ -324,7 +319,7 @@ public class AI : MonoBehaviour
         //通常
         else
         {
-            if (gameManager.gameState != GameState.Serve && miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
+            if (ball.boundCount !=0 && gameManager.gameState != GameState.Serve && miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
             {
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
