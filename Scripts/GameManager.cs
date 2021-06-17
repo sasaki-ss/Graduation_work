@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//定数クラス
+public class Define
+{
+    public const float NEXT_ROUNDTIME = 2.0f;  //ラウンド間の時間
+}
+
 //ユーザースコアデータ
 public class UserScoreData
 {
@@ -44,24 +50,25 @@ public enum FaultState
 public class GameManager : MonoBehaviour
 {
     /*外部参照に使う変数*/
-    public static GameManager   instance;       //インスタンス
+    public static GameManager instance;               //インスタンス
 
     /*このスクリプトでのみ使う変数*/
-    private Score               score;              //スコアクラス
-    private GameObject          serveAreaObj;       //サーブエリアオブジェクト
-    private GameObject          safetyAreaObj;      //セーフティエリアオブジェクト
-    private GameObject[]        serveOutAreaObj;    //サーブアウトエリアオブジェクト
-    private Vector3[]           serveAreaPos;       //セーブエリアの座標
-    private int                 changeCount;        //ラウンドカウント
+    private Score           score;               //スコアクラス
+    private GameObject      serveAreaObj;        //サーブエリアオブジェクト
+    private GameObject      safetyAreaObj;       //セーフティエリアオブジェクト
+    private GameObject[]    serveOutAreaObj;     //サーブアウトエリアオブジェクト
+    private Vector3[]       serveAreaPos;        //セーブエリアの座標
+    private int             changeCount;         //ラウンドカウント
 
     /*プロパティ関連*/
     public bool         isDeuce { get; set; }              //デュースフラグ
     public bool         isAddScore { get; set; }           //スコアフラグ
     public bool         isNextRound { get; set; }          //次のラウンドフラグ
-    public bool         isServe { get; set; }               //サーブフラグ
+    public bool         isServe { get; set; }              //サーブフラグ
+    public bool         isFault { get; private set; }      //フォルトフラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
-    public FaultState   faultState { get; private set; }    //フォルト状態
+    public FaultState   faultState { get; private set; }   //フォルト状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -83,6 +90,7 @@ public class GameManager : MonoBehaviour
 
         instance = this;
         isDeuce = false;
+        isFault = false;
         isServe = true;
         isAddScore = false;
         isNextRound = false;
@@ -162,6 +170,7 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 
+
     //サーバーユーザーを切り替える
     private void ServeUserChange()
     {
@@ -175,6 +184,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //サーブエリア変更処理
     private void ServeAreaPosChange()
     {
         //サーブユーザーがプレイヤー1の場合
@@ -217,14 +227,14 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator NextRound()
     {
-        float timeCnt = 1f;
+        float timeCnt = Define.NEXT_ROUNDTIME;
         isNextRound = true;
 
         //ゲームを次のラウンドへ
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-        //Base[] iPBase = new Base[2];
-        //iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
-        //iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
+        Base[] iPBase = new Base[2];
+        iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
+        iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
 
         iBall.Init();
         //foreach (var pBase in iPBase) pBase.Init();
@@ -254,7 +264,8 @@ public class GameManager : MonoBehaviour
 
         isNextRound = false;
         isAddScore = false;
-        faultState = FaultState.None;
+        isFault = false;
+        if (faultState == FaultState.DoubleFault)faultState = FaultState.None;
     }
 
     public void ChangeField()
@@ -268,20 +279,19 @@ public class GameManager : MonoBehaviour
         safetyAreaObj.SetActive(true);
     }
 
-
-    private string InversionTag(string _str)
+    private User InversionTag(User _user)
     {
         //タグを反転させる
-        if (_str == "Player")
+        if (_user == User.User1)
         {
-            _str = "Player2";
+            _user = User.User2;
         }
         else
         {
-            _str = "Player";
+            _user = User.User1;
         }
 
-        return _str;
+        return _user;
     }
 
     public void FaultProc()
@@ -294,11 +304,14 @@ public class GameManager : MonoBehaviour
         {
         case FaultState.None:
             faultState = FaultState.Fault;
+            isFault = true;
             break;
         case FaultState.Fault:
             faultState = FaultState.DoubleFault;
             score.AddScore(InversionTag(ball.nowUserTag));
             break;
         }
+
+        StartCoroutine(NextRound());
     }
 }

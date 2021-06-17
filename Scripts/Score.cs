@@ -6,10 +6,10 @@ using UnityEngine;
 public class Score : MonoBehaviour
 {
     /*プロパティ関連*/
-    public int user1Score { get; private set; }     //user1のスコア
-    public int user2Score { get; private set; }     //user2のスコア
-    public bool isUser1MatchP { get; private set; } //user1のマッチポイントフラグ
-    public bool isUser2MatchP { get; private set; } //user2のマッチポイントフラグ
+    public int  user1Score { get; private set; }        //user1のスコア
+    public int  user2Score { get; private set; }        //user2のスコア
+    public bool isUser1MatchP { get; private set; }     //user1のマッチポイントフラグ
+    public bool isUser2MatchP { get; private set; }     //user2のマッチポイントフラグ
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -38,7 +38,7 @@ public class Score : MonoBehaviour
     }
 
     //スコアを加算する
-    public void AddScore(string _playerTag)
+    public void AddScore(User _playerTag)
     {
         //デュースの際
         if (GameManager.instance.isDeuce)
@@ -48,7 +48,7 @@ public class Score : MonoBehaviour
         }
 
         //タグが"Player"の場合
-        if (_playerTag == "Player")
+        if (_playerTag == User.User1)
         {
             user1Score++;
             if (user1Score == matchPScore) isUser1MatchP = true;

@@ -22,7 +22,7 @@ public class Ball : MonoBehaviour
     private bool            isSafetyArea;   //セーフティエリアフラグ
 
     /*プロパティ関連*/
-    public string       nowUserTag { get; private set; }    //タグ
+    public User         nowUserTag { get; private set; }    //タグ
     public int          boundCount { get; private set; }    //バウンド回数
     public bool         isOut { get; private set; }         //アウトフラグを取得
     public bool         isNet { get; private set; }         //ネットフラグ
@@ -287,6 +287,8 @@ public class Ball : MonoBehaviour
         isSafetyArea = false;
         isCoolTime = false;
 
+        nowShotUser = GameManager.instance.serveUser;
+
         rb.isKinematic = true;
         rb.useGravity = false;
     }
@@ -306,7 +308,7 @@ public class Ball : MonoBehaviour
         }
 
         //タグを指定したユーザーへ変更する
-        nowUserTag = userObj[(int)nowShotUser].name;
+        nowUserTag = nowShotUser;
         //バウンド回数もリセットする
         boundCount = 0;
 
