@@ -50,27 +50,6 @@ public class Base : MonoBehaviour
         touch_state = tMger.getTouch();    //タッチ取得
     }
 
-    void FixedUpdate()
-    {
-        //ここにProjectileMotion関数で使うための情報を入れる関数が来る
-        if (flg == true)
-        {
-            //サーブフラグをオフに
-            if (GameManager.instance.isServe == true)
-            {
-                GameManager.instance.isServe = false;
-                ball.Serve(flightTime, speed);
-            }
-            //ラリーとかでのスイングの時
-            else
-            {
-                ball.Strike(flightTime, speed);
-            }
-
-            flg = false;
-        }
-    }
-
     //共通処理部分の初期化
     public void Init()
     {
@@ -171,6 +150,11 @@ public class Base : MonoBehaviour
     //共通処理　スイング
     public void Swing(double _power, double _flight, double _taptime)
     {
+        if (GameManager.instance.isServe == true)
+        {
+            GameManager.instance.isServe = false;
+        }
+
         //滞空時間　タップ時間から　
         //速度　　　パワーから
 
@@ -180,9 +164,7 @@ public class Base : MonoBehaviour
         //Debug.Log(flightTime);
         //Debug.Log("a" + flightTime);
         //とりあえず5で割ってます
-        speed = (float)_power / 6;
-
-        flg = true;    
+        speed = (float)_power / 6; 
     }
 }
 

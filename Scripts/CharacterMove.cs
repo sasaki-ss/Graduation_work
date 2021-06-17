@@ -31,7 +31,7 @@ public class CharacterMove : MonoBehaviour
     {
         //if文で判定してから場所決め
         //こっちサーブの時
-        if (ball.nowUserTag == "Player2")
+        if (ball.nowUserTag == User.User2)
         {
             if (score.user1Score % 2 == 0)
             {
@@ -192,7 +192,7 @@ public class CharacterMove : MonoBehaviour
         //横移動のみ
         //こっちサーブの時
         else
-        if (ball.nowUserTag == "Player2")
+        if (ball.nowUserTag == User.User2)
         {
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
@@ -235,7 +235,7 @@ public class CharacterMove : MonoBehaviour
                     GetComponent<NavMeshAgent>().destination = xyz;          
                 }
                 else
-                if(ball.nowUserTag == "Player2")
+                if(ball.nowUserTag == User.User2)
                 {
                     //スイングAnimationにする予定
                     animator.SetBool("is_RightShake", true);
@@ -253,8 +253,8 @@ public class CharacterMove : MonoBehaviour
                     //Debug.Log(CharaStatus.Distance);
 
                     //振る
-                    float a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 3;
-                    float b = (float)CharaStatus.CharaPower / 5;
+                    float a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 5;
+                    float b = (float)CharaStatus.CharaPower / 6;
 
                     //Debug.Log(a);
                     //Debug.Log(b);
@@ -272,7 +272,7 @@ public class CharacterMove : MonoBehaviour
     void AutoMove()
     {
         //オート移動処理
-        if (ball.nowUserTag == "Player2")
+        if (ball.nowUserTag == User.User2)
         {
             // Debug.Log("x:"+pointB.transform.position.x+ "y:" + pointB.transform.position.y+ "z:" + pointB.transform.position.z );
 
@@ -461,14 +461,15 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (ball.nowUserTag == "Player2" && hitFlg == true && swingFlg == true)
+        if (ball.nowUserTag == User.User2 && hitFlg == true && swingFlg == true)
         {
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
-            //Debug.Log(Shot.GetTapTime);
-            //Debug.Log(Shot.GetPower);
+                                                              //Debug.Log(Shot.GetTapTime);
+                                                              //Debug.Log(Shot.GetPower);
 
             //振る
+            Debug.Log("呼び出し"+this.gameObject.name);
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime);
            
             
