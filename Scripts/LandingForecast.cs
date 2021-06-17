@@ -4,27 +4,19 @@ using UnityEngine;
 
 public class LandingForecast : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject randingPoint;    //着地地点オブジェクト
-    [SerializeField]
-    private GameObject shotObject;      //座標受け取り用
-    [SerializeField]
-    private Shot shot;                  //座標受け取り用
-    [SerializeField]
-    private CharaStatus[] cStatus;
-    [SerializeField]
-    private float radius;               //半径
-    [SerializeField]
-    private float diameter;             //直径
+    /*このスクリプトでのみ使う変数*/
+    private CharaStatus[]   cStatus;        //ユーザーのステータス
+    private GameObject      randingPoint;   //着地地点オブジェクト
+    private float           radius;         //半径
+    private float           diameter;       //直径
+
+    /*インスペクターに表示又は設定する変数*/
     [SerializeField,Range(0f,100f)]
     private float correctionVal;        //補正値
 
     //初期化処理
     private void Start()
     {
-        radius = 2;
-        diameter = radius * 2;
-
         cStatus = new CharaStatus[2];
 
         GameObject userObj = GameObject.Find("Player");
@@ -33,10 +25,13 @@ public class LandingForecast : MonoBehaviour
         cStatus[0] = userObj.GetComponent<CharaStatus>();
         cStatus[1] = userObj2.GetComponent<CharaStatus>();
 
+        randingPoint = GameObject.Find("RandingPoint");
+
         //オブジェクト非表示
         randingPoint.SetActive(false);
 
-        shot = shotObject.GetComponent<Shot>();
+        radius = 2;
+        diameter = radius * 2;
     }
 
     public void PointSetting()
@@ -44,7 +39,7 @@ public class LandingForecast : MonoBehaviour
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
         int nowUser = 0;
 
-        if (ball.nowUserTag == "Player2") nowUser = 1;
+        if (ball.nowUserTag == User.User2) nowUser = 1;
 
         float rad = (float)cStatus[nowUser].Rad;                                //ラジアン値
         float distance = (float)cStatus[nowUser].Distance / correctionVal;      //到達距離
@@ -56,11 +51,11 @@ public class LandingForecast : MonoBehaviour
         float z = Mathf.Cos(rad) * distance;
 
         //User2だった場合数値を反転させる
-        if (ball.nowUserTag == "Player2")
+        if (ball.nowUserTag == User.User2)
         {
             z = -z;
         }
-        else if(ball.nowUserTag == "Player")
+        else if(ball.nowUserTag == User.User1)
         {
             x = -x;
         }
