@@ -8,6 +8,8 @@ public class Base : MonoBehaviour
 {
     [SerializeField] Ball ball;
     private User user;
+    GameObject[] chara;
+
 
     //タッチ時に使う処理
     Vector2 touch;
@@ -30,6 +32,13 @@ public class Base : MonoBehaviour
         flg = false;
 
         tMger = new TouchManager(); //初期化
+        chara = new GameObject[2];
+
+        chara[(int)User.User1] = GameObject.Find("Player");
+        chara[(int)User.User2] = GameObject.Find("Player2");
+
+        user = User.User1;
+
         ball = GameObject.Find("Ball").GetComponent<Ball>();
     }
 
@@ -65,16 +74,11 @@ public class Base : MonoBehaviour
     //共通処理部分の初期化
     public void Init()
     {
-        if (user == User.User1)
-        {
-            CharacterMove player = this.GetComponent<CharacterMove>();
-            player.Init();
-        }
-        else
-        {
-            AI ai = this.GetComponent<AI>();
-            ai.Init();
-        }
+        CharacterMove player = chara[0].GetComponent<CharacterMove>();
+        player.Init();
+
+        AI ai = chara[1].GetComponent<AI>();
+        ai.Init();
 
         flightTime = 0;
         speed = 0;
