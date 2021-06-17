@@ -24,7 +24,7 @@ public class AI : MonoBehaviour
     RaycastHit hit;
 
     int motionCnt = 0;
-    bool swingFlg = false;
+    public bool swingFlg = false;
     bool hitFlg = false;
     bool resetFlg = false;
     bool start_SwingFlg = true;
@@ -36,7 +36,7 @@ public class AI : MonoBehaviour
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
         //こっちサーブの時
-        if (ball.nowUserTag == "Player")
+        if (ball.nowUserTag == User.User1)
         {
             //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
@@ -87,8 +87,10 @@ public class AI : MonoBehaviour
         dis = 0;
         miss = 0;
         cnt = 0;
+        this.animator.SetBool("is_RightShake", false);
+
         //こっちサーブの時
-        if (ball.nowUserTag == "Player")
+        if (ball.nowUserTag == User.User1)
         {
             //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
@@ -145,7 +147,7 @@ public class AI : MonoBehaviour
         nowPosition = player.position;
 
         //アップデートで直接やるとAnimationの処理が今の所マシな動きになってくれる
-        if (resetFlg == true)
+        if (resetFlg == true && dis <= 150)
         {
             //振る
             //角度によって判定
@@ -161,8 +163,8 @@ public class AI : MonoBehaviour
             CharaStatus.Distance = parameter.y;
 
             //パラメータちょこっと直接いじってる
-            //Debug.Log(parameter.x + ":::"+ parameter.y);
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 20,0);
+            Debug.Log(parameter.x + ":::"+ parameter.y);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10,0);
 
             start_SwingFlg = false;
 
@@ -377,7 +379,7 @@ public class AI : MonoBehaviour
         if (GameManager.instance.isServe != true)
         {
             //違和感のない範囲にいたら
-            if (dis <= 50)
+            if (ball.boundCount!=0 && dis <= 50)
             {
                 // Debug.Log("現在の距離: " + dis);
 
@@ -401,14 +403,14 @@ public class AI : MonoBehaviour
             }
         }
         else
-        if (ball.nowUserTag == "Player")
+        if (ball.nowUserTag == User.User1)
         {
             //とりあえず間隔をあける
             cnt++;
 
             if (cnt > 300)
             {
-                Debug.Log("AIのサーブ");
+                //Debug.Log("AIのサーブ");
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
 
@@ -423,22 +425,22 @@ public class AI : MonoBehaviour
                 {
                     Debug.Log("左側から");
                     this.CharaStatus.Rad = 1.3f;          //ラジアン値
-                    this.CharaStatus.Distance = 2000;   //距離
+                    this.CharaStatus.Distance = -200;   //距離
                 }
                 //右側
                 else
                 {
                     Debug.Log("右側から");
                     this.CharaStatus.Rad = 1.3f;          //ラジアン値
-                    this.CharaStatus.Distance = 2000;   //距離
+                    this.CharaStatus.Distance = -200;   //距離
                 }
 
                 //Debug.Log(CharaStatus.Rad);
                 //Debug.Log(CharaStatus.Distance);
 
                 //振る
-                float a = 10;
-                float b = (float)CharaStatus.CharaPower / 5;
+                float a = 6;
+                float b = (float)CharaStatus.CharaPower / 6;
 
                 //Debug.Log(a);
                 //Debug.Log(b);
@@ -447,6 +449,8 @@ public class AI : MonoBehaviour
                 GameManager.instance.isServe = false;
 
                 //サーブ関数呼ぶ
+
+                //Debug.Log(a+"aaa"+b);
                 ball.Serve(a, b);
                 cnt = 0;
             } 
