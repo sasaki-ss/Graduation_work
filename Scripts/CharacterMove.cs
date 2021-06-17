@@ -80,7 +80,7 @@ public class CharacterMove : MonoBehaviour
 
         //if•¶‚Å”»’è‚µ‚Ä‚©‚çêŠŒˆ‚ß
         //‚±‚Á‚¿ƒT[ƒu‚Ì
-        if (ball.nowUserTag == "Player2")
+        if (ball.nowUserTag == User.User2)
         {
             if (score.user1Score % 2 == 0)
             {
