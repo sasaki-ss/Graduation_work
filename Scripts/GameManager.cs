@@ -87,6 +87,7 @@ public class GameManager : MonoBehaviour
         isAddScore = false;
         isNextRound = false;
 
+        faultState = FaultState.None;
         gameState = GameState.Serve;
         serveUser = User.User1;
 
@@ -221,8 +222,12 @@ public class GameManager : MonoBehaviour
 
         //ƒQ[ƒ€‚ğŸ‚Ìƒ‰ƒEƒ“ƒh‚Ö
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
+        //Base[] iPBase = new Base[2];
+        //iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
+        //iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
 
         iBall.Init();
+        //foreach (var pBase in iPBase) pBase.Init();
 
         gameState = GameState.Serve;
         isServe = true;
@@ -237,10 +242,9 @@ public class GameManager : MonoBehaviour
             ServeAreaPosChange();
         }
 
-        changeCount++;
+        if (gameState == GameState.DuringRound ||
+            faultState == FaultState.DoubleFault) changeCount++;
         #endregion
-
-
 
         while (timeCnt >= 0f)
         {
@@ -250,6 +254,7 @@ public class GameManager : MonoBehaviour
 
         isNextRound = false;
         isAddScore = false;
+        faultState = FaultState.None;
     }
 
     public void ChangeField()
