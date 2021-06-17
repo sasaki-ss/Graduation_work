@@ -384,7 +384,7 @@ public class UIManager : MonoBehaviour
         
         for(int n = 0; n < r; n++)
         {
-            Destroy(roundInstances[n],GameManager.instance.NEXT_ROUNDTIME);                                                   //タップ中に生成されたオブジェクトの削除
+            Destroy(roundInstances[n],Define.NEXT_ROUNDTIME);                                                   //タップ中に生成されたオブジェクトの削除
         }
 
         rCreateFlg = false;
