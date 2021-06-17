@@ -410,7 +410,7 @@ public class AI : MonoBehaviour
 
             if (cnt > 300)
             {
-                Debug.Log("AIのサーブ");
+                //Debug.Log("AIのサーブ");
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
 
@@ -450,7 +450,7 @@ public class AI : MonoBehaviour
 
                 //サーブ関数呼ぶ
 
-                Debug.Log(a+"aaa"+b);
+                //Debug.Log(a+"aaa"+b);
                 ball.Serve(a, b);
                 cnt = 0;
             } 

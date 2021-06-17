@@ -469,7 +469,7 @@ public class CharacterMove : MonoBehaviour
                                                               //Debug.Log(Shot.GetPower);
 
             //U‚é
-            Debug.Log("ŒÄ‚Ño‚µ"+this.gameObject.name);
+            //Debug.Log("ŒÄ‚Ño‚µ"+this.gameObject.name);
             Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime);
            
             
