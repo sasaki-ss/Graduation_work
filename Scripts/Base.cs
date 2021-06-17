@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public class Base : MonoBehaviour
 {
     [SerializeField] Ball ball;
+    private User user;
 
     //タッチ時に使う処理
     Vector2 touch;
@@ -20,17 +21,10 @@ public class Base : MonoBehaviour
     float speed;
 
     bool flg;
-    int initCnt;
-    public int InitCnt
-    {
-        get { return this.initCnt; }
-        set { this.initCnt = value; }
-    }
 
     // Start is called before the first frame update
     void Start()
     {
-        initCnt = 0;
         flightTime = 0;
         speed = 0;
         flg = false;
@@ -45,12 +39,6 @@ public class Base : MonoBehaviour
         tMger.update(); //更新
 
         touch_state = tMger.getTouch();    //タッチ取得
-
-        if (initCnt == 3) 
-        {
-            initCnt = 0;
-            Debug.Log("Base3");
-        }
     }
 
     void FixedUpdate()
@@ -77,11 +65,21 @@ public class Base : MonoBehaviour
     //共通処理部分の初期化
     public void Init()
     {
-        initCnt = 1;
+        if (user == User.User1)
+        {
+            CharacterMove player = this.GetComponent<CharacterMove>();
+            player.Init();
+        }
+        else
+        {
+            AI ai = this.GetComponent<AI>();
+            ai.Init();
+        }
 
         flightTime = 0;
         speed = 0;
         flg = false;
+
         Debug.Log("BaseのInit処理の実行");
     }
 
