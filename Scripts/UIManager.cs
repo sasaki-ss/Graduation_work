@@ -8,6 +8,9 @@ public class UIManager : MonoBehaviour
     TouchManager tMger;                 //TapStateManager内のTouchManager
     private bool createFlg;             //タップ中のUIの生成フラグ
 
+    //ラウンド時の生成
+    private bool rCreateFlg;            //ラウンド時の生成フラグ
+
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
     private const int RoundUINum = 2;   //ラウンド間に表示するUIの要素数
@@ -149,9 +152,13 @@ public class UIManager : MonoBehaviour
         lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
         lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
-        if (GameManager.instance.isAddScore || GameManager.instance.faultState != FaultState.None)
+        if (GameManager.instance.isAddScore || GameManager.isstance.isFault)
         {
-            RoundBetween();                                             //ラウンドの間のUIの生成管理x
+            if(rCreateFlg)  RoundBetween();                                             //ラウンドの間のUIの生成管理
+        }
+        else
+        {
+            rCreateFlg = true;
         }
 
     }
@@ -374,10 +381,14 @@ public class UIManager : MonoBehaviour
             textRoundBetween.text = "ダブルフォルト";   //ダブルフォルト
         }
 
+        
         for(int n = 0; n < r; n++)
         {
-            Destroy(roundInstances[n],1.0f);                                                         //タップ中に生成されたオブジェクトの削除
+            Destroy(roundInstances[n],Define.NEXT_ROUNDTIME);                                                   //タップ中に生成されたオブジェクトの削除
         }
+
+        rCreateFlg = false;
+
         #endregion
     }
 }
