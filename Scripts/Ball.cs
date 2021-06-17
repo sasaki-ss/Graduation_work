@@ -60,10 +60,6 @@ public class Ball : MonoBehaviour
     //初期化処理
     private void Start()
     {
-        //打っているユーザーの初期化
-        nowShotUser = User.User1;
-        TagChange();
-
         Init();
     }
 
@@ -239,8 +235,6 @@ public class Ball : MonoBehaviour
 
         //タグを切り替える
         TagChange();
-
-        Debug.Log(nowShotUser);
 
         //到達地点を更新する
         LandingForecast lf = 

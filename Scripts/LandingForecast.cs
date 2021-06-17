@@ -37,12 +37,10 @@ public class LandingForecast : MonoBehaviour
     public void PointSetting()
     {
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
-        int nowUser = 0;
 
-        if (ball.nowUserTag == User.User2) nowUser = 1;
-
-        float rad = (float)cStatus[nowUser].Rad;                                //ラジアン値
-        float distance = (float)cStatus[nowUser].Distance / correctionVal;      //到達距離
+        float rad = (float)cStatus[(int)ball.nowUserTag].Rad;               //ラジアン値
+        float distance = (float)cStatus[(int)ball.nowUserTag].Distance
+            / correctionVal;                                                //到達距離
 
         //ボールScriptを取得
 
