@@ -844,7 +844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022b7b839c545da479217d8c9b9c64a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: {fileID: 0}
+  Base: {fileID: 862302801}
   animator: {fileID: 862302804}
   CharaStatus: {fileID: 862302807}
   player: {fileID: 862302805}
@@ -854,6 +854,19 @@ MonoBehaviour:
   gameManager: {fileID: 487528676}
   pointB: {fileID: 2076708612}
   score: {fileID: 2132639381}
+--- !u!114 &862302811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 862302799}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 605d56812e2812c4db76a4da1e9cf0d0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ball: {fileID: 1172014078}
 --- !u!1 &1172014073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1460,7 +1473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d335d48089cb94fb393137da3f9089, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: {fileID: 0}
+  Base: {fileID: 1834506133}
   animator: {fileID: 1834506136}
   CharaStatus: {fileID: 1834506130}
   player: {fileID: 1834506139}
@@ -1494,7 +1507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 605d56812e2812c4db76a4da1e9cf0d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ball: {fileID: 0}
+  ball: {fileID: 1172014078}
 --- !u!95 &1834506136 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
