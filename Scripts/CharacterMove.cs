@@ -26,7 +26,7 @@ public class CharacterMove : MonoBehaviour
     int motionCnt = 0;
     bool swingFlg = false;
     bool hitFlg = false;
-    
+    bool serveFlag = true;
     void Start()
     {
         //if文で判定してから場所決め
@@ -73,7 +73,7 @@ public class CharacterMove : MonoBehaviour
         motionCnt = 0;
         swingFlg = false;
         hitFlg = false;
-
+        serveFlag = true;
         //現状の移動指定地を削除
         GetComponent<NavMeshAgent>().ResetPath();
 
@@ -235,7 +235,6 @@ public class CharacterMove : MonoBehaviour
                 else
                 if(GameManager.instance.serveUser == User.User1)
                 {
-                    Debug.Log("サーブ");
                     //スイングAnimationにする予定
                     animator.SetBool("is_RightShake", true);
 
@@ -253,17 +252,8 @@ public class CharacterMove : MonoBehaviour
                     Debug.Log(CharaStatus.Distance);
 
                     //振る
-                    float a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 5;
-                    float b = (float)CharaStatus.CharaPower / 6;
-
-                    //Debug.Log(a);
-                    //Debug.Log(b);
-
-                    //サーブフラグオフ
-                    GameManager.instance.isServe = false;
-
-                    //サーブ関数呼ぶ
-                    //ball.Serve(a, b);
+                    //サーブする方の関数を呼ぶ
+                    Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
                     //
                 }
             }
@@ -462,7 +452,7 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (ball.nowUserTag == User.User1 && hitFlg == true && swingFlg == true)
+        if (ball.nowUserTag == User.User1 && hitFlg == true && swingFlg == true && serveFlag == false)
         {
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
@@ -472,7 +462,7 @@ public class CharacterMove : MonoBehaviour
 
             //振る
             Debug.Log("スイング呼び出し"+this.gameObject.name);
-            Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
+           // Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
 
             //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
             hitFlg = false;

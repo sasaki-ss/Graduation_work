@@ -164,11 +164,13 @@ public class Base : MonoBehaviour
 
         if (GameManager.instance.isServe == true)
         {
+            Debug.Log("サーブ");
             GameManager.instance.isServe = false;
             ball.Serve(flightTime, speed,_user);
         }
         else
         {
+            Debug.Log("ラリー");
             ball.Strike(flightTime, speed,_user);
         }
 
