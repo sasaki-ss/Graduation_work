@@ -36,7 +36,7 @@ public class AI : MonoBehaviour
     {
         Shot = GameObject.Find("Shot").GetComponent<Shot>();
         //こっちサーブの時
-        if (ball.nowUserTag == User.User1)
+        if (ball.nowUserTag == User.User2)
         {
             //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
@@ -90,7 +90,7 @@ public class AI : MonoBehaviour
         this.animator.SetBool("is_RightShake", false);
 
         //こっちサーブの時
-        if (ball.nowUserTag == User.User1)
+        if (ball.nowUserTag == User.User2)
         {
             //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
@@ -164,7 +164,7 @@ public class AI : MonoBehaviour
 
             //パラメータちょこっと直接いじってる
             Debug.Log(parameter.x + ":::"+ parameter.y);
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10,0);
+            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10,0, User.User1);
 
             start_SwingFlg = false;
 
@@ -403,7 +403,7 @@ public class AI : MonoBehaviour
             }
         }
         else
-        if (ball.nowUserTag == User.User1)
+        if (ball.nowUserTag == User.User2)
         {
             //とりあえず間隔をあける
             cnt++;
@@ -435,6 +435,8 @@ public class AI : MonoBehaviour
                     this.CharaStatus.Distance = -200;   //距離
                 }
 
+                //書き直し
+
                 //Debug.Log(CharaStatus.Rad);
                 //Debug.Log(CharaStatus.Distance);
 
@@ -453,6 +455,7 @@ public class AI : MonoBehaviour
                 //Debug.Log(a+"aaa"+b);
                 ball.Serve(a, b);
                 cnt = 0;
+                //
             } 
         }
     }
