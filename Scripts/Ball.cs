@@ -66,9 +66,10 @@ public class Ball : MonoBehaviour
     //物理演算が行われる際の処理
     private void FixedUpdate()
     {
+        Debug.Log("現在のユーザータグ : "+nowUserTag);
+
         if (GameManager.instance.isServe)
         {
-            Debug.Log("追従中");
             Vector3 pPos = userObj[(int)GameManager.instance.serveUser].transform.position;
             Vector3 pForwardVec = userObj[(int)GameManager.instance.serveUser].transform.forward;
 
@@ -81,7 +82,6 @@ public class Ball : MonoBehaviour
                 isCoolTime = false;
                 colCoolTime = 0;
             }
-            Debug.Log("バウンド回数 : " + boundCount);
 
             //ネットに当たってるとき
             if (isNet)
@@ -196,13 +196,13 @@ public class Ball : MonoBehaviour
     }
 
     #region サーブ処理
-    public void Serve(float _flightTime,float _speedRate)
+    public void Serve(float _flightTime, float _speedRate, User _user)
     {
         //サーブ用のコルーチンを開始
-        coroutine = StartCoroutine(ThrowBall(_flightTime,_speedRate));
+        coroutine = StartCoroutine(ThrowBall(_flightTime, _speedRate, _user));
     }
 
-    private IEnumerator ThrowBall(float _flightTime, float _speedRate)
+    private IEnumerator ThrowBall(float _flightTime, float _speedRate, User _user)
     {
         Debug.Log("=======上昇開始=======");
         flightTime = _flightTime;
@@ -219,27 +219,28 @@ public class Ball : MonoBehaviour
 
         Debug.Log("=======発射！！=======");
 
-        Strike(flightTime, speedRate);
+        Strike(flightTime, speedRate, _user);
     }
     #endregion
 
     #region 打つ処理
-    public void Strike(float _flightTime, float _speedRate)
+    public void Strike(float _flightTime, float _speedRate,User _user)
     {
-        if(GameManager.instance.gameState == GameState.Serve &&
+        Debug.Log("=======Shot　Now=======");
+
+        if (GameManager.instance.gameState == GameState.Serve &&
             boundCount == 0 && isProjection && !isBound)
         {
             isOut = true;
-            Debug.Log("バウンドしてから打ち返そうね！！！");
         }
 
         //タグを切り替える
-        TagChange();
+        if(GameManager.instance.gameState != GameState.Serve)TagChange();
 
         //到達地点を更新する
         LandingForecast lf = 
             GameObject.Find("RandingPointControl").GetComponent<LandingForecast>();
-        lf.PointSetting();
+        lf.PointSetting(_user);
 
         //バウンドフラグをオフに
         isBound = false;
