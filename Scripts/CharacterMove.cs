@@ -263,7 +263,7 @@ public class CharacterMove : MonoBehaviour
                     GameManager.instance.isServe = false;
 
                     //ƒT[ƒuŠÖ”ŒÄ‚Ô
-                    ball.Serve(a, b);
+                    //ball.Serve(a, b);
                     //
                 }
             }
