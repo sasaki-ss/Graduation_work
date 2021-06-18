@@ -34,12 +34,12 @@ public class LandingForecast : MonoBehaviour
         diameter = radius * 2;
     }
 
-    public void PointSetting()
+    public void PointSetting(User _user)
     {
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
-        float rad = (float)cStatus[(int)ball.nowUserTag].Rad;               //ラジアン値
-        float distance = (float)cStatus[(int)ball.nowUserTag].Distance
+        float rad = (float)cStatus[(int)_user].Rad;               //ラジアン値
+        float distance = (float)cStatus[(int)_user].Distance
             / correctionVal;                                                //到達距離
 
         //ボールScriptを取得
