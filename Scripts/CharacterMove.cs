@@ -16,6 +16,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] Ball ball;
     [SerializeField] GameObject pointB;
     [SerializeField] Score score;
+
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
@@ -23,7 +24,6 @@ public class CharacterMove : MonoBehaviour
     RaycastHit hit;
 
     int motionCnt = 0;
-    bool autoFlg = false;
     bool swingFlg = false;
     bool hitFlg = false;
     
@@ -31,7 +31,7 @@ public class CharacterMove : MonoBehaviour
     {
         //if文で判定してから場所決め
         //こっちサーブの時
-        if (ball.nowUserTag == User.User2)
+        if (GameManager.instance.serveUser == User.User1)
         {
             if (score.user1Score % 2 == 0)
             {
@@ -71,7 +71,6 @@ public class CharacterMove : MonoBehaviour
         this.CharaStatus.Distance = 0;
         player.transform.position = new Vector3(125, 0, 0);
         motionCnt = 0;
-        autoFlg = false;
         swingFlg = false;
         hitFlg = false;
 
@@ -80,7 +79,7 @@ public class CharacterMove : MonoBehaviour
 
         //if文で判定してから場所決め
         //こっちサーブの時
-        if (ball.nowUserTag == User.User2)
+        if (GameManager.instance.serveUser == User.User1)
         {
             if (score.user1Score % 2 == 0)
             {
@@ -118,6 +117,8 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(GameManager.instance.serveUser);
+        Debug.Log(ball.nowUserTag);
         //コメントアウト
         {
             /*
@@ -146,10 +147,6 @@ public class CharacterMove : MonoBehaviour
         //現在の座標を取得
         nowPosition = player.position;
     }
-
-
-
-
 
 
     void TapMove()
@@ -192,7 +189,7 @@ public class CharacterMove : MonoBehaviour
         //横移動のみ
         //こっちサーブの時
         else
-        if (ball.nowUserTag == User.User2)
+        if (GameManager.instance.serveUser == User.User1)
         {
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
@@ -200,6 +197,7 @@ public class CharacterMove : MonoBehaviour
                 //クリック時間によって処理を分ける
                 if (Shot.GetTapTime <= 10)
                 {
+                    Debug.Log("サーブ時移動");
                     //移動の処理
                     Vector3 xyz = Base.Move(Input.mousePosition, hit);
 
@@ -235,8 +233,9 @@ public class CharacterMove : MonoBehaviour
                     GetComponent<NavMeshAgent>().destination = xyz;          
                 }
                 else
-                if(ball.nowUserTag == User.User2)
+                if(GameManager.instance.serveUser == User.User1)
                 {
+                    Debug.Log("サーブ");
                     //スイングAnimationにする予定
                     animator.SetBool("is_RightShake", true);
 
@@ -246,11 +245,12 @@ public class CharacterMove : MonoBehaviour
                     //プレイヤー状態を振るに変更
                     CharaStatus.NowState = 2;
 
+                    //書き直し
                     CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
                     CharaStatus.Distance = (float)Shot.GetDistance;   //距離
 
-                    //Debug.Log(CharaStatus.Rad);
-                    //Debug.Log(CharaStatus.Distance);
+                    Debug.Log(CharaStatus.Rad);
+                    Debug.Log(CharaStatus.Distance);
 
                     //振る
                     float a = (float)Shot.GetPower / 60 + (float)Shot.GetTapTime / 5;
@@ -264,6 +264,7 @@ public class CharacterMove : MonoBehaviour
 
                     //サーブ関数呼ぶ
                     ball.Serve(a, b);
+                    //
                 }
             }
         }
@@ -461,21 +462,17 @@ public class CharacterMove : MonoBehaviour
         }
 
         //振ったラケットが当たったら
-        if (ball.nowUserTag == User.User2 && hitFlg == true && swingFlg == true)
+        if (ball.nowUserTag == User.User1 && hitFlg == true && swingFlg == true)
         {
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
             CharaStatus.Distance = (float)Shot.GetDistance;   //距離
-                                                              //Debug.Log(Shot.GetTapTime);
-                                                              //Debug.Log(Shot.GetPower);
+
+            Debug.Log(Shot.GetTapTime);
+            Debug.Log(Shot.GetPower);
 
             //振る
-            //Debug.Log("呼び出し"+this.gameObject.name);
-            Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime);
-           
-            
-            
-            //自動移動フラグがたつ
-            autoFlg = true;
+            Debug.Log("スイング呼び出し"+this.gameObject.name);
+            Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
 
             //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
             hitFlg = false;
