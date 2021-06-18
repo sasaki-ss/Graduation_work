@@ -237,14 +237,14 @@ public class GameManager : MonoBehaviour
         iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
 
         iBall.Init();
-        //foreach (var pBase in iPBase) pBase.Init();
+        foreach (var pBase in iPBase) pBase.Init();
 
         gameState = GameState.Serve;
         isServe = true;
 
         #region サーブユーザー切り替え処理
         //切り替え処理
-        if (changeCount == 2)
+        if (changeCount == 2 && !isFault)
         {
             ServeUserChange();
             changeCount = 0;
