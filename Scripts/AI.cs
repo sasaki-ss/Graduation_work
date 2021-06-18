@@ -453,7 +453,7 @@ public class AI : MonoBehaviour
                 //ƒT[ƒuŠÖ”ŒÄ‚Ô
 
                 //Debug.Log(a+"aaa"+b);
-                ball.Serve(a, b);
+                //ball.Serve(a, b);
                 cnt = 0;
                 //
             } 
