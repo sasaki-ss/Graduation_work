@@ -232,11 +232,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6431e61c0b59f4c48922618f8e7bb209, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &430214870 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9149836939618701361, guid: 7ef940602da8e7e4f88ab05e22404322, type: 3}
-  m_PrefabInstance: {fileID: 9201915909730615538}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &452205145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -590,12 +585,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da9a3e8ec70ccaa48a320e413d97533e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  randingPoint: {fileID: 2122987217}
-  shotObject: {fileID: 429837357}
-  shot: {fileID: 0}
-  cStatus: []
-  radius: 0
-  diameter: 0
   correctionVal: 10
 --- !u!4 &647400825
 Transform:
@@ -787,11 +776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 0}
---- !u!95 &862302804 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
-  m_PrefabInstance: {fileID: 651271634}
-  m_PrefabAsset: {fileID: 0}
+  chara: []
 --- !u!4 &862302805 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
@@ -844,16 +829,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 022b7b839c545da479217d8c9b9c64a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: {fileID: 862302801}
-  animator: {fileID: 862302804}
-  CharaStatus: {fileID: 862302807}
-  player: {fileID: 862302805}
-  ball: {fileID: 1172014078}
-  net: {fileID: 430214870}
-  Shot: {fileID: 429837359}
-  gameManager: {fileID: 487528676}
-  pointB: {fileID: 2076708612}
-  score: {fileID: 2132639381}
+  Base: {fileID: 0}
+  animator: {fileID: 0}
+  CharaStatus: {fileID: 0}
+  player: {fileID: 0}
+  ball: {fileID: 0}
+  net: {fileID: 0}
+  pointB: {fileID: 0}
+  score: {fileID: 0}
+  Shot: {fileID: 0}
 --- !u!114 &862302811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -867,6 +851,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 1172014078}
+  chara: []
 --- !u!1 &1172014073
 GameObject:
   m_ObjectHideFlags: 0
@@ -1473,15 +1458,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94d335d48089cb94fb393137da3f9089, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Base: {fileID: 1834506133}
-  animator: {fileID: 1834506136}
-  CharaStatus: {fileID: 1834506130}
-  player: {fileID: 1834506139}
-  Shot: {fileID: 429837359}
-  net: {fileID: 430214870}
-  ball: {fileID: 1172014078}
-  pointB: {fileID: 2076708612}
-  score: {fileID: 2132639381}
+  Base: {fileID: 0}
+  animator: {fileID: 0}
+  CharaStatus: {fileID: 0}
+  player: {fileID: 0}
+  ball: {fileID: 0}
+  net: {fileID: 0}
+  pointB: {fileID: 0}
+  score: {fileID: 0}
+  Shot: {fileID: 0}
 --- !u!65 &1834506132
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1508,11 +1493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ball: {fileID: 1172014078}
---- !u!95 &1834506136 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 9500000, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
-  m_PrefabInstance: {fileID: 1666853045}
-  m_PrefabAsset: {fileID: 0}
+  chara: []
 --- !u!4 &1834506139 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
