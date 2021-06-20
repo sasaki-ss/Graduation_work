@@ -187,6 +187,14 @@ public class GameManager : MonoBehaviour
     //サーブエリア変更処理
     private void ServeAreaPosChange()
     {
+        foreach (var obj in serveOutAreaObj)
+        {
+            obj.SetActive(true);
+        }
+
+        serveAreaObj.SetActive(true);
+        safetyAreaObj.SetActive(false);
+
         //サーブユーザーがプレイヤー1の場合
         if (serveUser == User.User1)
         {

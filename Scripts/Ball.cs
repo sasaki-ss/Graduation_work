@@ -12,6 +12,7 @@ public class Ball : MonoBehaviour
     private Vector3         endPoint;       //終点地点
     private Vector3         diff;           //距離
     private User            nowShotUser;    //現在打っているユーザー
+    private GameObject[]    userObj;        //ユーザーオブジェクト
     private int             colCoolTime;    //当たり判定クールタイム
     private float           flightTime;     //滞空時間
     private float           speedRate;      //滞空時間を基準とした移動速度倍率
@@ -28,7 +29,6 @@ public class Ball : MonoBehaviour
     public bool         isNet { get; private set; }         //ネットフラグ
 
     /*インスペクターに表示又は設定する変数*/
-    private GameObject[]    userObj;        //ユーザーオブジェクト
     [SerializeField]
     private GameObject      randingPoint;   //着地地点オブジェクト
 
@@ -273,6 +273,11 @@ public class Ball : MonoBehaviour
 
     public void Init()
     {
+        if (isProjection)
+        {
+            StopCoroutine(coroutine);
+        }
+
         boundCount = 0;
         colCoolTime = 0;
         isBound = false;
@@ -286,6 +291,8 @@ public class Ball : MonoBehaviour
 
         rb.isKinematic = true;
         rb.useGravity = false;
+
+        tr.time = 0;
     }
 
     //タグ切り替え処理
