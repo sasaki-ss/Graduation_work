@@ -63,6 +63,11 @@ public class Score : MonoBehaviour
         //スコア追加フラグをオンにする
         GameManager.instance.isAddScore = true;
 
+        GameManager.instance.isFault = false;
+        GameManager.instance.faultState = FaultState.None;
+
+        GameManager.instance.changeCount++;
+
         Debug.Log("User1 : " + user1Score + " " + "User2 : " + user2Score);
 
     }

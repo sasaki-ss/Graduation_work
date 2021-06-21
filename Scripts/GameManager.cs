@@ -58,17 +58,17 @@ public class GameManager : MonoBehaviour
     private GameObject      safetyAreaObj;       //セーフティエリアオブジェクト
     private GameObject[]    serveOutAreaObj;     //サーブアウトエリアオブジェクト
     private Vector3[]       serveAreaPos;        //セーブエリアの座標
-    private int             changeCount;         //ラウンドカウント
 
     /*プロパティ関連*/
+    public int          changeCount { get; set; }          //ラウンドカウント
     public bool         isDeuce { get; set; }              //デュースフラグ
     public bool         isAddScore { get; set; }           //スコアフラグ
     public bool         isNextRound { get; set; }          //次のラウンドフラグ
     public bool         isServe { get; set; }              //サーブフラグ
-    public bool         isFault { get; private set; }      //フォルトフラグ
+    public bool         isFault { get; set; }              //フォルトフラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
-    public FaultState   faultState { get; private set; }   //フォルト状態
+    public FaultState   faultState { get; set; }           //フォルト状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
             new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
-        changeCount = 2;
+        changeCount = 1;
 
         ServeAreaPosChange();
     }
@@ -235,10 +235,24 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator NextRound()
     {
+        Debug.Log("サーブチェンジカウント : " + changeCount);
+
         float timeCnt = Define.NEXT_ROUNDTIME;
         isNextRound = true;
 
         //ゲームを次のラウンドへ
+        #region サーブユーザー切り替え処理
+        //切り替え処理
+        if (changeCount == 2)
+        {
+            ServeUserChange();
+            changeCount = 0;
+
+            ServeAreaPosChange();
+        }
+
+        #endregion
+
         Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
         Base[] iPBase = new Base[2];
         iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
@@ -249,20 +263,6 @@ public class GameManager : MonoBehaviour
 
         gameState = GameState.Serve;
         isServe = true;
-
-        #region サーブユーザー切り替え処理
-        //切り替え処理
-        if (changeCount == 2 && !isFault)
-        {
-            ServeUserChange();
-            changeCount = 0;
-
-            ServeAreaPosChange();
-        }
-
-        if (gameState == GameState.DuringRound ||
-            faultState == FaultState.DoubleFault) changeCount++;
-        #endregion
 
         while (timeCnt >= 0f)
         {
@@ -289,17 +289,15 @@ public class GameManager : MonoBehaviour
 
     private User InversionTag(User _user)
     {
+        User returnUesr = User.User1;
+
         //タグを反転させる
         if (_user == User.User1)
         {
-            _user = User.User2;
-        }
-        else
-        {
-            _user = User.User1;
+            returnUesr = User.User2;
         }
 
-        return _user;
+        return returnUesr;
     }
 
     public void FaultProc()
