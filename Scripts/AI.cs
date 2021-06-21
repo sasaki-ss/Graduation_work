@@ -390,7 +390,7 @@ public class AI : MonoBehaviour
 
                     //適当に設定(角度と距離)
                     this.CharaStatus.Rad = 1.8f;        //ラジアン値
-                    this.CharaStatus.Distance = 580;    //距離
+                    this.CharaStatus.Distance = 600;    //距離
                 }
                 //右側
                 else
@@ -398,8 +398,8 @@ public class AI : MonoBehaviour
                     Debug.Log("右側から");
 
                     //適当に設定(角度と距離)
-                    this.CharaStatus.Rad = 0.8f;        //ラジアン値
-                    this.CharaStatus.Distance = 580;    //距離
+                    this.CharaStatus.Rad = 0.9f;        //ラジアン値
+                    this.CharaStatus.Distance = 600;    //距離
                 }
             }
         }
