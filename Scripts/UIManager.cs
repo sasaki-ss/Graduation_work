@@ -154,11 +154,19 @@ public class UIManager : MonoBehaviour
         TapDoing();                                                     //タップ中のUIの生成管理
         if (GameManager.instance.isAddScore || GameManager.instance.isFault)
         {
-            if(rCreateFlg)  RoundBetween();                                             //ラウンドの間のUIの生成管理
+            if (GameManager.instance.gameState != GameState.GameSet)
+            {//終了していない場合
+                if (rCreateFlg) RoundBetween();                                             //ラウンドの間のUIの生成管理
+            }
         }
         else
         {
             rCreateFlg = true;
+        }
+
+        if (GameManager.instance.gameState == GameState.GameSet)
+        {
+            GameSet();          //終了処理
         }
 
     }
@@ -329,8 +337,9 @@ public class UIManager : MonoBehaviour
         }
         #endregion
     }
+    
     void RoundBetween()
-    {   //ラウンドの間に行う処理
+    {
         #region ラウンド切り替え時に行う処理
 
         roundInstances = new GameObject[RoundUINum];
@@ -362,7 +371,15 @@ public class UIManager : MonoBehaviour
             }
             else
             {   //通常時
-                textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+                if(score.isUser1MatchP || score.isUser2MatchP)
+                {
+                    textRoundBetween.text = score.user1Score + " - " + score.user2Score+
+                        "\nマッチポイント";            //得点取得
+                }
+                else
+                {
+                    textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+                }
             }
 
         }
@@ -378,7 +395,17 @@ public class UIManager : MonoBehaviour
 
         else if(GameManager.instance.faultState == FaultState.DoubleFault)
         {
-            textRoundBetween.text = "ダブルフォルト";   //ダブルフォルト
+            if(score.isUser1MatchP || score.isUser2MatchP)
+            {
+                textRoundBetween.text = "ダブルフォルト\n" +
+                score.user1Score + " - " + score.user2Score+
+                "\nマッチポイント";   //ダブルフォルト
+            }
+            else
+            {
+                textRoundBetween.text = "ダブルフォルト\n" +
+                score.user1Score + " - " + score.user2Score;   //ダブルフォルト
+            }
         }
 
         
@@ -388,6 +415,13 @@ public class UIManager : MonoBehaviour
         }
 
         rCreateFlg = false;
+
+        #endregion
+    }
+
+    void GameSet()
+    {
+        #region ゲームセット時に行う処理
 
         #endregion
     }
