@@ -7,61 +7,55 @@ using UnityEngine.AI;
 public class Base : MonoBehaviour
 {
     [SerializeField] Ball ball;
-    private User user;
-    GameObject[] chara;
-
+    [SerializeField] GameObject[] chara;
 
     //タッチ時に使う処理
     Vector2 touch;
     Vector3 touchPosition;
 
     //タップ処理を実行するためのやつ
-    TouchManager tMger;      //TapStateManager内のTouchManager
+    TouchManager tMger;
     public TouchManager touch_state;
 
     float flightTime;
     float speed;
 
-    bool flg;
-
-    // Start is called before the first frame update
     void Start()
     {
+        //数値リセット
         flightTime = 0;
-        speed = 0;
-        flg = false;
+        speed      = 0;
 
         tMger = new TouchManager(); //初期化
-        chara = new GameObject[2];
 
+        //それぞれのキャラを読み込む
+        chara = new GameObject[2];
         chara[(int)User.User1] = GameObject.Find("Player");
         chara[(int)User.User2] = GameObject.Find("Player2");
 
-        user = User.User1;
-
+        //ボールの読み込み
         ball = GameObject.Find("Ball").GetComponent<Ball>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        tMger.update(); //更新
-
+        tMger.update();                    //更新
         touch_state = tMger.getTouch();    //タッチ取得
     }
 
     //共通処理部分の初期化
     public void Init()
     {
+        //それぞれのInitを呼び出す
         CharacterMove player = chara[0].GetComponent<CharacterMove>();
         player.Init();
 
         AI ai = chara[1].GetComponent<AI>();
         ai.Init();
 
+        //数値のリセット
         flightTime = 0;
         speed = 0;
-        flg = false;
 
         Debug.Log("BaseのInit処理の実行");
     }
@@ -154,13 +148,15 @@ public class Base : MonoBehaviour
         //速度　　　パワーから
 
         //この二つ変数をProjectileMotion関数に渡す
+
         //とりあえず最低4秒滞空時間があるとしてます　
-        flightTime = (float)_flight / 60 + (float)_taptime / 5;
+        flightTime = (float)_flight / 60 + (float)_taptime / 20 + 2.5f;
+
+        //とりあえず6で割ってます
+        speed = (float)_power / 6;
 
         //Debug.Log(flightTime);
-        //Debug.Log("a" + flightTime);
-        //とりあえず5で割ってます
-        speed = (float)_power / 6;
+        //Debug.Log(speed);
 
         if (GameManager.instance.isServe == true)
         {
@@ -173,7 +169,6 @@ public class Base : MonoBehaviour
             Debug.Log("ラリー");
             ball.Strike(flightTime, speed,_user);
         }
-
     }
 }
 

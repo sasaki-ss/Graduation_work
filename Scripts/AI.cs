@@ -3,52 +3,53 @@ using UnityEngine.AI;
 
 public class AI : MonoBehaviour
 {
-    //共通のやつ
+    //外部のやつの読み込み用
     [SerializeField] Base Base;
-
-    //各々のやつ
     [SerializeField] Animator animator;
     [SerializeField] CharaStatus CharaStatus;
     [SerializeField] Transform player;
     [SerializeField] Ball ball;
     [SerializeField] GameObject net;
-    [SerializeField] public Shot Shot;
-    [SerializeField] GameManager gameManager;
     [SerializeField] GameObject pointB;
     [SerializeField] Score score;
+    [SerializeField] public Shot Shot;
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
 
-    //理解はしてないけど3d空間上でのClick座標を取得するのに使う
-    RaycastHit hit;
+    int   motionCnt = 0;        //モーション管理用のカウント変数
+    int   serveCnt  = 0;        //サーブ時のちょっとした待機時間変数
+    int   miss      = 0;        //特定の数値なら移動をしない変数
+    float dis       = 0;        //距離を測る為の変数
+    bool  hitFlg    = false;    //ラケットに当たったとするフラグ
+    bool  onceFlg   = true;     //スイング処理を一回だけ行うためのフラグ
 
-    int motionCnt = 0;
-    public bool swingFlg = false;
-    bool hitFlg = false;
-    bool resetFlg = false;
-    bool start_SwingFlg = true;
-    float dis = 0;
-    bool boundFlg = true;
-    int miss = 0;  //移動をしない
-    int cnt = 0;
     void Start()
     {
-        Shot = GameObject.Find("Shot").GetComponent<Shot>();
+        //読み込み
+        Base        = GameObject.Find("Player2").GetComponent<Base>();
+        animator    = GameObject.Find("Player2").GetComponent<Animator>();
+        CharaStatus = GameObject.Find("Player2").GetComponent<CharaStatus>();
+        player      = GameObject.Find("Player2").GetComponent<Transform>();
+        ball        = GameObject.Find("Ball").GetComponent<Ball>();
+        net         = GameObject.Find("Net");
+        pointB      = GameObject.Find("pointB");
+        score       = GameObject.Find("Score").GetComponent<Score>();
+        Shot        = GameObject.Find("Shot").GetComponent<Shot>();
+
         //こっちサーブの時
         if (ball.nowUserTag == User.User2)
         {
-            //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
             {
                 //奇数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //偶数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, -25);
             }
         }
@@ -58,13 +59,13 @@ public class AI : MonoBehaviour
             if (score.user1Score % 2 == 0)
             {
                 //奇数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //偶数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, -25);
             }
         }
@@ -75,55 +76,62 @@ public class AI : MonoBehaviour
         //現状の移動指定地を削除
         GetComponent<NavMeshAgent>().ResetPath();
 
-        this.CharaStatus.Rad = 0;
+        //読み込み
+        Base        = GameObject.Find("Player2").GetComponent<Base>();
+        animator    = GameObject.Find("Player2").GetComponent<Animator>();
+        CharaStatus = GameObject.Find("Player2").GetComponent<CharaStatus>();
+        player      = GameObject.Find("Player2").GetComponent<Transform>();
+        ball        = GameObject.Find("Ball").GetComponent<Ball>();
+        net         = GameObject.Find("Net");
+        pointB      = GameObject.Find("pointB");
+        score       = GameObject.Find("Score").GetComponent<Score>();
+        Shot        = GameObject.Find("Shot").GetComponent<Shot>();
+
+        //数値のリセット
+        this.CharaStatus.Rad      = 0;
         this.CharaStatus.Distance = 0;
-        player.transform.position = new Vector3(-125, 0, 0);
         motionCnt = 0;
-        boundFlg = true;
-        swingFlg = true;
-        start_SwingFlg = false;
-        resetFlg = false;
-        hitFlg = false;
-        dis = 0;
-        miss = 0;
-        cnt = 0;
+        serveCnt  = 0;
+        miss      = 0;
+        dis       = 0;
+        hitFlg    = false;
+        onceFlg   = true;
+
+        //振るモーションをfalseに
         this.animator.SetBool("is_RightShake", false);
 
         //こっちサーブの時
-        if (ball.nowUserTag == User.User2)
+        if (GameManager.instance.serveUser == User.User2) 
         {
-            //if文でこっちがサーブなのか判定してから
             if (score.user2Score % 2 == 0)
             {
                 //奇数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //偶数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, -25);
             }
         }
+        //サーブじゃない時なら
         else
         {
-            //if文でこっちがサーブなのか判定してから
             if (score.user1Score % 2 == 0)
             {
                 //奇数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, 25);
             }
             else
             {
                 //偶数
-                //対角線上に配置する予定
+                //相手と対角線上に配置する予定
                 player.transform.position = new Vector3(-125, 0, -25);
             }
         }
-
-        Shot = GameObject.Find("Shot").GetComponent<Shot>();
 
         Debug.Log("AIのInit処理の実行");
     }
@@ -146,51 +154,16 @@ public class AI : MonoBehaviour
         //現在の座標を取得
         nowPosition = player.position;
 
-        //アップデートで直接やるとAnimationの処理が今の所マシな動きになってくれる
-        if (resetFlg == true && dis <= 150)
+        //振るモーションでない時はフラグをオンにしておく
+        if (animator.GetBool("is_RightShake") == false)
         {
-            //振る
-            //角度によって判定
-            //スワイプの長さによって判定
-            //プレイヤーから見たとき
-            // 0.5 :左上ギリ
-            // 2.5 :右上ギリ
-
-            Vector2 parameter;
-
-            parameter = TargetPoint();
-            CharaStatus.Rad = parameter.x;
-            CharaStatus.Distance = parameter.y;
-
-            //パラメータちょこっと直接いじってる
-            Debug.Log(parameter.x + ":::"+ parameter.y);
-            Base.Swing(CharaStatus.CharaPower * 1.5f, Shot.GetPower + 10,0, User.User1);
-
-            start_SwingFlg = false;
-
-            this.animator.SetBool("is_RightShake", false);
-            motionCnt = 0;
-            swingFlg = false;
-            hitFlg = false;
-            resetFlg = false;
-        }
-
-        //ミスってもカウント後は元に戻しておく
-        if (motionCnt > 300)
-        {
-            this.animator.SetBool("is_RightShake", false);
-            motionCnt = 0;
-            swingFlg = false;
-            hitFlg = false;
-            resetFlg = false;
+            onceFlg = true;
         }
     }
 
     void AutoMove()
     {
         //オート移動処理
-
-        // Debug.Log("x:"+pointB.transform.position.x+ "y:" + pointB.transform.position.y+ "z:" + pointB.transform.position.z );
 
         //x-7～x119がAIコートの内側
         //z55～z-55がAIコートの内側
@@ -201,7 +174,7 @@ public class AI : MonoBehaviour
         //Xの場合
         if (pointB.transform.position.x < -7 && pointB.transform.position.x >= -30)
         {
-            // Debug.Log("-7～-30");
+            //Debug.Log("-7～-30");
             patternX = 1;
         }
         else
@@ -247,7 +220,7 @@ public class AI : MonoBehaviour
             patternZ = 3;
         }
         else
-        if (pointB.transform.position.z > 27.5 && pointB.transform.position.z <= 55)
+        if (pointB.transform.position.z > 27.5 && pointB.transform.position.z <= 55) 
         {
             //Debug.Log("27.5～55");
             patternZ = 4;
@@ -257,8 +230,6 @@ public class AI : MonoBehaviour
             //Debug.Log("55～or-55～");
             patternZ = 0;
         }
-
-        //Debug.Log(patternX +":::"+ patternZ);
 
         Vector3 xyz = new Vector3(0, 0, 0);
 
@@ -300,13 +271,11 @@ public class AI : MonoBehaviour
                 break;
         }
 
-        //Debug.Log(ball.boundCount);
-
-        //乱数の設定(設定した数値が出ればAIは動けない)
-        int miss = Random.Range(1, 20);
+        //乱数の設定(設定した数値が出ればAIは動かない)
+        miss = Random.Range(1, 20);
 
         //最初のみ
-        if (ball.boundCount != 0 && start_SwingFlg == true)
+        if (ball.boundCount != 0) 
         {
             if (pointB.transform.position.x >= -62 && pointB.transform.position.x <= 0)
             {
@@ -314,22 +283,19 @@ public class AI : MonoBehaviour
                 {
                     //移動させる
                     GetComponent<NavMeshAgent>().destination = xyz;
-                    swingFlg = true;
                 }
             }
         }
         //通常
         else
         {
-            if (ball.boundCount !=0 && gameManager.gameState != GameState.Serve && miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
+            if (ball.boundCount != 0 && GameManager.instance.gameState != GameState.Serve && 
+                miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
             {
                 //移動させる
                 GetComponent<NavMeshAgent>().destination = xyz;
-                swingFlg = true;
             }
         }
-
-        //Debug.Log(swingFlg);
     }
 
     void JudgeMove()
@@ -373,44 +339,41 @@ public class AI : MonoBehaviour
 
     void Swing()
     {
-        float dis = Vector3.Distance(this.transform.position, pointB.transform.position);
+        //距離を測る(pointBとの)
+        dis = Vector3.Distance(this.transform.position, pointB.transform.position);
 
-        //サーブフラグがtrueならしない
+        //こちらがサーブする側ではないとき
         if (GameManager.instance.isServe != true)
         {
             //違和感のない範囲にいたら
-            if (ball.boundCount!=0 && dis <= 50)
+            if (ball.boundCount != 0 && dis <= 50)
             {
-                // Debug.Log("現在の距離: " + dis);
+                //スイングAnimationにする予定
+                //スイングフラグ(モーションフラグも兼ねてるフラグをオン)
+                animator.SetBool("is_RightShake", true);
 
-                if (swingFlg == true && animator.GetBool("is_Run") == false)
-                {
-                    //プレイヤーをスイングモーションにする
-                    this.animator.SetBool("is_RightShake", true);
-                    //Debug.Log("ふるるるるる");
-                    motionCnt++;
-                    //プレイヤーのスタミナを減らす
-                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
-                }
+                //円の大きさを測る
+                CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
-                if (this.animator.GetBool("is_RightShake") == true)
-                {
-                    if (hitFlg == true)
-                    {
-                        resetFlg = true;
-                    }
-                }
+                //プレイヤー状態を振るに変更
+                CharaStatus.NowState = 2;
+
+                //プレイヤーのスタミナを減らす
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
             }
         }
+        //こっちサーブの時
         else
-        if (ball.nowUserTag == User.User2)
+        if (GameManager.instance.serveUser == User.User2)
         {
             //とりあえず間隔をあける
-            cnt++;
+            serveCnt++;
 
-            if (cnt > 300)
+            //Debug.Log(cnt);
+            if (serveCnt > 200)
             {
-                //Debug.Log("AIのサーブ");
+                //Debug.Log("AIサーブ");
+
                 //スイングAnimationにする予定
                 animator.SetBool("is_RightShake", true);
 
@@ -424,39 +387,74 @@ public class AI : MonoBehaviour
                 if (this.transform.position.z <= 0)
                 {
                     Debug.Log("左側から");
-                    this.CharaStatus.Rad = 1.3f;          //ラジアン値
-                    this.CharaStatus.Distance = -200;   //距離
+
+                    //適当に設定(角度と距離)
+                    this.CharaStatus.Rad = 1.8f;        //ラジアン値
+                    this.CharaStatus.Distance = 580;    //距離
                 }
                 //右側
                 else
                 {
                     Debug.Log("右側から");
-                    this.CharaStatus.Rad = 1.3f;          //ラジアン値
-                    this.CharaStatus.Distance = -200;   //距離
+
+                    //適当に設定(角度と距離)
+                    this.CharaStatus.Rad = 0.8f;        //ラジアン値
+                    this.CharaStatus.Distance = 580;    //距離
                 }
+            }
+        }
 
-                //書き直し
+        //振る状態時なら50カウント後に待機状態に戻す
+        if (animator.GetBool("is_RightShake") == true)
+        {
+            motionCnt++;
 
-                //Debug.Log(CharaStatus.Rad);
-                //Debug.Log(CharaStatus.Distance);
+            if (motionCnt > 40)
+            {
+                motionCnt = 0;
+
+                //プレイヤー状態を待機に変更
+                CharaStatus.NowState = 0;
+
+                //プレイヤーを待機モーションにする
+                animator.SetBool("is_RightShake", false);
+
+                //プレイヤーのスタミナを減らす
+                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+            }
+        }
+
+        //スイング状態でボールと当たったら
+        if (animator.GetBool("is_RightShake") == true && hitFlg == true && onceFlg == true)
+        {
+            Vector2 parameter;
+
+            //適当に設定(飛ぶ強さと滞空時間)
+            float power = 1.5f, taptime = 50;
+
+            //サーブ時なら
+            if (GameManager.instance.serveUser == User.User2 && GameManager.instance.isServe == true)
+            {
+                //角度と距離は少し上らへんで設定されてる
+                //振る
+                Base.Swing(CharaStatus.CharaPower, power, taptime, User.User2);
+            }
+            else
+            {
+                //適当に設定(角度と距離)
+                parameter = TargetPoint();
+                CharaStatus.Rad = parameter.x;
+                CharaStatus.Distance = parameter.y;
 
                 //振る
-                float a = 6;
-                float b = (float)CharaStatus.CharaPower / 6;
+                Base.Swing(CharaStatus.CharaPower, power, taptime, User.User2);
+            }
 
-                //Debug.Log(a);
-                //Debug.Log(b);
+            //この処理一度だけ実行させるためにフラグをかませる
+            onceFlg = false;
 
-                //サーブフラグオフ
-                GameManager.instance.isServe = false;
-
-                //サーブ関数呼ぶ
-
-                //Debug.Log(a+"aaa"+b);
-                //ball.Serve(a, b);
-                cnt = 0;
-                //
-            } 
+            //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
+            hitFlg = false;
         }
     }
 
@@ -467,8 +465,6 @@ public class AI : MonoBehaviour
         //プレイヤー側のラケットと当たったら
         if (collision.name == "Ball")
         {
-            //Debug.Log("hu");
-
             hitFlg = true;
         }
     }
@@ -480,8 +476,6 @@ public class AI : MonoBehaviour
         //プレイヤー側のラケットと離れたとき
         if (collision.name == "Ball")
         {
-            //Debug.Log("hu");
-
             hitFlg = false;
         }
     }
@@ -511,8 +505,6 @@ public class AI : MonoBehaviour
             targetPointX = 2.1f;
         }
 
-
-        // Debug.Log("pointB:"+ pointB.transform.position.x +":::"+ pointB.transform.position.z);
         if (mode == 2)
         {
 
@@ -520,10 +512,12 @@ public class AI : MonoBehaviour
             if (pointB.transform.position.x < 0 && pointB.transform.position.x > -40)
             {
                 int a = Random.Range(1, 3);
+
                 if (a != 2)
                 {
                     targetPointX = 1.3f;
                 }
+
                 targetPointY = 400 * 2.5f;
             }
 
@@ -531,10 +525,12 @@ public class AI : MonoBehaviour
             if (pointB.transform.position.x < -41 && pointB.transform.position.x > -80)
             {
                 int a = Random.Range(1, 3);
+
                 if (a != 2)
                 {
                     targetPointX = 1.8f;
                 }
+
                 targetPointY = 400 * 3f;
             }
 
@@ -542,20 +538,22 @@ public class AI : MonoBehaviour
             if (pointB.transform.position.x < -81 && pointB.transform.position.x > -120)
             {
                 int a = Random.Range(1, 3);
+
                 if (a != 3)
                 {
                     targetPointX = 2.2f;
                 }
+
                 targetPointY = 400 * 2.5f;
             }
         }
 
         if (mode == 4)
         {
-
             targetPointX = Random.Range(1, 25) / 10;
             targetPointY = 400 * Random.Range(10, 35) / 10;
         }
+
         Vector2 targetPoint = new Vector2(targetPointX, targetPointY);
 
         //Debug.Log("rad" + targetPointX);
