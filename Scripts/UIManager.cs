@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TapStateManager;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -360,7 +361,6 @@ public class UIManager : MonoBehaviour
         textRoundBetween.color = Color.white;                                                   //色変更
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
-        
         r++;
 
         if (GameManager.instance.isAddScore)
@@ -423,6 +423,27 @@ public class UIManager : MonoBehaviour
     {
         #region ゲームセット時に行う処理
 
+        roundInstances = new GameObject[RoundUINum];
+        r = 0;      //現在生成されているUIの要素数分をrに代入
+
+        //パネル
+        roundInstances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "panel";                                                            //オブジェクト名変更
+        panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
+        r++;
+
+        //ラウンド間に表示するテキスト
+        roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
+        textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
+        textRoundBetween.color = Color.white;                                                   //色変更
+        textRoundBetween.fontSize = 80;                                                         //フォントサイズ
+        textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
+        r++;
+
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
 }
