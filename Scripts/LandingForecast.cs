@@ -7,6 +7,7 @@ public class LandingForecast : MonoBehaviour
     /*このスクリプトでのみ使う変数*/
     private CharaStatus[]   cStatus;        //ユーザーのステータス
     private GameObject      randingPoint;   //着地地点オブジェクト
+    private GameObject      pointB;         //ポイントBオブジェクト
     private float           radius;         //半径
     private float           diameter;       //直径
 
@@ -17,7 +18,7 @@ public class LandingForecast : MonoBehaviour
     //初期化処理
     private void Start()
     {
-        cStatus = new CharaStatus[2];
+        cStatus = new CharaStatus[Define.USER_NUM];
 
         GameObject userObj = GameObject.Find("Player");
         GameObject userObj2 = GameObject.Find("Player2");
@@ -26,12 +27,19 @@ public class LandingForecast : MonoBehaviour
         cStatus[1] = userObj2.GetComponent<CharaStatus>();
 
         randingPoint = GameObject.Find("RandingPoint");
-
-        //オブジェクト非表示
-        randingPoint.SetActive(false);
+        pointB = GameObject.Find("PointB");
 
         radius = 2;
         diameter = radius * 2;
+
+        Init();
+    }
+
+    public void Init()
+    {
+        //オブジェクト非表示
+        randingPoint.SetActive(false);
+        pointB.SetActive(false);
     }
 
     public void PointSetting(User _user)
@@ -60,6 +68,7 @@ public class LandingForecast : MonoBehaviour
 
         //オブジェクトを表示する
         randingPoint.SetActive(true);
+        pointB.SetActive(true);
 
         //到達地点の座標を変更
         randingPoint.transform.position = new Vector3(x, 0.5f, z);
@@ -69,7 +78,6 @@ public class LandingForecast : MonoBehaviour
         randingPoint.transform.localScale = new Vector3(diameter, diameter, diameter);
 
         Vector3 basePoint = randingPoint.transform.position;
-        GameObject pointB = GameObject.Find("pointB");
 
         //マイナスか否かを判定
         int isMinusX = Random.Range(0, 1 + 1);
