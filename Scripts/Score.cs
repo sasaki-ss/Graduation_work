@@ -22,7 +22,7 @@ public class Score : MonoBehaviour
     }
 
     //初期化処理
-    private void Init()
+    public void Init()
     {
         user1Score = 0;
         user2Score = 0;
@@ -62,9 +62,6 @@ public class Score : MonoBehaviour
         
         //スコア追加フラグをオンにする
         GameManager.instance.isAddScore = true;
-
-        GameManager.instance.isFault = false;
-        GameManager.instance.faultState = FaultState.None;
 
         GameManager.instance.changeCount++;
 

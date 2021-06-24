@@ -49,11 +49,11 @@ public class LandingForecast : MonoBehaviour
         float z = Mathf.Cos(rad) * distance;
 
         //User2‚¾‚Á‚½ê‡”’l‚ğ”½“]‚³‚¹‚é
-        if (ball.nowUserTag == User.User2)
+        if (_user == User.User2)
         {
             z = -z;
         }
-        else if(ball.nowUserTag == User.User1)
+        else if(_user == User.User1)
         {
             x = -x;
         }

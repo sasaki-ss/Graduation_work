@@ -86,19 +86,6 @@ public class GameManager : MonoBehaviour
         serveOutAreaObj[1] = GameObject.Find("Area2");
         serveOutAreaObj[2] = GameObject.Find("Area3");
 
-        safetyAreaObj.SetActive(false);
-
-        instance = this;
-        isDeuce = false;
-        isFault = false;
-        isServe = true;
-        isAddScore = false;
-        isNextRound = false;
-
-        faultState = FaultState.None;
-        gameState = GameState.Serve;
-        serveUser = User.User1;
-
         serveAreaPos = new Vector3[4]
         {
             new Vector3( 32f,0f, 21f), //ユーザー1側右
@@ -107,9 +94,8 @@ public class GameManager : MonoBehaviour
             new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
-        changeCount = 1;
-
-        ServeAreaPosChange();
+        instance = this;
+        Init();
     }
 
     //更新処理
@@ -139,7 +125,7 @@ public class GameManager : MonoBehaviour
 
         //バウンド回数が2回以上の場合
         //※正確なバウンド数が取れないため
-        if(ball.boundCount >= 2 && !isAddScore)
+        if (ball.boundCount >= 2 && !isAddScore)
         {
             score.AddScore(ball.nowUserTag);
             Debug.Log("得点が入りました！ " + ball.nowUserTag);
@@ -150,14 +136,14 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             //ユーザーiが勝利スコアに到達かつユーザーjがマッチポイントでない場合
-            if(userSData[i].score == winScore && !userSData[j].isMatchP)
+            if (userSData[i].score == winScore && !userSData[j].isMatchP)
             {
                 gameState = GameState.GameSet;
                 Debug.Log("勝ちました！！");
             }
 
             //両ユーザーがマッチポイントの場合
-            if(userSData[i].isMatchP && userSData[j].isMatchP)
+            if (userSData[i].isMatchP && userSData[j].isMatchP)
             {
                 isDeuce = true;
                 score.MatchPReset();
@@ -170,14 +156,34 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 
+    private void Init()
+    {
+        safetyAreaObj.SetActive(false);
+
+        isDeuce = false;
+        isFault = false;
+        isServe = true;
+        isAddScore = false;
+        isNextRound = false;
+
+        changeCount = 1;
+
+        faultState = FaultState.None;
+        gameState = GameState.Serve;
+        serveUser = User.User1;
+
+        ServeAreaPosChange();
+    }
 
     //サーバーユーザーを切り替える
     private void ServeUserChange()
     {
-        if(serveUser == User.User2)
+        //現在のサーブユーザーがUser2の場合
+        if (serveUser == User.User2)
         {
             serveUser = User.User1;
         }
+        //現在のサーブユーザーがUser2ではない場合
         else
         {
             serveUser = User.User2;
@@ -232,53 +238,9 @@ public class GameManager : MonoBehaviour
             serveOutAreaObj[2].transform.position = new Vector3(91.7f, 0f, 0f);
         }
     }
-
-    private IEnumerator NextRound()
-    {
-        Debug.Log("サーブチェンジカウント : " + changeCount);
-
-        float timeCnt = Define.NEXT_ROUNDTIME;
-        isNextRound = true;
-
-        //ゲームを次のラウンドへ
-        #region サーブユーザー切り替え処理
-        //切り替え処理
-        if (changeCount == 2)
-        {
-            ServeUserChange();
-            changeCount = 0;
-
-            ServeAreaPosChange();
-        }
-
-        #endregion
-
-        Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-        Base[] iPBase = new Base[2];
-        iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
-        iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
-
-        iBall.Init();
-        foreach (var pBase in iPBase) pBase.Init();
-
-        gameState = GameState.Serve;
-        isServe = true;
-
-        while (timeCnt >= 0f)
-        {
-            timeCnt -= Time.deltaTime;
-            yield return null;
-        }
-
-        isNextRound = false;
-        isAddScore = false;
-        isFault = false;
-        if (faultState == FaultState.DoubleFault)faultState = FaultState.None;
-    }
-
     public void ChangeField()
     {
-        foreach(var obj in serveOutAreaObj)
+        foreach (var obj in serveOutAreaObj)
         {
             obj.SetActive(false);
         }
@@ -308,16 +270,84 @@ public class GameManager : MonoBehaviour
 
         switch (faultState)
         {
-        case FaultState.None:
-            faultState = FaultState.Fault;
-            isFault = true;
-            break;
-        case FaultState.Fault:
-            faultState = FaultState.DoubleFault;
-            score.AddScore(InversionTag(ball.nowUserTag));
-            break;
+            case FaultState.None:
+                faultState = FaultState.Fault;
+                isFault = true;
+                break;
+            case FaultState.Fault:
+                faultState = FaultState.DoubleFault;
+                score.AddScore(InversionTag(ball.nowUserTag));
+                break;
         }
 
         StartCoroutine(NextRound());
     }
+
+    #region ゲームの進行関連
+
+    //次のラウンド
+    private IEnumerator NextRound()
+    {
+        float timeCnt = Define.NEXT_ROUNDTIME;  //待機時間
+
+        //ダブルフォルトまたはスコアが加算された際
+        if(faultState == FaultState.DoubleFault || isAddScore)
+        {
+            isNextRound = true;
+        }
+
+        //切り替えカウントが2の場合
+        if (changeCount == 2)
+        {
+            //サーブユーザーを切り替える
+            ServeUserChange();
+
+            //切り替えカウントを初期化
+            changeCount = 0;
+        }
+
+        //サーブエリアの座標を適用
+        ServeAreaPosChange();
+
+        //ボール、プレイヤーの初期化
+        Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
+        Base[] iPBase = new Base[2];
+        iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
+        iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
+
+        iBall.Init();
+        foreach (var pBase in iPBase) pBase.Init();
+
+        //ゲームの状態をサーブに変更
+        gameState = GameState.Serve;
+
+        //次のラウンドの際フォルトの状態をNoneに変更
+        if (isNextRound)
+        {
+            faultState = FaultState.None;
+        }
+
+        //処理待ち
+        while (timeCnt >= 0f)
+        {
+            timeCnt -= Time.deltaTime;
+            yield return null;
+        }
+
+        //各フラグをオフにする
+        isNextRound = false;
+        isAddScore = false;
+        isFault = false;
+
+        //サーブフラグをオンに
+        isServe = true;
+    }
+
+    private void NextGame()
+    {
+        score.Init();
+        Init();
+    }
+
+    #endregion
 }
