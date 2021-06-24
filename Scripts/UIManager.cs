@@ -12,9 +12,12 @@ public class UIManager : MonoBehaviour
     //ラウンド時の生成
     private bool rCreateFlg;            //ラウンド時の生成フラグ
 
+    //サーブ時の生成
+    private bool sCreateFlg;            //サーブ時の生成フラグ
+
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
-    private const int RoundUINum = 4;   //ラウンド間に表示するUIの要素数
+    private const int RoundUINum = 5;   //ラウンド間に表示するUIの要素数
 
     private int i = 0;                  //UIの要素数のカウント
     private int j = 0;                  //ゲーム中生成したり削除するオブジェクトの要素数
@@ -28,10 +31,13 @@ public class UIManager : MonoBehaviour
     private GameObject linePref;        //線
     private GameObject panelPref;       //パネル
     private GameObject buttonPref;      //ボタン
+    private GameObject trianglePref;    //三角形
 
-    //UIのインスタンスを格納する配列
+    //UIのインスタンスを格納する変数
     private GameObject[] instances;
     private GameObject[] roundInstances;
+    private GameObject serveInstance;
+    
 
     //テキスト
     private Text textScore;             //スコアの表示
@@ -56,6 +62,8 @@ public class UIManager : MonoBehaviour
     private Button retryB;              //リトライボタン
     private Text retryBtext;            //リトライボタンのテキスト
 
+    private Image triangle;             //三角形
+
     //保持用
     private float gaugeKeep;            //ゲージのキープ
     private Vector3 vertexKeep;         //頂点の座標キープ
@@ -75,6 +83,7 @@ public class UIManager : MonoBehaviour
     private Vector3 panelPos;           //パネルの座標
     private Vector2 gSetTextPos;        //ゲームセット時のテキストの座標
     private Vector2 buttonPos;          //ボタンの座標 
+    private Vector3 triPos;             //三角形の座標
 
 
     //カメラ
@@ -105,6 +114,7 @@ public class UIManager : MonoBehaviour
         //タップ関連の初期化
         tMger = new TouchManager();
         createFlg = true;
+        sCreateFlg = true;
 
         //プレハブの読み込み
         textPref = (GameObject)Resources.Load("TextPref");
@@ -114,6 +124,7 @@ public class UIManager : MonoBehaviour
         linePref = (GameObject)Resources.Load("linePref");
         panelPref = (GameObject)Resources.Load("PanelPref");
         buttonPref = (GameObject)Resources.Load("ButtonPref");
+        trianglePref = (GameObject)Resources.Load("TrianglePref");
 
         //アニメーションカーブの初期化
         lineCurve = new AnimationCurve();
@@ -174,7 +185,10 @@ public class UIManager : MonoBehaviour
                 if (rCreateFlg) GameSet();          //終了処理
             }
         }
-        else rCreateFlg = true;
+        else { rCreateFlg = true; }
+
+    //    if (sCreateFlg) ServeDisplay();
+        
     }
 
     private void CreateInit()
@@ -420,7 +434,35 @@ public class UIManager : MonoBehaviour
         }
 
         rCreateFlg = false;
+        #endregion
+    }
 
+    void ServeDisplay()
+    {
+        #region サーブ権の表示
+
+        serveInstance = null;
+
+        if(GameManager.instance.serveUser == User.User1)
+        {
+            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
+            triPos = triPos + new Vector3(-560, -640, 0);
+
+        }
+        else
+        {
+            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, opponentPlayer.transform.position);
+            triPos = triPos + new Vector3(-540, -810, 0);
+        }
+
+        serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.identity);      //インスタンス生成
+        serveInstance.transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        serveInstance.name = "triangle";                                                         //オブジェクト名変更
+        triangle = serveInstance.GetComponent<Image>();                                          //イメージ
+
+        Destroy(serveInstance, Define.NEXT_ROUNDTIME);                                           //削除
+
+        sCreateFlg = false;
         #endregion
     }
 
