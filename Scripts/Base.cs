@@ -57,7 +57,7 @@ public class Base : MonoBehaviour
         flightTime = 0;
         speed = 0;
 
-        Debug.Log("BaseのInit処理の実行");
+        //Debug.Log("BaseのInit処理の実行");
     }
 
     //共通処理　移動
@@ -160,13 +160,13 @@ public class Base : MonoBehaviour
 
         if (GameManager.instance.isServe == true)
         {
-            Debug.Log("サーブ");
+            //Debug.Log("サーブ");
             GameManager.instance.isServe = false;
             ball.Serve(flightTime, speed,_user);
         }
         else
         {
-            Debug.Log("ラリー");
+            //Debug.Log("ラリー");
             ball.Strike(flightTime, speed,_user);
         }
     }

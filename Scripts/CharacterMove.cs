@@ -21,10 +21,16 @@ public class CharacterMove : MonoBehaviour
     //理解はしてないけど3d空間上でのClick座標を取得するのに使う
     RaycastHit hit;
 
-    int   motionCnt = 0;        //モーション管理用のカウント変数
-    float dis       = 0;        //距離を測る為の変数
-    bool  hitFlg    = false;    //ラケットに当たったとするフラグ
-    bool  onceFlg   = true;     //スイング処理を一回だけ行うためのフラグ
+    //
+
+    int   motionCnt    = 0;        //モーション管理用のカウント変数
+    int   serveMoveCnt = 0;        //サーブした直後に自動移動をさせないためのカウント
+    float dis          = 0;        //距離を測る為の変数
+    bool  hitFlg       = false;    //ラケットに当たったとするフラグ
+    bool  onceFlg      = true;     //スイング処理を一回だけ行うためのフラグ
+    bool  serveMoveFlg = true;     //サーブした直後に自動移動をさせないためのフラグ
+
+    //
 
     void Start()
     {
@@ -94,9 +100,10 @@ public class CharacterMove : MonoBehaviour
         player.transform.position = new Vector3(125, 0, 0);
         dis = 0;
         motionCnt = 0;
+        serveMoveCnt = 0;
         onceFlg = true;
         hitFlg = false;
-
+        serveMoveFlg = true;
         //振るモーションをfalseに
         this.animator.SetBool("is_RightShake", false);
 
@@ -133,7 +140,7 @@ public class CharacterMove : MonoBehaviour
             }
         }
 
-        Debug.Log("PlayerのInit処理の実行");
+        //Debug.Log("PlayerのInit処理の実行");
     }
 
     void Update()
@@ -179,10 +186,13 @@ public class CharacterMove : MonoBehaviour
         //こちらがサーブする側ではないとき
         if (GameManager.instance.isServe != true) 
         {
+            serveMoveFlg = false;
+            serveMoveCnt = 300;
+
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
-                Debug.Log("サーブ時ではない行動");
+                //Debug.Log("サーブ時ではない行動");
 
                 //現状の移動指定地を削除
                 GetComponent<NavMeshAgent>().ResetPath();
@@ -272,6 +282,8 @@ public class CharacterMove : MonoBehaviour
 
                     //プレイヤー状態を振るに変更
                     CharaStatus.NowState = 2;
+
+                    serveMoveFlg = false;
                 }
             }
         }
@@ -279,8 +291,20 @@ public class CharacterMove : MonoBehaviour
 
     void AutoMove()
     {
+        //
+
+        //Debug.Log(serveMoveCnt);
+
+        if (serveMoveFlg == false)
+        {
+            serveMoveCnt++;
+        }
+
+        //
+
         //オート移動処理
-        if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 && ball.transform.position.x > -5) 
+        if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 &&
+            ball.transform.position.x > -5 && serveMoveCnt >= 300) 
         {
             //x7～x119がコートの内側
             //z55～z-55がコートの内側
