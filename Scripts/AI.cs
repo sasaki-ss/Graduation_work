@@ -33,7 +33,7 @@ public class AI : MonoBehaviour
         player      = GameObject.Find("Player2").GetComponent<Transform>();
         ball        = GameObject.Find("Ball").GetComponent<Ball>();
         net         = GameObject.Find("Net");
-        pointB      = GameObject.Find("pointB");
+        pointB      = GameObject.Find("PointB");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
 
@@ -83,7 +83,7 @@ public class AI : MonoBehaviour
         player      = GameObject.Find("Player2").GetComponent<Transform>();
         ball        = GameObject.Find("Ball").GetComponent<Ball>();
         net         = GameObject.Find("Net");
-        pointB      = GameObject.Find("pointB");
+        pointB      = GameObject.Find("PointB");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
 
@@ -96,6 +96,9 @@ public class AI : MonoBehaviour
         dis       = 0;
         hitFlg    = false;
         onceFlg   = true;
+
+        //プレイヤーのスタミナを回復
+        this.CharaStatus.CharaStamina = CharaStatus.CharaStamina + 0.5f;
 
         //振るモーションをfalseに
         this.animator.SetBool("is_RightShake", false);
