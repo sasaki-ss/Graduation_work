@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using TapStateManager;
 using UnityEngine.SceneManagement;
+using System.Collections;
+using UnityEngine.Events;
 
 public class UIManager : MonoBehaviour
 {
@@ -85,7 +87,6 @@ public class UIManager : MonoBehaviour
     private Vector2 buttonPos;          //ボタンの座標 
     private Vector3 triPos;             //三角形の座標
 
-
     //カメラ
     private GameObject mCam;            //カメラ格納オブジェクト
     private GameObject uCam;
@@ -104,8 +105,12 @@ public class UIManager : MonoBehaviour
     private GameObject Shot;            //ショットオブジェクトを格納する変数
     Shot shot;                          //ショットオブジェクトのスクリプトを格納する変数
 
+    //スコアのオブジェクト格納
     private GameObject Score;           //スコア
     private Score score;                //スコアのスクリプト
+
+    //パネルスクリプトの格納
+    private DestroyPanel destroyPanel;  
 
     void Start()
     {
@@ -115,6 +120,7 @@ public class UIManager : MonoBehaviour
         tMger = new TouchManager();
         createFlg = true;
         sCreateFlg = true;
+
 
         //プレハブの読み込み
         textPref = (GameObject)Resources.Load("TextPref");
@@ -187,7 +193,7 @@ public class UIManager : MonoBehaviour
         }
         else { rCreateFlg = true; }
 
-    //    if (sCreateFlg) ServeDisplay();
+        if (sCreateFlg) ServeDisplay();
         
     }
 
@@ -370,6 +376,8 @@ public class UIManager : MonoBehaviour
         roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
         roundInstances[r].name = "panel";                                                            //オブジェクト名変更
         panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
+        destroyPanel = roundInstances[r].GetComponent<DestroyPanel>();
+        destroyPanel.onDestroyed.AddListener(() => sCreateFlg = true);                               //パネルが削除されるときに呼び出される処理
         r++;
 
         //ラウンド間に表示するテキスト
@@ -381,6 +389,8 @@ public class UIManager : MonoBehaviour
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
         r++;
+
+        
 
         if (GameManager.instance.isAddScore)
         {   //得点フラグオン時に行う処理
@@ -507,4 +517,5 @@ public class UIManager : MonoBehaviour
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
+
 }
