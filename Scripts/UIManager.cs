@@ -14,7 +14,7 @@ public class UIManager : MonoBehaviour
 
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
-    private const int RoundUINum = 2;   //ラウンド間に表示するUIの要素数
+    private const int RoundUINum = 4;   //ラウンド間に表示するUIの要素数
 
     private int i = 0;                  //UIの要素数のカウント
     private int j = 0;                  //ゲーム中生成したり削除するオブジェクトの要素数
@@ -27,6 +27,7 @@ public class UIManager : MonoBehaviour
     private GameObject pgPref2;         //パワーゲージ(青い部分)
     private GameObject linePref;        //線
     private GameObject panelPref;       //パネル
+    private GameObject buttonPref;      //ボタン
 
     //UIのインスタンスを格納する配列
     private GameObject[] instances;
@@ -51,6 +52,10 @@ public class UIManager : MonoBehaviour
     //パネル
     private Image panel;                //ラウンド間に表示するパネル(画面を暗くすることでテキストUIを見やすくする)
 
+    //ボタン
+    private Button retryB;              //リトライボタン
+    private Text retryBtext;            //リトライボタンのテキスト
+
     //保持用
     private float gaugeKeep;            //ゲージのキープ
     private Vector3 vertexKeep;         //頂点の座標キープ
@@ -68,6 +73,8 @@ public class UIManager : MonoBehaviour
     private Vector3 linePos;            //線の原点
     private Vector3 lineEndPos;         //線の移動する頂点
     private Vector3 panelPos;           //パネルの座標
+    private Vector2 gSetTextPos;        //ゲームセット時のテキストの座標
+    private Vector2 buttonPos;          //ボタンの座標 
 
 
     //カメラ
@@ -106,6 +113,7 @@ public class UIManager : MonoBehaviour
         pgPref2 = (GameObject)Resources.Load("PowerGaugePref2");
         linePref = (GameObject)Resources.Load("linePref");
         panelPref = (GameObject)Resources.Load("PanelPref");
+        buttonPref = (GameObject)Resources.Load("ButtonPref");
 
         //アニメーションカーブの初期化
         lineCurve = new AnimationCurve();
@@ -118,6 +126,8 @@ public class UIManager : MonoBehaviour
         plgPos = pNamePos + new Vector2(215.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
+        gSetTextPos = new Vector2(0.0f, 500.0f);
+        buttonPos = new Vector2(0.0f, -500.0f);
 
         //カメラの取得
         mCam = GameObject.Find("Main Camera");
@@ -159,17 +169,12 @@ public class UIManager : MonoBehaviour
             {//終了していない場合
                 if (rCreateFlg) RoundBetween();                                             //ラウンドの間のUIの生成管理
             }
+            else
+            {
+                if (rCreateFlg) GameSet();          //終了処理
+            }
         }
-        else
-        {
-            rCreateFlg = true;
-        }
-
-        if (GameManager.instance.gameState == GameState.GameSet)
-        {
-            GameSet();          //終了処理
-        }
-
+        else rCreateFlg = true;
     }
 
     private void CreateInit()
@@ -434,15 +439,29 @@ public class UIManager : MonoBehaviour
         r++;
 
         //ラウンド間に表示するテキスト
-        roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
-        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
-        textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
+        roundInstances[r] = (GameObject)Instantiate(textPref, gSetTextPos, Quaternion.identity);        //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                             //親オブジェクト
+        roundInstances[r].name = "GameSetText";                                                         //オブジェクト名変更
+        textRoundBetween = roundInstances[r].GetComponent<Text>();                                      //テキスト
         textRoundBetween.color = Color.white;                                                   //色変更
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
+        if(score.user1Score > score.user2Score) textRoundBetween.text = "ゲームセット\nプレイヤーの勝ち";
+        else textRoundBetween.text = "ゲームセット\n相手の勝ち";
         r++;
 
+        //リトライボタン
+        roundInstances[r] = (GameObject)Instantiate(buttonPref, buttonPos, Quaternion.identity);    //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                         //親オブジェクト
+        roundInstances[r].name = "retryButton";                                                     //オブジェクト名
+        retryB = roundInstances[r].GetComponent<Button>();                                          //ボタン
+        //retryB.onClick.AddListener(() => ) ;                                                      //OnClickの処理追加
+        retryBtext = roundInstances[r].GetComponentInChildren<Text>();                              //テキスト
+        retryBtext.fontSize = 80;                                                                   //フォントサイズ
+        retryBtext.text = "リトライ";
+        r++;
+
+        rCreateFlg = false;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
