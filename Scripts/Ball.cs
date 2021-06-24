@@ -288,6 +288,7 @@ public class Ball : MonoBehaviour
         isCoolTime = false;
 
         nowShotUser = GameManager.instance.serveUser;
+        nowUserTag = nowShotUser;
 
         rb.isKinematic = true;
         rb.useGravity = false;
