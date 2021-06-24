@@ -5,7 +5,10 @@ using UnityEngine;
 //定数クラス
 public class Define
 {
-    public const float NEXT_ROUNDTIME = 2.0f;  //ラウンド間の時間
+    public const float  NEXT_ROUNDTIME = 2.0f;  //ラウンド間の時間
+    public const int    USER_NUM = 2;           //ユーザーの数
+    public const int    SERVE_CHANGECNT = 2;    //サーブ切り替えの数
+    public const int    MAX_BOUNDCNT = 2;       //最大のバウンド回数
 }
 
 //ユーザースコアデータ
@@ -53,22 +56,24 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;               //インスタンス
 
     /*このスクリプトでのみ使う変数*/
-    private Score           score;               //スコアクラス
-    private GameObject      serveAreaObj;        //サーブエリアオブジェクト
-    private GameObject      safetyAreaObj;       //セーフティエリアオブジェクト
-    private GameObject[]    serveOutAreaObj;     //サーブアウトエリアオブジェクト
-    private Vector3[]       serveAreaPos;        //セーブエリアの座標
+    private Score           score;              //スコアクラス
+    private GameObject      serveAreaObj;       //サーブエリアオブジェクト
+    private GameObject      safetyAreaObj;      //セーフティエリアオブジェクト
+    private GameObject[]    serveOutAreaObj;    //サーブアウトエリアオブジェクト
+    private Vector3[]       serveAreaPos;       //セーブエリアの座標
+    private int             changeCount;        //ラウンドカウント
+    private string[]        userObjTag;         //プレイヤーオブジェクトのタグ
+
 
     /*プロパティ関連*/
-    public int          changeCount { get; set; }          //ラウンドカウント
     public bool         isDeuce { get; set; }              //デュースフラグ
     public bool         isAddScore { get; set; }           //スコアフラグ
-    public bool         isNextRound { get; set; }          //次のラウンドフラグ
+    public bool         isNextRound { get;  private set; } //次のラウンドフラグ
     public bool         isServe { get; set; }              //サーブフラグ
-    public bool         isFault { get; set; }              //フォルトフラグ
+    public bool         isFault { get; private set; }      //フォルトフラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
-    public FaultState   faultState { get; set; }           //フォルト状態
+    public FaultState   faultState { get; private set; }   //フォルト状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -94,6 +99,12 @@ public class GameManager : MonoBehaviour
             new Vector3(-32f,0f,-21f), //ユーザー2側左
         };
 
+        userObjTag = new string[Define.USER_NUM]
+        {
+            "Player",
+            "Player2"
+        };
+
         instance = this;
         Init();
     }
@@ -111,7 +122,7 @@ public class GameManager : MonoBehaviour
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
         //ユーザーデータを取得
-        UserScoreData[] userSData = new UserScoreData[2];
+        UserScoreData[] userSData = new UserScoreData[Define.USER_NUM];
         userSData[0] = new UserScoreData(score.user1Score, score.isUser1MatchP);
         userSData[1] = new UserScoreData(score.user2Score, score.isUser2MatchP);
         int j = 1;  //もう一つのユーザー指定用
@@ -125,21 +136,19 @@ public class GameManager : MonoBehaviour
 
         //バウンド回数が2回以上の場合
         //※正確なバウンド数が取れないため
-        if (ball.boundCount >= 2 && !isAddScore)
+        if (ball.boundCount >= Define.MAX_BOUNDCNT && !isAddScore)
         {
             score.AddScore(ball.nowUserTag);
-            Debug.Log("得点が入りました！ " + ball.nowUserTag);
         }
         #endregion
 
         #region 勝利判定
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < Define.USER_NUM; i++)
         {
             //ユーザーiが勝利スコアに到達かつユーザーjがマッチポイントでない場合
             if (userSData[i].score == winScore && !userSData[j].isMatchP)
             {
                 gameState = GameState.GameSet;
-                Debug.Log("勝ちました！！");
             }
 
             //両ユーザーがマッチポイントの場合
@@ -156,6 +165,7 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 
+    //初期化処理
     private void Init()
     {
         safetyAreaObj.SetActive(false);
@@ -175,20 +185,35 @@ public class GameManager : MonoBehaviour
         ServeAreaPosChange();
     }
 
-    //サーバーユーザーを切り替える
-    private void ServeUserChange()
+    private void ObjInit()
     {
-        //現在のサーブユーザーがUser2の場合
-        if (serveUser == User.User2)
-        {
-            serveUser = User.User1;
-        }
-        //現在のサーブユーザーがUser2ではない場合
-        else
-        {
-            serveUser = User.User2;
-        }
+        //ボール、プレイヤー、着地地点の初期化
+        Ball            iBall = GameObject.Find("Ball").GetComponent<Ball>();
+        LandingForecast iLandForecast =
+            GameObject.Find("RandingForecast").GetComponent<LandingForecast>();
+        Base[]          iPBase = new Base[Define.USER_NUM];
+        for (int i = 0; i < Define.USER_NUM; i++)
+            iPBase[i] = GameObject.Find(userObjTag[i]).GetComponent<Base>();
+
+        iBall.Init();
+        iLandForecast.Init();
+        foreach (var pBase in iPBase) pBase.Init();
     }
+
+    //サーバーユーザーを切り替える
+    //private void ServeUserChange()
+    //{
+    //    //現在のサーブユーザーがUser2の場合
+    //    if (serveUser == User.User2)
+    //    {
+    //        serveUser = User.User1;
+    //    }
+    //    //現在のサーブユーザーがUser2ではない場合
+    //    else
+    //    {
+    //        serveUser = User.User2;
+    //    }
+    //}
 
     //サーブエリア変更処理
     private void ServeAreaPosChange()
@@ -296,11 +321,22 @@ public class GameManager : MonoBehaviour
             isNextRound = true;
         }
 
+        //ゲームの状態をサーブに変更
+        gameState = GameState.Serve;
+
+        //次のラウンドの際フォルトの状態をNoneに変更
+        if (isNextRound)
+        {
+            faultState = FaultState.None;
+            changeCount++;
+        }
+
         //切り替えカウントが2の場合
-        if (changeCount == 2)
+        if (changeCount == Define.SERVE_CHANGECNT)
         {
             //サーブユーザーを切り替える
-            ServeUserChange();
+            //ServeUserChange();
+            serveUser = InversionTag(serveUser);
 
             //切り替えカウントを初期化
             changeCount = 0;
@@ -309,23 +345,8 @@ public class GameManager : MonoBehaviour
         //サーブエリアの座標を適用
         ServeAreaPosChange();
 
-        //ボール、プレイヤーの初期化
-        Ball iBall = GameObject.Find("Ball").GetComponent<Ball>();
-        Base[] iPBase = new Base[2];
-        iPBase[(int)User.User1] = GameObject.Find("Player").GetComponent<Base>();
-        iPBase[(int)User.User2] = GameObject.Find("Player2").GetComponent<Base>();
-
-        iBall.Init();
-        foreach (var pBase in iPBase) pBase.Init();
-
-        //ゲームの状態をサーブに変更
-        gameState = GameState.Serve;
-
-        //次のラウンドの際フォルトの状態をNoneに変更
-        if (isNextRound)
-        {
-            faultState = FaultState.None;
-        }
+        //ボール、プレイヤー、着地地点の初期化
+        ObjInit();
 
         //処理待ち
         while (timeCnt >= 0f)
@@ -347,6 +368,7 @@ public class GameManager : MonoBehaviour
     {
         score.Init();
         Init();
+        ObjInit();
     }
 
     #endregion

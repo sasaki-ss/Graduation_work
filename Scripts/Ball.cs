@@ -6,6 +6,8 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
     /*このスクリプトでのみ使う変数*/
+    private const int COOLTIME = 60;
+
     private Rigidbody       rb;             //Rigidbody
     private TrailRenderer   tr;             //TrailRenderer
     private Coroutine       coroutine;      //コルーチン
@@ -42,7 +44,7 @@ public class Ball : MonoBehaviour
         tr.time = 0f;
 
         //Userオブジェクトを取得
-        userObj = new GameObject[2];
+        userObj = new GameObject[Define.USER_NUM];
         userObj[0] = GameObject.Find("Player");
         userObj[1] = GameObject.Find("Player2");
 
@@ -77,7 +79,7 @@ public class Ball : MonoBehaviour
         }
         else
         {
-            if (colCoolTime == 60)
+            if (colCoolTime == COOLTIME)
             {
                 isCoolTime = false;
                 colCoolTime = 0;
@@ -90,7 +92,7 @@ public class Ball : MonoBehaviour
                 StopCoroutine(coroutine);
             }
 
-            //滞空時間が0.005f以下の場合バウンドを停止させる
+            //滞空時間が1f以下の場合バウンドを停止させる
             if (isBound && flightTime < 1f)
             {
                 isBound = false;
@@ -152,8 +154,6 @@ public class Ball : MonoBehaviour
             if (other.gameObject.CompareTag("Net"))
             {
                 isNet = true;
-
-                Debug.Log("当たったよ");
             }
 
             //ボールがフィールドに着地した際の処理
@@ -163,7 +163,7 @@ public class Ball : MonoBehaviour
                 //着地地点を生成する
                 GenerateRandingPoint();
                 boundCount++;
-                Debug.Log("バウンド回数 : " + boundCount + " " + Time.time);
+
                 //セーフエリアの場合
                 if (other.gameObject.CompareTag("SafetyArea")) isSafetyArea = true;
 
@@ -179,17 +179,14 @@ public class Ball : MonoBehaviour
         {
             if (other.gameObject.CompareTag("ServeArea"))
             {
-                Debug.Log("サーブ成功");
                 GameManager.instance.gameState = GameState.DuringRound;
                 GameManager.instance.ChangeField();
                 boundCount++;
-                Debug.Log("バウンド回数 : " + boundCount + " " + Time.time);
 
                 isCoolTime = true;
             }
             else if (!other.gameObject.CompareTag("SwingArea"))
             {
-                Debug.Log("サーブ失敗");
                 GameManager.instance.FaultProc();
             }
         }
@@ -204,7 +201,6 @@ public class Ball : MonoBehaviour
 
     private IEnumerator ThrowBall(float _flightTime, float _speedRate, User _user)
     {
-        Debug.Log("=======上昇開始=======");
         flightTime = _flightTime;
         speedRate = _speedRate;
         rb.isKinematic = false;
@@ -217,8 +213,6 @@ public class Ball : MonoBehaviour
             yield return null;
         }
 
-        Debug.Log("=======発射！！=======");
-
         Strike(flightTime, speedRate, _user);
     }
     #endregion
@@ -226,8 +220,6 @@ public class Ball : MonoBehaviour
     #region 打つ処理
     public void Strike(float _flightTime, float _speedRate,User _user)
     {
-        Debug.Log("=======Shot　Now=======");
-
         if (GameManager.instance.gameState == GameState.Serve &&
             boundCount == 0 && isProjection && !isBound)
         {
@@ -257,7 +249,7 @@ public class Ball : MonoBehaviour
         }
 
         //到達地点を取得
-        endPoint = GameObject.Find("pointB").transform.position;
+        endPoint = GameObject.Find("PointB").transform.position;
 
         //滞空時間をBallクラスに格納
         flightTime = _flightTime;
