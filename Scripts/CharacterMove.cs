@@ -104,6 +104,10 @@ public class CharacterMove : MonoBehaviour
         onceFlg = true;
         hitFlg = false;
         serveMoveFlg = true;
+
+        //プレイヤーのスタミナを回復
+        this.CharaStatus.CharaStamina = CharaStatus.CharaStamina + 0.5f;
+
         //振るモーションをfalseに
         this.animator.SetBool("is_RightShake", false);
 
