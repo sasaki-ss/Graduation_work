@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TapStateManager;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -154,11 +155,19 @@ public class UIManager : MonoBehaviour
         TapDoing();                                                     //タップ中のUIの生成管理
         if (GameManager.instance.isAddScore || GameManager.instance.isFault)
         {
-            if(rCreateFlg)  RoundBetween();                                             //ラウンドの間のUIの生成管理
+            if (GameManager.instance.gameState != GameState.GameSet)
+            {//終了していない場合
+                if (rCreateFlg) RoundBetween();                                             //ラウンドの間のUIの生成管理
+            }
         }
         else
         {
             rCreateFlg = true;
+        }
+
+        if (GameManager.instance.gameState == GameState.GameSet)
+        {
+            GameSet();          //終了処理
         }
 
     }
@@ -329,8 +338,9 @@ public class UIManager : MonoBehaviour
         }
         #endregion
     }
+    
     void RoundBetween()
-    {   //ラウンドの間に行う処理
+    {
         #region ラウンド切り替え時に行う処理
 
         roundInstances = new GameObject[RoundUINum];
@@ -351,7 +361,6 @@ public class UIManager : MonoBehaviour
         textRoundBetween.color = Color.white;                                                   //色変更
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
-        
         r++;
 
         if (GameManager.instance.isAddScore)
@@ -362,7 +371,15 @@ public class UIManager : MonoBehaviour
             }
             else
             {   //通常時
-                textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+                if(score.isUser1MatchP || score.isUser2MatchP)
+                {
+                    textRoundBetween.text = score.user1Score + " - " + score.user2Score+
+                        "\nマッチポイント";            //得点取得
+                }
+                else
+                {
+                    textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+                }
             }
 
         }
@@ -378,7 +395,17 @@ public class UIManager : MonoBehaviour
 
         else if(GameManager.instance.faultState == FaultState.DoubleFault)
         {
-            textRoundBetween.text = "ダブルフォルト";   //ダブルフォルト
+            if(score.isUser1MatchP || score.isUser2MatchP)
+            {
+                textRoundBetween.text = "ダブルフォルト\n" +
+                score.user1Score + " - " + score.user2Score+
+                "\nマッチポイント";   //ダブルフォルト
+            }
+            else
+            {
+                textRoundBetween.text = "ダブルフォルト\n" +
+                score.user1Score + " - " + score.user2Score;   //ダブルフォルト
+            }
         }
 
         
@@ -389,6 +416,34 @@ public class UIManager : MonoBehaviour
 
         rCreateFlg = false;
 
+        #endregion
+    }
+
+    void GameSet()
+    {
+        #region ゲームセット時に行う処理
+
+        roundInstances = new GameObject[RoundUINum];
+        r = 0;      //現在生成されているUIの要素数分をrに代入
+
+        //パネル
+        roundInstances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "panel";                                                            //オブジェクト名変更
+        panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
+        r++;
+
+        //ラウンド間に表示するテキスト
+        roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
+        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+        roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
+        textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
+        textRoundBetween.color = Color.white;                                                   //色変更
+        textRoundBetween.fontSize = 80;                                                         //フォントサイズ
+        textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
+        r++;
+
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
 }
