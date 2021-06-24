@@ -133,7 +133,7 @@ public class AI : MonoBehaviour
             }
         }
 
-        Debug.Log("AIのInit処理の実行");
+        //Debug.Log("AIのInit処理の実行");
     }
 
     void Update()
@@ -386,7 +386,7 @@ public class AI : MonoBehaviour
                 //サーブ時左側なら
                 if (this.transform.position.z <= 0)
                 {
-                    Debug.Log("左側から");
+                    //Debug.Log("左側から");
 
                     //適当に設定(角度と距離)
                     this.CharaStatus.Rad = 1.8f;        //ラジアン値
@@ -395,7 +395,7 @@ public class AI : MonoBehaviour
                 //右側
                 else
                 {
-                    Debug.Log("右側から");
+                    //Debug.Log("右側から");
 
                     //適当に設定(角度と距離)
                     this.CharaStatus.Rad = 0.9f;        //ラジアン値
