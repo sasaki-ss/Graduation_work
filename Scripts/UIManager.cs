@@ -17,6 +17,9 @@ public class UIManager : MonoBehaviour
     //サーブ時の生成
     private bool sCreateFlg;            //サーブ時の生成フラグ
 
+    //ゲームセット時の生成
+    private bool gSetFlg;               //ゲームセット時の生成フラグ
+
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
     private const int RoundUINum = 5;   //ラウンド間に表示するUIの要素数
@@ -120,6 +123,7 @@ public class UIManager : MonoBehaviour
         tMger = new TouchManager();
         createFlg = true;
         sCreateFlg = true;
+        gSetFlg = true;
 
 
         //プレハブの読み込み
@@ -180,18 +184,22 @@ public class UIManager : MonoBehaviour
         lgPlayer.value = (float)pcStatus.CharaStamina;                  //スタミナ取得
         lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
+
+        if (GameManager.instance.isGameSet)
+        {
+            if (gSetFlg) GameSet();          //終了処理
+            rCreateFlg = false;
+        }
+
         if (GameManager.instance.isAddScore || GameManager.instance.isFault)
         {
-            if (GameManager.instance.gameState != GameState.GameSet)
+            if (!GameManager.instance.isGameSet && !gSetFlg)
             {//終了していない場合
                 if (rCreateFlg) RoundBetween();                                             //ラウンドの間のUIの生成管理
             }
-            else
-            {
-                if (rCreateFlg) GameSet();          //終了処理
-            }
         }
-        else { rCreateFlg = true; }
+        else{ rCreateFlg = true; }
+
 
         if (sCreateFlg) ServeDisplay();
         
@@ -513,7 +521,7 @@ public class UIManager : MonoBehaviour
         retryBtext.text = "リトライ";
         r++;
 
-        rCreateFlg = false;
+        gSetFlg = false;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
