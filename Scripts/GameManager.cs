@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
     private int             changeCount;        //ラウンドカウント
     private string[]        userObjTag;         //プレイヤーオブジェクトのタグ
 
-
     /*プロパティ関連*/
     public bool         isDeuce { get; set; }              //デュースフラグ
     public bool         isAddScore { get; set; }           //スコアフラグ
@@ -130,14 +129,15 @@ public class GameManager : MonoBehaviour
 
         #region 得点処理
         //アウトの場合
-        if ((ball.isOut || ball.isNet) && !isAddScore)
+        if (ball.isNet && !isAddScore)
         {
             score.AddScore(InversionTag(ball.nowUserTag));
         }
 
         //バウンド回数が2回以上の場合
         //※正確なバウンド数が取れないため
-        if (ball.boundCount >= Define.MAX_BOUNDCNT && !isAddScore)
+        if ((ball.boundCount >= Define.MAX_BOUNDCNT && !isAddScore) ||
+            ball.isOut)
         {
             score.AddScore(ball.nowUserTag);
         }
@@ -342,7 +342,6 @@ public class GameManager : MonoBehaviour
         {
             //ゲーム状態をサーブに変更
             gameState = GameState.Serve;
-
 
             //次のラウンドの際フォルトの状態をNoneに変更
             if (isNextRound)
