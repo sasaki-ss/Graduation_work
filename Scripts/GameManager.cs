@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
     public bool         isFault { get; private set; }      //フォルトフラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
-    public FaultState   faultState { get; private set; }   //フォルト状態
+    public FaultState   faultState { get; set; }           //フォルト状態
 
     /*インスペクターに表示又は設定する変数*/
     [SerializeField]
@@ -113,7 +113,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         //スコアが追加された際
-        if (isAddScore && !isNextRound)
+        if (isAddScore && !isNextRound && gameState != GameState.GameSet)
         {
             StartCoroutine(NextRound());
         }
@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
         #endregion
     }
 
-    //初期化処理
+    #region 初期化処理
     private void Init()
     {
         safetyAreaObj.SetActive(false);
@@ -200,20 +200,7 @@ public class GameManager : MonoBehaviour
         foreach (var pBase in iPBase) pBase.Init();
     }
 
-    //サーバーユーザーを切り替える
-    //private void ServeUserChange()
-    //{
-    //    //現在のサーブユーザーがUser2の場合
-    //    if (serveUser == User.User2)
-    //    {
-    //        serveUser = User.User1;
-    //    }
-    //    //現在のサーブユーザーがUser2ではない場合
-    //    else
-    //    {
-    //        serveUser = User.User2;
-    //    }
-    //}
+    #endregion
 
     //サーブエリア変更処理
     private void ServeAreaPosChange()
@@ -305,7 +292,7 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        StartCoroutine(NextRound());
+        if (gameState != GameState.GameSet) StartCoroutine(NextRound());
     }
 
     #region ゲームの進行関連
@@ -321,21 +308,13 @@ public class GameManager : MonoBehaviour
             isNextRound = true;
         }
 
-        //ゲームの状態をサーブに変更
-        gameState = GameState.Serve;
-
-        //次のラウンドの際フォルトの状態をNoneに変更
-        if (isNextRound)
-        {
-            faultState = FaultState.None;
-            changeCount++;
-        }
+        //サーブ切り替えカウントを加算
+        if (isNextRound) changeCount++;
 
         //切り替えカウントが2の場合
         if (changeCount == Define.SERVE_CHANGECNT)
         {
             //サーブユーザーを切り替える
-            //ServeUserChange();
             serveUser = InversionTag(serveUser);
 
             //切り替えカウントを初期化
@@ -353,6 +332,18 @@ public class GameManager : MonoBehaviour
         {
             timeCnt -= Time.deltaTime;
             yield return null;
+        }
+
+        //ゲーム終了でない場合、ゲーム状態をサーブに変更
+        if (gameState != GameState.GameSet)
+        {
+            gameState = GameState.Serve;
+        }
+
+        //次のラウンドの際フォルトの状態をNoneに変更
+        if (isNextRound)
+        {
+            faultState = FaultState.None;
         }
 
         //各フラグをオフにする

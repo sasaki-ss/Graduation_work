@@ -62,5 +62,9 @@ public class Score : MonoBehaviour
         
         //スコア追加フラグをオンにする
         GameManager.instance.isAddScore = true;
+
+        //フォルト状態がフォルトの場合、フォルト状態をNoneに変更
+        if (GameManager.instance.faultState == FaultState.Fault)
+            GameManager.instance.faultState = FaultState.None;
     }
 }
