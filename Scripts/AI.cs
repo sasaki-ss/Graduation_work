@@ -346,9 +346,6 @@ public class AI : MonoBehaviour
 
     void Swing()
     {
-        if (pointB.activeSelf == true)
-        {
-
             //距離を測る(pointBとの)
             dis = Vector3.Distance(this.transform.position, pointB.transform.position);
 
@@ -466,7 +463,6 @@ public class AI : MonoBehaviour
                 //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
                 hitFlg = false;
             }
-        }
     }
 
     private void OnTriggerEnter(Collider collision)
