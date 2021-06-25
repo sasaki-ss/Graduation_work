@@ -118,16 +118,19 @@ public class GameManager : MonoBehaviour
             StartCoroutine(NextRound());
         }
 
+        //得点処理
+        ScoreProc();
+
+        //勝利判定
+        VictoryJudgment();
+    }
+
+    #region 得点処理
+    private void ScoreProc()
+    {
         //ボールを取得
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
-        //ユーザーデータを取得
-        UserScoreData[] userSData = new UserScoreData[Define.USER_NUM];
-        userSData[0] = new UserScoreData(score.user1Score, score.isUser1MatchP);
-        userSData[1] = new UserScoreData(score.user2Score, score.isUser2MatchP);
-        int j = 1;  //もう一つのユーザー指定用
-
-        #region 得点処理
         //アウトの場合
         if (ball.isNet && !isAddScore)
         {
@@ -141,9 +144,18 @@ public class GameManager : MonoBehaviour
         {
             score.AddScore(ball.nowUserTag);
         }
-        #endregion
+    }
+    #endregion
 
-        #region 勝利判定
+    #region 勝利判定処理
+    private void VictoryJudgment()
+    {
+        //ユーザーデータを取得
+        UserScoreData[] userSData = new UserScoreData[Define.USER_NUM];
+        userSData[0] = new UserScoreData(score.user1Score, score.isUser1MatchP);
+        userSData[1] = new UserScoreData(score.user2Score, score.isUser2MatchP);
+        int j = 1;  //もう一つのユーザー指定用
+
         for (int i = 0; i < Define.USER_NUM; i++)
         {
             //ユーザーiが勝利スコアに到達かつユーザーjがマッチポイントでない場合
@@ -164,8 +176,8 @@ public class GameManager : MonoBehaviour
 
             j--;
         }
-        #endregion
     }
+    #endregion
 
     #region 初期化処理
     private void Init()
@@ -205,6 +217,7 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    #region フィールド関連の処理
     //サーブエリア変更処理
     private void ServeAreaPosChange()
     {
@@ -263,7 +276,9 @@ public class GameManager : MonoBehaviour
         serveAreaObj.SetActive(false);
         safetyAreaObj.SetActive(true);
     }
+    #endregion
 
+    #region タグ関連
     private User InversionTag(User _user)
     {
         User returnUesr = User.User1;
@@ -276,7 +291,9 @@ public class GameManager : MonoBehaviour
 
         return returnUesr;
     }
+    #endregion
 
+    #region フォルトの状態関連
     public void FaultProc()
     {
 
@@ -297,6 +314,7 @@ public class GameManager : MonoBehaviour
 
         if (gameState != GameState.GameSet) StartCoroutine(NextRound());
     }
+    #endregion
 
     #region ゲームの進行関連
 
@@ -359,7 +377,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void NextGame()
+    public void NextGame()
     {
         score.Init();
         Init();
