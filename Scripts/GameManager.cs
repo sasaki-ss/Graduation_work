@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
         //ボール、プレイヤー、着地地点の初期化
         Ball            iBall = GameObject.Find("Ball").GetComponent<Ball>();
         LandingForecast iLandForecast =
-            GameObject.Find("RandingForecast").GetComponent<LandingForecast>();
+            GameObject.Find("RandingPoint").GetComponent<LandingForecast>();
         Base[]          iPBase = new Base[Define.USER_NUM];
         for (int i = 0; i < Define.USER_NUM; i++)
             iPBase[i] = GameObject.Find(userObjTag[i]).GetComponent<Base>();
