@@ -835,7 +835,7 @@ MonoBehaviour:
   player: {fileID: 0}
   ball: {fileID: 0}
   net: {fileID: 0}
-  pointB: {fileID: 0}
+  pointB: {fileID: 2076708612}
   score: {fileID: 0}
   Shot: {fileID: 0}
 --- !u!114 &862302811
@@ -1464,7 +1464,7 @@ MonoBehaviour:
   player: {fileID: 0}
   ball: {fileID: 0}
   net: {fileID: 0}
-  pointB: {fileID: 0}
+  pointB: {fileID: 2076708612}
   score: {fileID: 0}
   Shot: {fileID: 0}
 --- !u!65 &1834506132
