@@ -377,7 +377,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void NextGame()
+    public void NextGame()
     {
         score.Init();
         Init();
