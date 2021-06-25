@@ -71,6 +71,7 @@ public class GameManager : MonoBehaviour
     public bool         isNextRound { get;  private set; } //次のラウンドフラグ
     public bool         isServe { get; set; }              //サーブフラグ
     public bool         isFault { get; private set; }      //フォルトフラグ
+    public bool         isGameSet { get; private set; }    //ゲーム終了フラグ
     public GameState    gameState { get; set; }            //ゲームの状態
     public User         serveUser { get; private set; }    //サーブするユーザー
     public FaultState   faultState { get; set; }           //フォルト状態
@@ -113,7 +114,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         //スコアが追加された際
-        if (isAddScore && !isNextRound && gameState != GameState.GameSet)
+        if (isAddScore && !isNextRound && !isGameSet)
         {
             StartCoroutine(NextRound());
         }
@@ -149,6 +150,7 @@ public class GameManager : MonoBehaviour
             if (userSData[i].score == winScore && !userSData[j].isMatchP)
             {
                 gameState = GameState.GameSet;
+                isGameSet = true;
             }
 
             //両ユーザーがマッチポイントの場合
@@ -175,6 +177,7 @@ public class GameManager : MonoBehaviour
         isServe = true;
         isAddScore = false;
         isNextRound = false;
+        isGameSet = false;
 
         changeCount = 1;
 
@@ -334,25 +337,27 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        //ゲーム終了でない場合、ゲーム状態をサーブに変更
+        //ゲーム終了でない場合
         if (gameState != GameState.GameSet)
         {
+            //ゲーム状態をサーブに変更
             gameState = GameState.Serve;
+
+
+            //次のラウンドの際フォルトの状態をNoneに変更
+            if (isNextRound)
+            {
+                faultState = FaultState.None;
+            }
+
+            //各フラグをオフにする
+            isNextRound = false;
+            isAddScore = false;
+            isFault = false;
+
+            //サーブフラグをオンに
+            isServe = true;
         }
-
-        //次のラウンドの際フォルトの状態をNoneに変更
-        if (isNextRound)
-        {
-            faultState = FaultState.None;
-        }
-
-        //各フラグをオフにする
-        isNextRound = false;
-        isAddScore = false;
-        isFault = false;
-
-        //サーブフラグをオンに
-        isServe = true;
     }
 
     private void NextGame()
