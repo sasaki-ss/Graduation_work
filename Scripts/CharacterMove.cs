@@ -41,7 +41,6 @@ public class CharacterMove : MonoBehaviour
         player      = GameObject.Find("Player").GetComponent<Transform>();
         ball        = GameObject.Find("Ball").GetComponent<Ball>();
         net         = GameObject.Find("Net");
-        pointB      = GameObject.Find("PointB");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
 
@@ -90,7 +89,6 @@ public class CharacterMove : MonoBehaviour
         player      = GameObject.Find("Player").GetComponent<Transform>();
         ball        = GameObject.Find("Ball").GetComponent<Ball>();
         net         = GameObject.Find("Net");
-        pointB      = GameObject.Find("PointB");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
 
@@ -149,6 +147,11 @@ public class CharacterMove : MonoBehaviour
 
     void Update()
     {
+        if(pointB == null && pointB.activeSelf == true)
+        {
+            pointB = GameObject.Find("PointB");
+        }
+
         //キャラとボールの距離を測る
         dis = Vector3.Distance(this.transform.position, ball.transform.position);
 
@@ -308,7 +311,7 @@ public class CharacterMove : MonoBehaviour
 
         //オート移動処理
         if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 &&
-            ball.transform.position.x > -5 && serveMoveCnt >= 300) 
+            ball.transform.position.x > -5 && serveMoveCnt >= 300 && pointB.activeSelf == true)
         {
             //x7～x119がコートの内側
             //z55～z-55がコートの内側
