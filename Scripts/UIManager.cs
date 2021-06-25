@@ -18,7 +18,8 @@ public class UIManager : MonoBehaviour
     private bool sCreateFlg;            //サーブ時の生成フラグ
 
     //ゲームセット時の生成
-    private bool gSetFlg;               //ゲームセット時の生成フラグ
+    private bool gSetFlg;               //ゲームセットフラグ
+    private bool gSetCreateFlg;         //ゲームセット時の生成フラグ
 
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
@@ -123,7 +124,8 @@ public class UIManager : MonoBehaviour
         tMger = new TouchManager();
         createFlg = true;
         sCreateFlg = true;
-        gSetFlg = true;
+        gSetFlg = false;
+        gSetCreateFlg = true;
 
 
         //プレハブの読み込み
@@ -185,21 +187,14 @@ public class UIManager : MonoBehaviour
         lgOpponent.value = (float)opcStatus.CharaStamina;               //相手スタミナ取得　
         TapDoing();                                                     //タップ中のUIの生成管理
 
-        if (GameManager.instance.isGameSet)
-        {
-            if (gSetFlg) GameSet();          //終了処理
-            rCreateFlg = false;
-        }
-
         if (GameManager.instance.isAddScore || GameManager.instance.isFault)
         {
-            if (!GameManager.instance.isGameSet && !gSetFlg)
-            {//終了していない場合
-                if (rCreateFlg) RoundBetween();                                             //ラウンドの間のUIの生成管理
-            }
+            if(rCreateFlg)RoundBetween(); //ラウンドの間のUIの生成管理
         }
-        else{ rCreateFlg = true; }
-
+        else
+        {
+            rCreateFlg = true;
+        }
 
         if (sCreateFlg) ServeDisplay();
         
@@ -376,83 +371,94 @@ public class UIManager : MonoBehaviour
     {
         #region ラウンド切り替え時に行う処理
 
-        roundInstances = new GameObject[RoundUINum];
-        r = 0;      //現在生成されているUIの要素数分をrに代入
 
-        //パネル
-        roundInstances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
-        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        roundInstances[r].name = "panel";                                                            //オブジェクト名変更
-        panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
-        destroyPanel = roundInstances[r].GetComponent<DestroyPanel>();
-        destroyPanel.onDestroyed.AddListener(() => sCreateFlg = true);                               //パネルが削除されるときに呼び出される処理
-        r++;
-
-        //ラウンド間に表示するテキスト
-        roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
-        roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
-        textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
-        textRoundBetween.color = Color.white;                                                   //色変更
-        textRoundBetween.fontSize = 80;                                                         //フォントサイズ
-        textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
-        r++;
-
-        
-
-        if (GameManager.instance.isAddScore)
-        {   //得点フラグオン時に行う処理
-            if (GameManager.instance.isDeuce)
-            {   //デュースになった場合
-                textRoundBetween.text = "デュース";
-            }
-            else
-            {   //通常時
-                if(score.isUser1MatchP || score.isUser2MatchP)
-                {
-                    textRoundBetween.text = score.user1Score + " - " + score.user2Score+
-                        "\nマッチポイント";            //得点取得
-                }
-                else
-                {
-                    textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
-                }
-            }
-
+        if (GameManager.instance.isGameSet == true)
+        {
+            gSetFlg = true;
+            if (gSetCreateFlg) GameSet();          //終了処理
         }
         else
         {
-            textRoundBetween.text = "";
-        }
-        
-        if(GameManager.instance.faultState == FaultState.Fault)
-        {
-            textRoundBetween.text = "フォルト";         //フォルト
-        }
 
-        else if(GameManager.instance.faultState == FaultState.DoubleFault)
-        {
-            if(score.isUser1MatchP || score.isUser2MatchP)
-            {
-                textRoundBetween.text = "ダブルフォルト\n" +
-                score.user1Score + " - " + score.user2Score+
-                "\nマッチポイント";   //ダブルフォルト
+            roundInstances = new GameObject[RoundUINum];
+            r = 0;      //現在生成されているUIの要素数分をrに代入
+
+            //パネル
+            roundInstances[r] = (GameObject)Instantiate(panelPref, panelPos, Quaternion.identity);       //インスタンス生成
+            roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+            roundInstances[r].name = "panel";                                                            //オブジェクト名変更
+            panel = roundInstances[r].GetComponent<Image>();                                             //イメージ
+            destroyPanel = roundInstances[r].GetComponent<DestroyPanel>();
+            destroyPanel.onDestroyed.AddListener(() => sCreateFlg = true);                               //パネルが削除されるときに呼び出される処理
+            r++;
+
+            //ラウンド間に表示するテキスト
+            roundInstances[r] = (GameObject)Instantiate(textPref, rTextPos, Quaternion.identity);        //インスタンス生成
+            roundInstances[r].transform.SetParent(gameObject.transform, false);                          //親オブジェクト
+            roundInstances[r].name = "TextRoundBetween";                                                 //オブジェクト名変更
+            textRoundBetween = roundInstances[r].GetComponent<Text>();                                   //テキスト
+            textRoundBetween.color = Color.white;                                                   //色変更
+            textRoundBetween.fontSize = 80;                                                         //フォントサイズ
+            textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
+            r++;
+
+
+
+            if (GameManager.instance.isAddScore)
+            {   //得点フラグオン時に行う処理
+                if (GameManager.instance.isDeuce)
+                {   //デュースになった場合
+                    textRoundBetween.text = "デュース";
+                }
+                else
+                {   //通常時
+                    if (score.isUser1MatchP || score.isUser2MatchP)
+                    {
+                        textRoundBetween.text = score.user1Score + " - " + score.user2Score +
+                            "\nマッチポイント";            //得点取得
+                    }
+                    else
+                    {
+                        textRoundBetween.text = score.user1Score + " - " + score.user2Score;            //得点取得
+                    }
+                }
+
             }
             else
             {
-                textRoundBetween.text = "ダブルフォルト\n" +
-                score.user1Score + " - " + score.user2Score;   //ダブルフォルト
+                textRoundBetween.text = "";
             }
-        }
 
-        
-        for(int n = 0; n < r; n++)
-        {
-            Destroy(roundInstances[n],Define.NEXT_ROUNDTIME);                                                   //タップ中に生成されたオブジェクトの削除
-        }
+            if (GameManager.instance.faultState == FaultState.Fault)
+            {
+                textRoundBetween.text = "フォルト";         //フォルト
+            }
 
-        rCreateFlg = false;
+            else if (GameManager.instance.faultState == FaultState.DoubleFault)
+            {
+                if (score.isUser1MatchP || score.isUser2MatchP)
+                {
+                    textRoundBetween.text = "ダブルフォルト\n" +
+                    score.user1Score + " - " + score.user2Score +
+                    "\nマッチポイント";   //ダブルフォルト
+                }
+                else
+                {
+                    textRoundBetween.text = "ダブルフォルト\n" +
+                    score.user1Score + " - " + score.user2Score;   //ダブルフォルト
+                }
+            }
+
+
+            for (int n = 0; n < r; n++)
+            {
+                Destroy(roundInstances[n], Define.NEXT_ROUNDTIME);                                                   //タップ中に生成されたオブジェクトの削除
+            }
+
+            rCreateFlg = false;
+        }
         #endregion
+
     }
 
     void ServeDisplay()
@@ -521,7 +527,7 @@ public class UIManager : MonoBehaviour
         retryBtext.text = "リトライ";
         r++;
 
-        gSetFlg = false;
+        gSetCreateFlg = false;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
