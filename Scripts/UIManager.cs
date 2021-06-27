@@ -513,7 +513,14 @@ public class UIManager : MonoBehaviour
         roundInstances[r].transform.SetParent(gameObject.transform, false);                         //親オブジェクト
         roundInstances[r].name = "retryButton";                                                     //オブジェクト名
         retryB = roundInstances[r].GetComponent<Button>();                                          //ボタン
-        //retryB.onClick.AddListener(() => ) ;                                                      //OnClickの処理追加
+        retryB.onClick.AddListener(() =>
+        {
+            GameManager.instance.NextGame();
+        for (int n = 0; n < r; n++)
+            {
+                Destroy(roundInstances[n]);
+            }
+        }) ;                                                      //OnClickの処理追加
         retryBtext = roundInstances[r].GetComponentInChildren<Text>();                              //テキスト
         retryBtext.fontSize = 80;                                                                   //フォントサイズ
         retryBtext.text = "リトライ";
