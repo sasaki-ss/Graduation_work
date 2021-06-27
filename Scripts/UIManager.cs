@@ -17,10 +17,6 @@ public class UIManager : MonoBehaviour
     //サーブ時の生成
     private bool sCreateFlg;            //サーブ時の生成フラグ
 
-    //ゲームセット時の生成
-    private bool gSetFlg;               //ゲームセットフラグ
-    private bool gSetCreateFlg;         //ゲームセット時の生成フラグ
-
     //UIの要素数
     private const int UINum = 8;        //生成するUIの要素数
     private const int RoundUINum = 5;   //ラウンド間に表示するUIの要素数
@@ -43,7 +39,7 @@ public class UIManager : MonoBehaviour
     private GameObject[] instances;
     private GameObject[] roundInstances;
     private GameObject serveInstance;
-    
+
 
     //テキスト
     private Text textScore;             //スコアの表示
@@ -114,7 +110,7 @@ public class UIManager : MonoBehaviour
     private Score score;                //スコアのスクリプト
 
     //パネルスクリプトの格納
-    private DestroyPanel destroyPanel;  
+    private DestroyPanel destroyPanel;
 
     void Start()
     {
@@ -124,9 +120,6 @@ public class UIManager : MonoBehaviour
         tMger = new TouchManager();
         createFlg = true;
         sCreateFlg = true;
-        gSetFlg = false;
-        gSetCreateFlg = true;
-
 
         //プレハブの読み込み
         textPref = (GameObject)Resources.Load("TextPref");
@@ -142,10 +135,10 @@ public class UIManager : MonoBehaviour
         lineCurve = new AnimationCurve();
 
         //座標設定
-        scorePos = new Vector2(0.0f, Screen.height/2);
+        scorePos = new Vector2(0.0f, Screen.height / 2);
         pNamePos = new Vector2(-Screen.width / 2, Screen.height / 2);
-        oNamePos = new Vector2(Screen.width / 2 , Screen.height / 2);
-        rTextPos = new Vector2(0.0f,0.0f);
+        oNamePos = new Vector2(Screen.width / 2, Screen.height / 2);
+        rTextPos = new Vector2(0.0f, 0.0f);
         plgPos = pNamePos + new Vector2(215.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
@@ -189,7 +182,7 @@ public class UIManager : MonoBehaviour
 
         if (GameManager.instance.isAddScore || GameManager.instance.isFault)
         {
-            if(rCreateFlg)RoundBetween(); //ラウンドの間のUIの生成管理
+            if (rCreateFlg) RoundBetween(); //ラウンドの間のUIの生成管理
         }
         else
         {
@@ -197,7 +190,7 @@ public class UIManager : MonoBehaviour
         }
 
         if (sCreateFlg) ServeDisplay();
-        
+
     }
 
     private void CreateInit()
@@ -266,7 +259,7 @@ public class UIManager : MonoBehaviour
     }
 
     void TapDoing()
-    {   
+    {
         #region タップしている最中に行う処理
 
         TouchManager touch_state = tMger.getTouch();    //タッチ取得
@@ -335,7 +328,7 @@ public class UIManager : MonoBehaviour
                             j++;
 
                             createFlg = false;                                                                  //生成しました
-                            
+
                         }
 
                         //タッチ中
@@ -366,7 +359,7 @@ public class UIManager : MonoBehaviour
         }
         #endregion
     }
-    
+
     void RoundBetween()
     {
         #region ラウンド切り替え時に行う処理
@@ -374,8 +367,7 @@ public class UIManager : MonoBehaviour
 
         if (GameManager.instance.isGameSet == true)
         {
-            gSetFlg = true;
-            if (gSetCreateFlg) GameSet();          //終了処理
+            GameSet();          //終了処理
         }
         else
         {
@@ -467,7 +459,7 @@ public class UIManager : MonoBehaviour
 
         serveInstance = null;
 
-        if(GameManager.instance.serveUser == User.User1)
+        if (GameManager.instance.serveUser == User.User1)
         {
             triPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
             triPos = triPos + new Vector3(-560, -640, 0);
@@ -512,7 +504,7 @@ public class UIManager : MonoBehaviour
         textRoundBetween.color = Color.white;                                                   //色変更
         textRoundBetween.fontSize = 80;                                                         //フォントサイズ
         textRoundBetween.alignment = TextAnchor.MiddleCenter;                                   //アンカー(中心位置)の変更
-        if(score.user1Score > score.user2Score) textRoundBetween.text = "ゲームセット\nプレイヤーの勝ち";
+        if (score.user1Score > score.user2Score) textRoundBetween.text = "ゲームセット\nプレイヤーの勝ち";
         else textRoundBetween.text = "ゲームセット\n相手の勝ち";
         r++;
 
@@ -521,20 +513,13 @@ public class UIManager : MonoBehaviour
         roundInstances[r].transform.SetParent(gameObject.transform, false);                         //親オブジェクト
         roundInstances[r].name = "retryButton";                                                     //オブジェクト名
         retryB = roundInstances[r].GetComponent<Button>();                                          //ボタン
-        retryB.onClick.AddListener(() =>                                                            //OnClickの処理追加
-        {
-            GameManager.instance.NextGame();                                                        //ゲームの初期化
-            for(int n = 0; n < r; n++)
-            {
-                Destroy(roundInstances[n]);                                                         //パネルの削除
-            }
-        });                                                                                         
+        //retryB.onClick.AddListener(() => ) ;                                                      //OnClickの処理追加
         retryBtext = roundInstances[r].GetComponentInChildren<Text>();                              //テキスト
         retryBtext.fontSize = 80;                                                                   //フォントサイズ
         retryBtext.text = "リトライ";
         r++;
 
-        gSetCreateFlg = false;
+        rCreateFlg = false;
         //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         #endregion
     }
