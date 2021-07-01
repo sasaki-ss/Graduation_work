@@ -132,15 +132,20 @@ public class GameManager : MonoBehaviour
         Ball ball = GameObject.Find("Ball").GetComponent<Ball>();
 
         //アウトの場合
-        if (ball.isNet && !isAddScore)
+        if ((ball.isOut || ball.isNet) && !isAddScore)
         {
+            if(gameState == GameState.Serve && ball.boundCount == 0)
+            {
+                score.AddScore(ball.nowUserTag);
+                return;
+            }
+
             score.AddScore(InversionTag(ball.nowUserTag));
         }
 
         //バウンド回数が2回以上の場合
         //※正確なバウンド数が取れないため
-        if ((ball.boundCount >= Define.MAX_BOUNDCNT && !isAddScore) ||
-            ball.isOut)
+        if (ball.boundCount >= Define.MAX_BOUNDCNT && !isAddScore)
         {
             score.AddScore(ball.nowUserTag);
         }
