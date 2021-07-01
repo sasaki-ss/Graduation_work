@@ -48,7 +48,7 @@ namespace TapStateManager
             this._touch_flag = false;
 
             // エディタ
-            if (Application.isEditor)
+            if (Application.isPlaying)
             {
                 // 押した瞬間
                 if (Input.GetMouseButtonDown(0))

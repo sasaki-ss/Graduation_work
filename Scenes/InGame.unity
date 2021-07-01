@@ -239,6 +239,34 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1062485212174347077, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_ScreenMatchMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062485212174347077, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_MatchWidthOrHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062485212174347077, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 684
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062485212174347077, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1216
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062485212174347078, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 767981375}
+    - target: {fileID: 1062485212174347078, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1062485212174347078, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: m_PixelPerfect
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2859628093923082611, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
       propertyPath: m_Pivot.x
       value: 0
