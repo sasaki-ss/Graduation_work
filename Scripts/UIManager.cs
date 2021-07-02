@@ -135,12 +135,12 @@ public class UIManager : MonoBehaviour
         lineCurve = new AnimationCurve();
 
         //座標設定
-        scorePos = new Vector2(0.0f, Screen.height / 2 + 150);
-        pNamePos = new Vector2(-Screen.width / 2 - 75, Screen.height / 2 + 150);
-        oNamePos = new Vector2(Screen.width / 2 + 75, Screen.height / 2 + 150);
+        scorePos = new Vector2(0.0f, Screen.height / 2);
+        pNamePos = new Vector2(-Screen.width / 2, Screen.height / 2);
+        oNamePos = new Vector2(Screen.width / 2, Screen.height / 2);
         rTextPos = new Vector2(0.0f, 0.0f);
-        plgPos = pNamePos + new Vector2(100.0f, -75.0f);
-        olgPos = oNamePos + new Vector2(-100.0f, -75.0f);
+        plgPos = pNamePos + new Vector2(215.0f, -100.0f);
+        olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
         gSetTextPos = new Vector2(0.0f, 500.0f);
         buttonPos = new Vector2(0.0f, -500.0f);
@@ -220,7 +220,7 @@ public class UIManager : MonoBehaviour
         instances[i].name = "TextPlayerName";                                               //オブジェクト名変更
         textPlayerName = instances[i].GetComponent<Text>();                                 //テキスト
         textPlayerName.text = "プレイヤー";                                                 //テキスト内容設定
-        textPlayerName.fontSize = 40;                                                       //フォントサイズの変更
+        textPlayerName.fontSize = 60;                                                       //フォントサイズの変更
         textPlayerName.alignment = TextAnchor.UpperLeft;                                   //テキストアンカー
         i++;
 
@@ -230,7 +230,7 @@ public class UIManager : MonoBehaviour
         instances[i].name = "TextOpponentName";                                             //オブジェクト名変更
         textOpponentName = instances[i].GetComponent<Text>();                               //テキスト
         textOpponentName.text = "相手";                                                     //テキスト内容設定
-        textOpponentName.fontSize = 40;                                                     //フォントサイズの変更
+        textOpponentName.fontSize = 60;                                                     //フォントサイズの変更
         textOpponentName.alignment = TextAnchor.UpperRight;                                //テキストアンカー
         i++;
 
@@ -290,7 +290,7 @@ public class UIManager : MonoBehaviour
                             //pgViewPos.z = 0;                                                                    //z軸の設定
                             //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
                             pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-                            pgPos = pgPos + new Vector3(-50, -300, 0);
+                            pgPos = pgPos + new Vector3(-430, -800, 0);
 
                             //線の座標設定
                             linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
@@ -462,12 +462,13 @@ public class UIManager : MonoBehaviour
         if (GameManager.instance.serveUser == User.User1)
         {
             triPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-            triPos = triPos + new Vector3(-320, -240, 0);
+            triPos = triPos + new Vector3(-560, -640, 0);
+
         }
         else
         {
             triPos = RectTransformUtility.WorldToScreenPoint(mainCam, opponentPlayer.transform.position);
-            triPos = triPos + new Vector3(-240, -180, 0);
+            triPos = triPos + new Vector3(-540, -810, 0);
         }
 
         serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.identity);      //インスタンス生成
