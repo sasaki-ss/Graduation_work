@@ -64,8 +64,6 @@ public class UIManager : MonoBehaviour
     private Button retryB;              //リトライボタン
     private Text retryBtext;            //リトライボタンのテキスト
 
-    private Image triangle;             //三角形
-
     //保持用
     private float gaugeKeep;            //ゲージのキープ
     private Vector3 vertexKeep;         //頂点の座標キープ
@@ -78,8 +76,6 @@ public class UIManager : MonoBehaviour
     private Vector2 olgPos;             //相手のスタミナゲージの座標
     private Vector3 rTextPos;           //ラウンド間に表示するテキストの座標
     private Vector3 pgPos;              //パワーゲージの座標
-    private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
-    private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
     private Vector3 linePos;            //線の原点
     private Vector3 lineEndPos;         //線の移動する頂点
     private Vector3 panelPos;           //パネルの座標
@@ -112,13 +108,17 @@ public class UIManager : MonoBehaviour
     //パネルスクリプトの格納
     private DestroyPanel destroyPanel;
 
-    [SerializeField] CanvasScaler canvasScaler;
+    //キャンバス
+    GameObject canvas;
+    CanvasScaler canvasScaler;
 
     void Start()
     {
         #region 初期化と初期生成
 
         //解像度設定
+        canvas = GameObject.Find("Canvas");
+        canvasScaler = canvas.GetComponent<CanvasScaler>();
         canvasScaler.referenceResolution = new Vector2(Screen.width, Screen.height);
 
         //タップ関連の初期化
@@ -466,20 +466,18 @@ public class UIManager : MonoBehaviour
 
         if (GameManager.instance.serveUser == User.User1)
         {
-            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-            triPos = triPos + new Vector3(-560, -640, 0);
-
+            triPos = Player.transform.position;
         }
         else
         {
-            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, opponentPlayer.transform.position);
-            triPos = triPos + new Vector3(-540, -810, 0);
+            triPos = opponentPlayer.transform.position;
         }
 
-        serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.identity);      //インスタンス生成
-        serveInstance.transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        serveInstance.name = "triangle";                                                         //オブジェクト名変更
-        triangle = serveInstance.GetComponent<Image>();                                          //イメージ
+        triPos.y = 19.0f;
+        serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.Euler(0.0f,90.0f,0.0f));      //インスタンス生成
+        //serveInstance.transform.SetParent(gameObject.transform, false);                                      //親オブジェクト
+        serveInstance.name = "triangle";                                                                       //オブジェクト名変更
+        serveInstance.transform.localScale = new Vector3(5.0f,5.0f,5.0f);                                      //スケール
 
         Destroy(serveInstance, Define.NEXT_ROUNDTIME);                                           //削除
 
