@@ -112,9 +112,14 @@ public class UIManager : MonoBehaviour
     //パネルスクリプトの格納
     private DestroyPanel destroyPanel;
 
+    [SerializeField] CanvasScaler canvasScaler;
+
     void Start()
     {
         #region 初期化と初期生成
+
+        //解像度設定
+        canvasScaler.referenceResolution = new Vector2(Screen.width, Screen.height);
 
         //タップ関連の初期化
         tMger = new TouchManager();

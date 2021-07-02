@@ -185,6 +185,12 @@ public class CharacterMove : MonoBehaviour
 
         //現在の座標を取得
         nowPosition = player.position;
+
+        if (GameManager.instance.gameState == GameState.GameSet)
+        {
+            //スタミナを回復
+            this.CharaStatus.CharaStamina = 10;
+        }
     }
 
 
@@ -496,7 +502,7 @@ public class CharacterMove : MonoBehaviour
 
         //スイング状態でボールと当たったら、後距離も違和感のない範囲で
         if (animator.GetBool("is_RightShake") == true && hitFlg == true && onceFlg == true &&
-            dis <= 20 && this.transform.position.x > ball.transform.position.x               )
+            dis <= 20 && this.transform.position.x > ball.transform.position.x)
         {
 
             CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
