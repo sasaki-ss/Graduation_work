@@ -164,6 +164,12 @@ public class AI : MonoBehaviour
         {
             onceFlg = true;
         }
+
+        if (GameManager.instance.gameState == GameState.GameSet)
+        {
+            //スタミナを回復
+            this.CharaStatus.CharaStamina = 10;
+        }
     }
 
     void AutoMove()
