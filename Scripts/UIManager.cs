@@ -146,6 +146,7 @@ public class UIManager : MonoBehaviour
         rTextPos = new Vector2(0.0f, 0.0f);
         plgPos = pNamePos + new Vector2(215.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
+        pgPos = new Vector3(-8.0f, 0.0f, 6.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
         gSetTextPos = new Vector2(0.0f, 500.0f);
         buttonPos = new Vector2(0.0f, -500.0f);
@@ -288,15 +289,7 @@ public class UIManager : MonoBehaviour
                             //タップ中に表示されるUIの生成
                             //Beganの代わり
                             j = i;                                                                              //現在のinstances配列の続きからカウントする
-
-                            //ゲージの座標設定
-                            //plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
-                            //pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
-                            //pgViewPos.z = 0;                                                                    //z軸の設定
-                            //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
-                            pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-                            pgPos = pgPos + new Vector3(-430, -800, 0);
-
+                            
                             //線の座標設定
                             linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
                             linePos.z = 10;
@@ -309,6 +302,7 @@ public class UIManager : MonoBehaviour
                             instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                             instances[j].name = "pGauge1";                                                      //オブジェクト名変更
                             pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
+                            instances[j].transform.position = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position + pgPos);
                             j++;
 
                             //パワーゲージ(青い部分)
@@ -316,6 +310,7 @@ public class UIManager : MonoBehaviour
                             instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                             instances[j].name = "pGauge2";                                                      //オブジェクト名変更
                             pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
+                            instances[j].transform.position = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position + pgPos);
                             j++;
 
                             //線
