@@ -64,8 +64,6 @@ public class UIManager : MonoBehaviour
     private Button retryB;              //リトライボタン
     private Text retryBtext;            //リトライボタンのテキスト
 
-    private Image triangle;             //三角形
-
     //保持用
     private float gaugeKeep;            //ゲージのキープ
     private Vector3 vertexKeep;         //頂点の座標キープ
@@ -78,8 +76,6 @@ public class UIManager : MonoBehaviour
     private Vector2 olgPos;             //相手のスタミナゲージの座標
     private Vector3 rTextPos;           //ラウンド間に表示するテキストの座標
     private Vector3 pgPos;              //パワーゲージの座標
-    private Vector3 plViewPos;          //プレイヤーのカメラ上の座標
-    private Vector3 pgViewPos;          //plViewPosと同じ位置に表示するための座標
     private Vector3 linePos;            //線の原点
     private Vector3 lineEndPos;         //線の移動する頂点
     private Vector3 panelPos;           //パネルの座標
@@ -112,13 +108,17 @@ public class UIManager : MonoBehaviour
     //パネルスクリプトの格納
     private DestroyPanel destroyPanel;
 
-    [SerializeField] CanvasScaler canvasScaler;
+    //キャンバス
+    GameObject canvas;
+    CanvasScaler canvasScaler;
 
     void Start()
     {
         #region 初期化と初期生成
 
         //解像度設定
+        canvas = GameObject.Find("Canvas");
+        canvasScaler = canvas.GetComponent<CanvasScaler>();
         canvasScaler.referenceResolution = new Vector2(Screen.width, Screen.height);
 
         //タップ関連の初期化
@@ -146,6 +146,7 @@ public class UIManager : MonoBehaviour
         rTextPos = new Vector2(0.0f, 0.0f);
         plgPos = pNamePos + new Vector2(215.0f, -100.0f);
         olgPos = oNamePos + new Vector2(-215.0f, -100.0f);
+        pgPos = new Vector3(-8.0f, 0.0f, 6.0f);
         panelPos = new Vector3(0.0f, 0.0f, 0.0f);
         gSetTextPos = new Vector2(0.0f, 500.0f);
         buttonPos = new Vector2(0.0f, -500.0f);
@@ -288,15 +289,7 @@ public class UIManager : MonoBehaviour
                             //タップ中に表示されるUIの生成
                             //Beganの代わり
                             j = i;                                                                              //現在のinstances配列の続きからカウントする
-
-                            //ゲージの座標設定
-                            //plViewPos = mainCam.WorldToViewportPoint(Player.transform.position);                //プレイヤーのカメラ上の座標
-                            //pgViewPos = uiCam.ViewportToWorldPoint(plViewPos);                                  //UIカメラでplViewPosと同じ位置に表示されるようにワールド座標を取得
-                            //pgViewPos.z = 0;                                                                    //z軸の設定
-                            //pgPos = pgViewPos + new Vector3(-200.0f, 100.0f, 0.0f);                             //pgViewPosに更に補正した値を設定
-                            pgPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-                            pgPos = pgPos + new Vector3(-430, -800, 0);
-
+                            
                             //線の座標設定
                             linePos = shot.GetTapStart;                                                         //タップを開始した座標に設定
                             linePos.z = 10;
@@ -309,6 +302,7 @@ public class UIManager : MonoBehaviour
                             instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                             instances[j].name = "pGauge1";                                                      //オブジェクト名変更
                             pGauge1 = instances[j].GetComponent<Image>();                                       //イメージ
+                            instances[j].transform.position = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position + pgPos);
                             j++;
 
                             //パワーゲージ(青い部分)
@@ -316,6 +310,7 @@ public class UIManager : MonoBehaviour
                             instances[j].transform.SetParent(gameObject.transform, false);                      //親オブジェクト
                             instances[j].name = "pGauge2";                                                      //オブジェクト名変更
                             pGauge2 = instances[j].GetComponent<Image>();                                       //イメージ
+                            instances[j].transform.position = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position + pgPos);
                             j++;
 
                             //線
@@ -466,20 +461,18 @@ public class UIManager : MonoBehaviour
 
         if (GameManager.instance.serveUser == User.User1)
         {
-            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, Player.transform.position);
-            triPos = triPos + new Vector3(-560, -640, 0);
-
+            triPos = Player.transform.position;
         }
         else
         {
-            triPos = RectTransformUtility.WorldToScreenPoint(mainCam, opponentPlayer.transform.position);
-            triPos = triPos + new Vector3(-540, -810, 0);
+            triPos = opponentPlayer.transform.position;
         }
 
-        serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.identity);      //インスタンス生成
-        serveInstance.transform.SetParent(gameObject.transform, false);                          //親オブジェクト
-        serveInstance.name = "triangle";                                                         //オブジェクト名変更
-        triangle = serveInstance.GetComponent<Image>();                                          //イメージ
+        triPos.y = 19.0f;
+        serveInstance = (GameObject)Instantiate(trianglePref, triPos, Quaternion.Euler(0.0f,90.0f,0.0f));      //インスタンス生成
+        //serveInstance.transform.SetParent(gameObject.transform, false);                                      //親オブジェクト
+        serveInstance.name = "triangle";                                                                       //オブジェクト名変更
+        serveInstance.transform.localScale = new Vector3(5.0f,5.0f,5.0f);                                      //スケール
 
         Destroy(serveInstance, Define.NEXT_ROUNDTIME);                                           //削除
 
