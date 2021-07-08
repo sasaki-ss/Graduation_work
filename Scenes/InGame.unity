@@ -1478,8 +1478,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2, y: 2, z: 2}
-  m_Center: {x: 1, y: 1, z: 1}
+  m_Size: {x: 3, y: 2, z: 3}
+  m_Center: {x: 0, y: 1.5, z: 1.5}
 --- !u!114 &1834506133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1499,6 +1499,35 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 400328, guid: 49f2055d53eeb4e5a92af590a44bddee, type: 3}
   m_PrefabInstance: {fileID: 1666853045}
   m_PrefabAsset: {fileID: 0}
+--- !u!111 &1834506140
+Animation:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834506128}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Animation: {fileID: 7400000, guid: 87486f7b16eedbf4eb26567d70189058, type: 3}
+  m_Animations:
+  - {fileID: -203655887218126122, guid: 3022dc7977fce1e40b48f58101ad235c, type: 3}
+  m_WrapMode: 0
+  m_PlayAutomatically: 0
+  m_AnimatePhysics: 0
+  m_CullingType: 0
+--- !u!114 &1834506141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1834506128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 009305fdfd33d324e9defa916fd22d30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anime: {fileID: 1834506140}
 --- !u!1 &2076708612
 GameObject:
   m_ObjectHideFlags: 0

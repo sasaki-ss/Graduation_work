@@ -274,7 +274,7 @@ public class AI : MonoBehaviour
                     xyz.z = -13;
                     break;
                 case 3:
-                    xyz.z = 13;
+                    xyz.z = 20;
                     break;
                 case 4:
                     xyz.z = 40;
@@ -286,28 +286,14 @@ public class AI : MonoBehaviour
             //乱数の設定(設定した数値が出ればAIは動かない)
             miss = Random.Range(1, 20);
 
-            //最初のみ
-            if (ball.boundCount != 0)
-            {
-                if (pointB.transform.position.x >= -62 && pointB.transform.position.x <= 0)
-                {
-                    if (miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
-                    {
-                        //移動させる
-                        GetComponent<NavMeshAgent>().destination = xyz;
-                    }
-                }
-            }
-            //通常
-            else
-            {
-                if (ball.boundCount != 0 && GameManager.instance.gameState != GameState.Serve &&
-                    miss != 13 && ball.transform.position.x <= 60 && patternX != 0 && patternZ != 0)
+
+                if ( GameManager.instance.gameState != GameState.Serve &&
+                    miss != 13 && patternX != 0 && patternZ != 0)
                 {
                     //移動させる
                     GetComponent<NavMeshAgent>().destination = xyz;
                 }
-            }
+            
         }
     }
 
@@ -323,7 +309,7 @@ public class AI : MonoBehaviour
             this.CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.0005f;
         }
         else
         {
@@ -358,9 +344,14 @@ public class AI : MonoBehaviour
             //こちらがサーブする側ではないとき
             if (GameManager.instance.isServe != true)
             {
+            if (ball.boundCount != 0)
+            {
                 //違和感のない範囲にいたら
                 if (ball.boundCount != 0 && dis <= 50)
                 {
+
+                    //Serveアニメーションの実行
+                    animator.Play("Swing", 0, 0f);
                     //スイングAnimationにする予定
                     //スイングフラグ(モーションフラグも兼ねてるフラグをオン)
                     animator.SetBool("is_RightShake", true);
@@ -375,6 +366,7 @@ public class AI : MonoBehaviour
                     CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
                 }
             }
+        }
             //こっちサーブの時
             else
             if (GameManager.instance.serveUser == User.User2)
@@ -383,12 +375,15 @@ public class AI : MonoBehaviour
                 serveCnt++;
 
                 //Debug.Log(cnt);
-                if (serveCnt > 200)
+                if (serveCnt > 140)
                 {
-                    //Debug.Log("AIサーブ");
+                //Debug.Log("AIサーブ");
 
-                    //スイングAnimationにする予定
-                    animator.SetBool("is_RightShake", true);
+                //Serveアニメーションの実行
+                animator.Play("Serve", 0, 0f);
+
+                //スイングAnimationにする予定
+                animator.SetBool("is_RightShake", true);
 
                     //円の大きさを測る
                     CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
@@ -403,7 +398,7 @@ public class AI : MonoBehaviour
 
                         //適当に設定(角度と距離)
                         this.CharaStatus.Rad = 1.8f;        //ラジアン値
-                        this.CharaStatus.Distance = 600;    //距離
+                        this.CharaStatus.Distance = 580;    //距離
                     }
                     //右側
                     else
@@ -411,8 +406,8 @@ public class AI : MonoBehaviour
                         //Debug.Log("右側から");
 
                         //適当に設定(角度と距離)
-                        this.CharaStatus.Rad = 0.9f;        //ラジアン値
-                        this.CharaStatus.Distance = 600;    //距離
+                        this.CharaStatus.Rad = 1.2f;        //ラジアン値
+                        this.CharaStatus.Distance = 580;    //距離
                     }
                 }
             }
@@ -579,5 +574,14 @@ public class AI : MonoBehaviour
         }
 
         return targetPoint;
+    }
+    void SwingStart()
+    {
+
+    }
+
+    void SwingEnd()
+    {
+
     }
 }
