@@ -304,8 +304,6 @@ public class CharacterMove : MonoBehaviour
                 if (GameManager.instance.serveUser == User.User1)
                 {
                     tapFlg = true;
-                    //Serveアニメーションの実行
-                    animator.Play("Serve", 0, 0f);
                     swingFlg = true;
                     //円の大きさを測る
                     CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
@@ -314,6 +312,8 @@ public class CharacterMove : MonoBehaviour
                     CharaStatus.NowState = 2;
 
                     serveMoveFlg = false;
+
+                    animator.Play("Serve", 0, 0f);
                 }
             }
         }
@@ -461,5 +461,17 @@ public class CharacterMove : MonoBehaviour
         onceFlg = false;
         swingFlg = false;
         cnt = 0;
+    }
+
+    void Call()
+    {
+        //Serveアニメーションの実行
+        animator.speed = 1;
+    }
+
+    void A()
+    {
+        animator.speed = 0.05f;
+        Invoke("Call", 1.2f);
     }
 }
