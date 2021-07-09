@@ -309,7 +309,7 @@ public class AI : MonoBehaviour
             this.CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.0005f;
+            this.CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.00005f;
         }
         else
         {
@@ -363,7 +363,7 @@ public class AI : MonoBehaviour
                     CharaStatus.NowState = 2;
 
                     //プレイヤーのスタミナを減らす
-                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.00005f;
                 }
             }
         }
@@ -428,7 +428,7 @@ public class AI : MonoBehaviour
                     animator.SetBool("is_RightShake", false);
 
                     //プレイヤーのスタミナを減らす
-                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+                    CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.00005f;
                 }
             }
 
@@ -581,6 +581,17 @@ public class AI : MonoBehaviour
     }
 
     void SwingEnd()
+    {
+
+    }
+
+    //スイングしてる瞬間
+    void HitStart()
+    {
+
+    }
+
+    void HitEnd()
     {
 
     }
