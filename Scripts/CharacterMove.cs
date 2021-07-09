@@ -35,10 +35,23 @@ public class CharacterMove : MonoBehaviour
     bool aniHit = false;
     bool stockFlg = false;
     bool tapFlg = false;
+
+
+    float screenAspect; //画面のアスペクト比
+    float targetAspect = (float)1080; //目的のアスペクト比
+    float magRate;
+    float a;
     //
 
     void Start()
     {
+
+        screenAspect = (float)Screen.width;
+        magRate = (float)screenAspect/ (float)targetAspect; //目的アスペクト比にするための倍率
+
+        Debug.Log(magRate);
+        //a = magRate - 1; //目的アスペクト比にするための倍率
+
         //読み込み
         Base        = GameObject.Find("Player").GetComponent<Base>();
         animator    = GameObject.Find("Player").GetComponent<Animator>();
@@ -427,10 +440,22 @@ public class CharacterMove : MonoBehaviour
         //スイング状態でボールと当たったら
         if (swingFlg == true && hitFlg == true && onceFlg == false)
         {
+            a = magRate - 1;
             if (cnt == 0)
             {
-                CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
-                CharaStatus.Distance = (float)Shot.GetDistance;   //距離
+
+                if (a > 0) 
+                {
+                    CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                    CharaStatus.Distance = (float)Shot.GetDistance / (1+a);   //距離
+                }
+                else
+                {
+                    a=(1+Mathf.Abs(a));
+                    CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                    CharaStatus.Distance = (float)Shot.GetDistance * (a);   //距離
+                }
+
 
                 //振る
                 Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
