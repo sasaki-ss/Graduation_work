@@ -23,13 +23,14 @@ public class CharacterMove : MonoBehaviour
 
     //
 
-    int   motionCnt    = 0;        //モーション管理用のカウント変数
+    int   cnt    = 0;        //モーション管理用のカウント変数
     int   serveMoveCnt = 0;        //サーブした直後に自動移動をさせないためのカウント
     float dis          = 0;        //距離を測る為の変数
+    bool swingFlg = false;
     bool  hitFlg       = false;    //ラケットに当たったとするフラグ
-    bool  onceFlg      = true;     //スイング処理を一回だけ行うためのフラグ
+    bool  onceFlg      = false;     //スイング処理を一回だけ行うためのフラグ
     bool  serveMoveFlg = true;     //サーブした直後に自動移動をさせないためのフラグ
-
+    bool autoFlg = false;
     //
 
     void Start()
@@ -97,17 +98,16 @@ public class CharacterMove : MonoBehaviour
         this.CharaStatus.Distance = 0;
         player.transform.position = new Vector3(125, 0, 0);
         dis = 0;
-        motionCnt = 0;
+        cnt = 0;
         serveMoveCnt = 0;
-        onceFlg = true;
+        onceFlg = false;
         hitFlg = false;
         serveMoveFlg = true;
-
+        swingFlg = false;
+        autoFlg = false;
         //プレイヤーのスタミナを回復
         this.CharaStatus.CharaStamina = CharaStatus.CharaStamina + 0.5f;
 
-        //振るモーションをfalseに
-        this.animator.SetBool("is_RightShake", false);
 
         //こっちサーブの時
         if (GameManager.instance.serveUser == User.User1)
@@ -171,8 +171,8 @@ public class CharacterMove : MonoBehaviour
             */
         }
 
-        //タッチ時の処理
-        TapMove();
+            //タッチ時の処理
+            TapMove();
 
         //自動移動時の処理
         AutoMove();
@@ -211,7 +211,7 @@ public class CharacterMove : MonoBehaviour
                 GetComponent<NavMeshAgent>().ResetPath();
 
                 //クリック時間によって処理を分ける
-                if (Shot.GetTapTime <= 10)
+                if (Shot.GetTapTime <= 15)
                 {
                     //移動の処理
                     Vector3 xyz = Base.Move(Input.mousePosition, hit);
@@ -225,10 +225,9 @@ public class CharacterMove : MonoBehaviour
                 //長押し(スイングを行ったとする)
                 else
                 {
-                    //スイングAnimationにする予定
-                    //スイングフラグ(モーションフラグも兼ねてるフラグをオン)
-                    animator.SetBool("is_RightShake", true);
-
+                    //Serveアニメーションの実行
+                    animator.Play("Swing", 0, 0f);
+                    swingFlg = true;
                     //円の大きさを測る
                     CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
@@ -246,7 +245,7 @@ public class CharacterMove : MonoBehaviour
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
                 //クリック時間によって処理を分ける
-                if (Shot.GetTapTime <= 10)
+                if (Shot.GetTapTime <= 15)
                 {
                     //Debug.Log("サーブ時の横移動");
 
@@ -287,9 +286,9 @@ public class CharacterMove : MonoBehaviour
                 else
                 if (GameManager.instance.serveUser == User.User1)
                 {
-                    //スイングAnimationにする予定
-                    animator.SetBool("is_RightShake", true);
-
+                    //Serveアニメーションの実行
+                    animator.Play("Serve", 0, 0f);
+                    swingFlg = true;
                     //円の大きさを測る
                     CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
@@ -316,9 +315,9 @@ public class CharacterMove : MonoBehaviour
         //
 
         //オート移動処理
-        if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 &&
-            ball.transform.position.x > -5 && serveMoveCnt >= 300 && pointB.activeSelf == true)
+        if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 && serveMoveCnt >= 0 && pointB.activeSelf == true && autoFlg == false)
         {
+            autoFlg = true;
             //x7～x119がコートの内側
             //z55～z-55がコートの内側
 
@@ -413,7 +412,7 @@ public class CharacterMove : MonoBehaviour
                     xyz.z = -40;
                     break;
                 case 2:
-                    xyz.z = -13;
+                    xyz.z = -15;
                     break;
                 case 3:
                     xyz.z = 13;
@@ -445,7 +444,7 @@ public class CharacterMove : MonoBehaviour
             CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
+            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.0005f;
         }
         else
         {
@@ -454,6 +453,8 @@ public class CharacterMove : MonoBehaviour
 
             //プレイヤー状態を待機に変更
             CharaStatus.NowState = 0;
+
+            autoFlg = false;
         }
 
         if (animator.GetBool("is_Run") == false)
@@ -470,74 +471,65 @@ public class CharacterMove : MonoBehaviour
             //対象を向かせる
             player.rotation = Quaternion.Slerp(this.transform.rotation, rotation, speed);
         }
-
-        //振るモーションでない時はフラグをオンにしておく
-        if (animator.GetBool("is_RightShake") == false)
-        {
-            onceFlg = true;
-        }
     }
 
     void Swing()
     {
-        //振る状態時なら50カウント後に待機状態に戻す
-        if (animator.GetBool("is_RightShake") == true)
-        {
-            motionCnt++;
-
-            if (motionCnt > 40)
-            {
-                motionCnt = 0;
-
-                //プレイヤー状態を待機に変更
-                CharaStatus.NowState = 0;
-
-                //プレイヤーを待機モーションにする
-                animator.SetBool("is_RightShake", false);
-
-                //プレイヤーのスタミナを減らす
-                CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.005f;
-            }
-        }
-
         //スイング状態でボールと当たったら、後距離も違和感のない範囲で
-        if (animator.GetBool("is_RightShake") == true && hitFlg == true && onceFlg == true &&
-            dis <= 20 && this.transform.position.x > ball.transform.position.x)
+
+        if (swingFlg == true && hitFlg == true && onceFlg == false)
         {
+            if (cnt == 0)
+            {
+                CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                CharaStatus.Distance = (float)Shot.GetDistance;   //距離
 
-            CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
-            CharaStatus.Distance = (float)Shot.GetDistance;   //距離
+                //振る
+                Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
+            }
 
-            //Debug.Log(dis);
-            //Debug.Log(CharaStatus.Rad);
-            //Debug.Log(CharaStatus.Distance);
-
-            //振る
-            Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
+            cnt++;
 
             //この処理一度だけ実行させるためにフラグをかませる
-            onceFlg = false;
+            onceFlg = true;
 
             //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
             hitFlg = false;
         }
     }
-
     void OnTriggerEnter(Collider collision)
     {
         // 物体がトリガーに接触しとき、１度だけ呼ばれる
 
-        //プレイヤー側のラケットと当たったら
-        if (collision.name == "Ball")
-        {
-            hitFlg = true;
-        }
+
     }
     void OnTriggerStay(Collider collision)
     {
         if (collision.name == "Ball")
         {
-            //Debug.Log("当たっている");
+            hitFlg = true;
         }
+    }
+
+    void OnTriggerExit(Collider collision)
+    {
+        if (collision.name == "Ball")
+        {
+            hitFlg = false;
+            cnt = 0;
+        }
+    }
+
+    void SwingStart()
+    {
+        swingFlg = true;
+        cnt = 1;
+    }
+
+    void SwingEnd()
+    {
+        onceFlg = false;
+        swingFlg = false;
+        cnt = 0;
     }
 }
