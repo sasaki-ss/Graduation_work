@@ -14,6 +14,7 @@ public class CharacterMove : MonoBehaviour
     [SerializeField] GameObject pointB;
     [SerializeField] Score score;
     [SerializeField] public Shot Shot;
+    [SerializeField] Judge judge;
 
     //前の座標と今の座標を比べるために使う変数
     Vector3 nowPosition;
@@ -31,10 +32,26 @@ public class CharacterMove : MonoBehaviour
     bool  onceFlg      = false;     //スイング処理を一回だけ行うためのフラグ
     bool  serveMoveFlg = true;     //サーブした直後に自動移動をさせないためのフラグ
     bool autoFlg = false;
+    bool aniHit = false;
+    bool stockFlg = false;
+    bool tapFlg = false;
+
+
+    float screenAspect; //画面のアスペクト比
+    float targetAspect = (float)1080; //目的のアスペクト比
+    float magRate;
+    float a;
     //
 
     void Start()
     {
+
+        screenAspect = (float)Screen.width;
+        magRate = (float)screenAspect/ (float)targetAspect; //目的アスペクト比にするための倍率
+
+        Debug.Log(magRate);
+        //a = magRate - 1; //目的アスペクト比にするための倍率
+
         //読み込み
         Base        = GameObject.Find("Player").GetComponent<Base>();
         animator    = GameObject.Find("Player").GetComponent<Animator>();
@@ -44,7 +61,7 @@ public class CharacterMove : MonoBehaviour
         net         = GameObject.Find("Net");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
-
+        judge       = GameObject.Find("PlayerRacket").GetComponent<Judge>();
         //こっちサーブの時
         if (GameManager.instance.serveUser == User.User1) 
         {
@@ -92,6 +109,7 @@ public class CharacterMove : MonoBehaviour
         net         = GameObject.Find("Net");
         score       = GameObject.Find("Score").GetComponent<Score>();
         Shot        = GameObject.Find("Shot").GetComponent<Shot>();
+        judge = GameObject.Find("PlayerRacket").GetComponent<Judge>();
 
         //数値のリセット
         this.CharaStatus.Rad = 0;
@@ -105,6 +123,9 @@ public class CharacterMove : MonoBehaviour
         serveMoveFlg = true;
         swingFlg = false;
         autoFlg = false;
+        aniHit = false;
+        stockFlg = false;
+        tapFlg = false;
         //プレイヤーのスタミナを回復
         this.CharaStatus.CharaStamina = CharaStatus.CharaStamina + 0.5f;
 
@@ -196,6 +217,7 @@ public class CharacterMove : MonoBehaviour
 
     void TapMove()
     {
+
         //こちらがサーブする側ではないとき
         if (GameManager.instance.isServe != true) 
         {
@@ -211,7 +233,7 @@ public class CharacterMove : MonoBehaviour
                 GetComponent<NavMeshAgent>().ResetPath();
 
                 //クリック時間によって処理を分ける
-                if (Shot.GetTapTime <= 15)
+                if (Shot.GetDistance < 50) 
                 {
                     //移動の処理
                     Vector3 xyz = Base.Move(Input.mousePosition, hit);
@@ -225,14 +247,22 @@ public class CharacterMove : MonoBehaviour
                 //長押し(スイングを行ったとする)
                 else
                 {
-                    //Serveアニメーションの実行
-                    animator.Play("Swing", 0, 0f);
-                    swingFlg = true;
-                    //円の大きさを測る
-                    CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
+                    tapFlg = true;
+                    if (autoFlg == true)
+                    {
+                        stockFlg = true;
+                    }
+                    else
+                    {
+                        //Serveアニメーションの実行
+                        animator.Play("Swing", 0, 0f);
+                        swingFlg = true;
+                        //円の大きさを測る
+                        CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
 
-                    //プレイヤー状態を振るに変更
-                    CharaStatus.NowState = 2;
+                        //プレイヤー状態を振るに変更
+                        CharaStatus.NowState = 2;
+                    }
                 }
             }
         }
@@ -245,7 +275,7 @@ public class CharacterMove : MonoBehaviour
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
                 //クリック時間によって処理を分ける
-                if (Shot.GetTapTime <= 15)
+                if (Shot.GetDistance < 50)
                 {
                     //Debug.Log("サーブ時の横移動");
 
@@ -286,8 +316,7 @@ public class CharacterMove : MonoBehaviour
                 else
                 if (GameManager.instance.serveUser == User.User1)
                 {
-                    //Serveアニメーションの実行
-                    animator.Play("Serve", 0, 0f);
+                    tapFlg = true;
                     swingFlg = true;
                     //円の大きさを測る
                     CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
@@ -296,14 +325,37 @@ public class CharacterMove : MonoBehaviour
                     CharaStatus.NowState = 2;
 
                     serveMoveFlg = false;
+
+                    animator.Play("Serve", 0, 0f);
                 }
             }
         }
+
+        if (autoFlg == false && tapFlg == true && stockFlg == true &&  player.transform.position.x - ball.transform.position.x  < 15) 
+        {
+            //Serveアニメーションの実行
+            animator.Play("Swing", 0, 0f);
+            swingFlg = true;
+            //円の大きさを測る
+            CharaStatus.CharaCircle = Base.CircleScale(Shot.GetTapTime);
+
+            //プレイヤー状態を振るに変更
+            CharaStatus.NowState = 2;
+
+            stockFlg = false;
+            tapFlg = true;
+        }
+
     }
 
     void AutoMove()
     {
-        //
+        if (hitFlg == true)
+        {
+            //現状の移動指定地を削除
+            GetComponent<NavMeshAgent>().ResetPath();
+            autoFlg = false;
+        }
 
         //Debug.Log(serveMoveCnt);
 
@@ -312,7 +364,7 @@ public class CharacterMove : MonoBehaviour
             serveMoveCnt++;
         }
 
-        //
+        
 
         //オート移動処理
         if (GameManager.instance.isServe != true && ball.nowUserTag == User.User2 && serveMoveCnt >= 0 && pointB.activeSelf == true && autoFlg == false)
@@ -321,108 +373,7 @@ public class CharacterMove : MonoBehaviour
             //x7～x119がコートの内側
             //z55～z-55がコートの内側
 
-            int patternX = 0;
-            int patternZ = 0;
-
-            //Xの場合
-            if (pointB.transform.position.x > 7 && pointB.transform.position.x <= 30)
-            {
-                // Debug.Log("7～30");
-                patternX = 1;
-            }
-            else
-            if (pointB.transform.position.x > 30 && pointB.transform.position.x <= 60)
-            {
-                //Debug.Log("30～60");
-                patternX = 2;
-            }
-            else
-            if (pointB.transform.position.x > 60 && pointB.transform.position.x <= 90)
-            {
-                //Debug.Log("60～90");
-                patternX = 3;
-            }
-            else
-            if (pointB.transform.position.x > 90 && pointB.transform.position.x <= 119)
-            {
-                //Debug.Log("90～119");
-                patternX = 4;
-            }
-            else
-            {
-                //Debug.Log("119～or7>x");
-                patternX = 0;
-            }
-
-            //Zの場合
-            if (pointB.transform.position.z > -55 && pointB.transform.position.z <= -27.5)
-            {
-                //Debug.Log("-55～-27.5");
-                patternZ = 1;
-            }
-            else
-            if (pointB.transform.position.z > -27.5 && pointB.transform.position.z <= 0)
-            {
-                //Debug.Log("-27.5～0");
-                patternZ = 2;
-            }
-            else
-            if (pointB.transform.position.z > 0 && pointB.transform.position.z <= 27.5)
-            {
-                //Debug.Log("0～27.5");
-                patternZ = 3;
-            }
-            else
-            if (pointB.transform.position.z > 27.5 && pointB.transform.position.z <= 55)
-            {
-                //Debug.Log("27.5～55");
-                patternZ = 4;
-            }
-            else
-            {
-                //Debug.Log("55～or-55～");
-                patternZ = 0;
-            }
-
-            Vector3 xyz = new Vector3(0, 0, 0);
-
-            //場所に応じて移動(X座標)
-            switch (patternX)
-            {
-                case 1:
-                    xyz.x = 40;
-                    break;
-                case 2:
-                    xyz.x = 70;
-                    break;
-                case 3:
-                    xyz.x = 100;
-                    break;
-                case 4:
-                    xyz.x = 130;
-                    break;
-                default:
-                    break;
-            }
-
-            //場所に応じて移動(Z座標)
-            switch (patternZ)
-            {
-                case 1:
-                    xyz.z = -40;
-                    break;
-                case 2:
-                    xyz.z = -15;
-                    break;
-                case 3:
-                    xyz.z = 13;
-                    break;
-                case 4:
-                    xyz.z = 40;
-                    break;
-                default:
-                    break;
-            }
+            Vector3 xyz = new Vector3(pointB.transform.position.x+15, 0, pointB.transform.position.z - 10);
 
             if (xyz.x != 0 && xyz.z != 0)
             {
@@ -444,7 +395,7 @@ public class CharacterMove : MonoBehaviour
             CharaStatus.NowState = 1;
 
             //プレイヤーのスタミナを減らす
-            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.0005f;
+            CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.00005f;
         }
         else
         {
@@ -475,14 +426,36 @@ public class CharacterMove : MonoBehaviour
 
     void Swing()
     {
-        //スイング状態でボールと当たったら、後距離も違和感のない範囲で
 
+        if (judge.Hit == true)
+        {
+            hitFlg = true;
+        }
+        else
+        {
+            hitFlg = false;
+            cnt = 0;
+        }
+
+        //スイング状態でボールと当たったら
         if (swingFlg == true && hitFlg == true && onceFlg == false)
         {
+            a = magRate - 1;
             if (cnt == 0)
             {
-                CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
-                CharaStatus.Distance = (float)Shot.GetDistance;   //距離
+
+                if (a > 0) 
+                {
+                    CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                    CharaStatus.Distance = (float)Shot.GetDistance / (1+a);   //距離
+                }
+                else
+                {
+                    a=(1+Mathf.Abs(a));
+                    CharaStatus.Rad = (float)Shot.GetRadian;          //ラジアン値
+                    CharaStatus.Distance = (float)Shot.GetDistance * (a);   //距離
+                }
+
 
                 //振る
                 Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
@@ -495,30 +468,12 @@ public class CharacterMove : MonoBehaviour
 
             //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
             hitFlg = false;
-        }
-    }
-    void OnTriggerEnter(Collider collision)
-    {
-        // 物体がトリガーに接触しとき、１度だけ呼ばれる
 
-
-    }
-    void OnTriggerStay(Collider collision)
-    {
-        if (collision.name == "Ball")
-        {
-            hitFlg = true;
+            tapFlg = false;
         }
     }
 
-    void OnTriggerExit(Collider collision)
-    {
-        if (collision.name == "Ball")
-        {
-            hitFlg = false;
-            cnt = 0;
-        }
-    }
+    //モーション再生中、特定のタイミングで呼ぶ関数
 
     void SwingStart()
     {
@@ -531,5 +486,17 @@ public class CharacterMove : MonoBehaviour
         onceFlg = false;
         swingFlg = false;
         cnt = 0;
+    }
+
+    void Call()
+    {
+        //Serveアニメーションの実行
+        animator.speed = 1;
+    }
+
+    void A()
+    {
+        animator.speed = 0.05f;
+        Invoke("Call", 1.2f);
     }
 }
