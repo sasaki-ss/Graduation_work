@@ -156,7 +156,7 @@ public class Base : MonoBehaviour
         speed = (float)_power / 6;
 
         //Debug.Log(flightTime);
-        //Debug.Log(speed);
+        Debug.Log(speed);
 
         if (GameManager.instance.isServe == true)
         {

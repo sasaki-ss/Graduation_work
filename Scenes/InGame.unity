@@ -239,6 +239,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1062485212174347075, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
+      propertyPath: textUI
+      value: 
+      objectReference: {fileID: 7012720600622313511, guid: 861096a7c0e0e1d4eb9c44978a9b61d1, type: 3}
     - target: {fileID: 2859628093923082611, guid: 62bee2a8907965d4f96560c0d986dfcd, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1353,7 +1357,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812654446}
   m_LocalRotation: {x: -0.0423322, y: -0.6466599, z: 0.7612212, w: 0.024108827}
-  m_LocalPosition: {x: 1.42, y: 0.84, z: 0.23}
+  m_LocalPosition: {x: 1.43, y: 0.77, z: -0.17}
   m_LocalScale: {x: 0.0005863103, y: 0.00020298605, z: 0.00025152453}
   m_Children: []
   m_Father: {fileID: 1834506139}
@@ -1370,7 +1374,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 4000, y: 15000, z: 7500}
+  m_Size: {x: 4000, y: 10000, z: 6500}
   m_Center: {x: 1000, y: -5000, z: 1}
 --- !u!114 &1812654449
 MonoBehaviour:

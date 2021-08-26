@@ -23,7 +23,8 @@ public class AI : MonoBehaviour
     float dis       = 0;        //距離を測る為の変数
     bool  hitFlg    = false;    //ラケットに当たったとするフラグ
     bool  onceFlg   = true;     //スイング処理を一回だけ行うためのフラグ
-
+    bool  missSwing = false;    //空振りのフラグ
+    bool  randFlg   = false;    //乱数を一回だけ取得する用のフラグ
     void Start()
     {
         //読み込み
@@ -94,7 +95,8 @@ public class AI : MonoBehaviour
         dis       = 0;
         hitFlg    = false;
         onceFlg   = true;
-
+        missSwing = false;
+        randFlg   = false;
         //プレイヤーのスタミナを回復
         this.CharaStatus.CharaStamina = CharaStatus.CharaStamina + 0.5f;
 
@@ -283,16 +285,27 @@ public class AI : MonoBehaviour
                     break;
             }
 
-            //乱数の設定(設定した数値が出ればAIは動かない)
-            miss = Random.Range(1, 20);
+            if(randFlg == false)
+            {
+                randFlg = true;
+                //乱数の設定(設定した数値が出ればAIは動かない)
+                miss = Random.Range(1, 5);
+            }
 
+            Debug.Log(miss);
 
-                if ( GameManager.instance.gameState != GameState.Serve &&
-                    miss != 13 && patternX != 0 && patternZ != 0)
-                {
-                    //移動させる
-                    GetComponent<NavMeshAgent>().destination = xyz;
-                }
+            if ( GameManager.instance.gameState != GameState.Serve &&
+                 patternX != 0 && patternZ != 0)
+            {
+                //移動させる
+                GetComponent<NavMeshAgent>().destination = xyz;
+                missSwing = false;
+            }
+
+            if (miss == 1)
+            {
+                missSwing = true;
+            }
             
         }
     }
@@ -344,6 +357,7 @@ public class AI : MonoBehaviour
             //こちらがサーブする側ではないとき
             if (GameManager.instance.isServe != true)
             {
+
             if (ball.boundCount != 0)
             {
                 //違和感のない範囲にいたら
@@ -366,7 +380,7 @@ public class AI : MonoBehaviour
                     CharaStatus.CharaStamina = CharaStatus.CharaStamina - 0.00005f;
                 }
             }
-        }
+            }
             //こっちサーブの時
             else
             if (GameManager.instance.serveUser == User.User2)
@@ -433,7 +447,7 @@ public class AI : MonoBehaviour
             }
 
             //スイング状態でボールと当たったら
-            if (animator.GetBool("is_RightShake") == true && hitFlg == true && onceFlg == true)
+            if (animator.GetBool("is_RightShake") == true && hitFlg == true && onceFlg == true && missSwing != true)
             {
                 Vector2 parameter;
 
@@ -463,6 +477,9 @@ public class AI : MonoBehaviour
 
                 //ラケットとのHitフラグをこちら側でオフ(あちら側だけで完結させたらこっちのフラグ情報と違いが発生したため)
                 hitFlg = false;
+
+                //フラグを戻す
+                randFlg = false;
             }
     }
 
@@ -592,6 +609,11 @@ public class AI : MonoBehaviour
     }
 
     void HitEnd()
+    {
+
+    }
+
+    void A()
     {
 
     }

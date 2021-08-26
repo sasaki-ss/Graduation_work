@@ -274,7 +274,7 @@ public class CharacterMove : MonoBehaviour
             //クリック
             if (Base.touch_state._touch_flag == true && Base.touch_state._touch_phase == TouchPhase.Ended)
             {
-                //クリック時間によって処理を分ける
+                //クリックの長さによって処理を分ける
                 if (Shot.GetDistance < 50)
                 {
                     //Debug.Log("サーブ時の横移動");
@@ -456,7 +456,9 @@ public class CharacterMove : MonoBehaviour
                     CharaStatus.Distance = (float)Shot.GetDistance * (a);   //距離
                 }
 
-
+                CharaStatus.CharaPower = CharaStatus.CharaPower + Shot.GetDistance / 700;
+                //Debug.Log(Shot.GetDistance / 1250);
+               // Debug.Log(CharaStatus.CharaPower);
                 //振る
                 Base.Swing(CharaStatus.CharaPower, Shot.GetPower, Shot.GetTapTime, User.User1);
             }
@@ -491,12 +493,12 @@ public class CharacterMove : MonoBehaviour
     void Call()
     {
         //Serveアニメーションの実行
-        animator.speed = 1;
+        animator.speed =1.7f;
     }
 
     void A()
     {
-        animator.speed = 0.05f;
-        Invoke("Call", 1.2f);
+        animator.speed = 0.5f;
+        Invoke("Call", 0.4f);
     }
 }
